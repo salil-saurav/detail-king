@@ -1,0 +1,175 @@
+/* =====================================================================
+   Single Service — page CSS (single-dk_service.php)
+   Hero reuses global/page-banner untouched. Intro reuses .dk-split +
+   section-heading + framed-photo (About's pattern). CTA reuses
+   global/cta-banner untouched. The booking widget is new here.
+   Section boundaries: projects/detail-king/figma-data/service-single-spec.md.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------
+   Intro ("Why X?") — same shape as About's Who We Are / Our Approach.
+   --------------------------------------------------------------- */
+.service-intro { position: relative; overflow: hidden; padding-block: 110px; }
+.service-intro__watermark {
+	position: absolute;
+	z-index: 0;
+	inset-inline-end: -50px;
+	inset-block-start: 30px;
+	font-size: 300px;
+}
+.service-intro__grid { position: relative; z-index: 1; }
+.service-intro__lead { color: var(--text-dark); font: 400 21px/1.65 var(--font-body); }
+.service-intro__lead + p { margin-block-start: 4px; }
+
+/* ---------------------------------------------------------------
+   Booking widget.
+   --------------------------------------------------------------- */
+.service-booking { padding-block: 120px; }
+.service-booking__head { margin-block-end: 54px; }
+
+.service-booking__steps {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 18px;
+	margin: 0 0 60px;
+	padding: 0;
+	list-style: none;
+}
+.service-booking__step {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	color: var(--text-white-45);
+}
+.service-booking__stepnum {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 50%;
+	border: 1px solid var(--glass-white-25);
+	font: 400 20px/1 var(--font-display);
+}
+.service-booking__step.is-active .service-booking__stepnum {
+	background: var(--gold-gradient-btn);
+	border-color: transparent;
+	color: var(--text-dark);
+}
+.service-booking__step.is-active .service-booking__steplabel { color: var(--text-white); }
+
+/* Package cards — survives 1..N (auto-fit, not a fixed 2/3-col grid). */
+.service-packages {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 26px;
+	margin-block-end: 60px;
+}
+.service-package {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--line-white-08);
+	border-radius: var(--radius-lg);
+	background: var(--bg-dark-card);
+	overflow: hidden;
+}
+.service-package.is-selected {
+	border-color: var(--gold-mid);
+	box-shadow: 0 30px 80px rgba(201, 161, 74, .22);
+}
+.service-package__media {
+	position: relative;
+	height: 200px;
+	background: linear-gradient(150deg, #1C1C20 0%, #0C0C0E 100%);
+}
+.service-package__media img { width: 100%; height: 100%; object-fit: cover; }
+.service-package__badge {
+	position: absolute;
+	inset-block-start: 16px;
+	inset-inline-end: 16px;
+	padding: 6px 18px;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	color: var(--text-dark);
+	font: 600 16px/1.65 var(--font-body);
+}
+.service-package__check {
+	position: absolute;
+	inset-block-start: 16px;
+	inset-inline-start: 16px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	border: 2px solid var(--glass-white-25);
+	background: rgba(11, 11, 12, .4);
+	color: transparent;
+	font-size: 16px;
+}
+.service-package.is-selected .service-package__check {
+	background: var(--gold-gradient-btn);
+	border-color: transparent;
+	color: var(--text-dark);
+}
+.service-package__body { padding: 28px 30px; }
+.service-package__title { margin-block-end: 8px; color: var(--text-white); font: 400 34px/1 var(--font-display); letter-spacing: .03em; }
+.service-package__desc { color: var(--text-white-65); }
+.service-package__price { margin-block-start: 8px; display: flex; align-items: baseline; gap: 8px; }
+.service-package__pricelabel { color: var(--text-white-55); }
+.service-package__price .text-gold-gradient { font: 400 48px/1 var(--font-display); }
+
+/* Step-2 details card. */
+.service-details {
+	max-width: 900px;
+	margin-inline: auto;
+	padding: 46px;
+	border: 1px solid var(--gold-25);
+	border-radius: var(--radius-xl);
+	background: var(--glass-white-04);
+}
+.service-details__title { margin-block-end: 8px; color: var(--text-white); font: 400 34px/1 var(--font-display); letter-spacing: .03em; }
+.service-details__subtitle { margin-block-end: 24px; color: var(--text-white-55); }
+.service-details__location { grid-column: 1 / -1; }
+
+.service-details__pricerow {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-block-start: 24px;
+	padding-block-start: 27px;
+	border-top: 1px solid var(--gold-30);
+}
+.service-details__pricelabel {
+	color: var(--text-white-55);
+	letter-spacing: .16em;
+	text-transform: uppercase;
+}
+.service-details__priceval { font: 400 54px/1 var(--font-display); }
+
+.service-details__disclaimer {
+	margin-block-start: 14px;
+	text-align: center;
+	color: var(--text-white-45);
+}
+
+/* ---------------------------------------------------------------
+   CTA — global/cta-banner.php handles everything; page-level spacing only.
+   --------------------------------------------------------------- */
+.service-cta { padding-block: 110px; }
+
+/* ---------------------------------------------------------------
+   Responsive.
+   --------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+	.service-intro__watermark { font-size: 160px; }
+	.service-details { padding: 32px 24px; }
+	.service-booking__steps { gap: 12px 24px; }
+	.service-booking__steplabel { font-size: 15px; }
+}
+
+@media (max-width: 575.98px) {
+	.service-details__pricerow { flex-direction: column; align-items: flex-start; gap: 8px; }
+}

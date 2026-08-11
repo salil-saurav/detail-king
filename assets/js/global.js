@@ -11,51 +11,17 @@
 
 	const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-	if (!prefersReducedMotion) {
-		document.documentElement.classList.add('aos-ready');
-	}
-
 	/* ----------------------------------------------------------
-		Scroll-reveal animations.
-		Add `data-animate` to any element to reveal it as it enters
-		the viewport. Variants: data-animate="fade-left|fade-right|zoom|fade".
+		Scroll-reveal ([data-animate]) lives in motion.js now.
+
+		It used to be an IntersectionObserver here. motion.js drives the same
+		attribute with GSAP + ScrollTrigger instead, per
+		animation-implementation-spec.md — that is what buys scrub-linked
+		parallax, a real hero timeline and batch stagger. Two engines writing
+		opacity/transform on the same nodes fight, so this one was removed
+		rather than left dormant. `aos-ready` is added by motion.js only once it
+		knows it can animate.
 		---------------------------------------------------------- */
-	const initScrollAnimations = () => {
-		if (prefersReducedMotion) {
-			return;
-		}
-
-		/* Scan the whole document, not just #site-container.
-
-		   The rule that hides these (`.aos-ready [data-animate]` in global.css)
-		   is document-wide, so scoping the observer to <main> meant anything
-		   outside it — the header, and the footer, which footer.php renders after
-		   </main> — was hidden by the stylesheet and then never observed. It
-		   stayed at opacity 0 permanently. Keeping the two selectors in agreement
-		   is the fix; the narrower observer is a trap for the next person. */
-		const animated = document.querySelectorAll('[data-animate]');
-		if (!animated.length) {
-			return;
-		}
-
-		const reveal = (el) => el.classList.add('is-visible');
-
-		if (!('IntersectionObserver' in window)) {
-			animated.forEach(reveal);
-			return;
-		}
-
-		const observer = new IntersectionObserver((entries, obs) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					reveal(entry.target);
-					obs.unobserve(entry.target);
-				}
-			});
-		}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-
-		animated.forEach((el) => observer.observe(el));
-	};
 
 	/* ----------------------------------------------------------
 		Stat counters ([data-count-to]).
@@ -96,7 +62,12 @@
 			return body + suffix;
 		};
 
-		const duration = 1600;
+		/* 1900, not the earlier 1600, and the ease below is not a guess: the
+		   reference recording's craft stats were sampled every 0.25s while they
+		   ran (t 20.4-22.3) and read 1461, 2810, 3639, 4289, 4592, 4749, 4795,
+		   4799 against a 4799 target. Inverting ease-out cubic on those gives an
+		   even ~0.131 of progress per 0.25s — i.e. exactly this curve over 1.9s. */
+		const duration = 1900;
 
 		const animate = (el, parsed) => {
 			let start = null;
@@ -149,6 +120,141 @@
 				toggler.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 			});
 		});
+	};
+
+	/* ----------------------------------------------------------
+		Category filter pills ([data-dk-filter-group]).
+		Each pill inside carries data-dk-filter="<slug>"; the group names the
+		card container to act on via data-dk-filter-target="<selector>". Cards
+		carry data-dk-filter-cats="<space-separated slugs>" — "all" means
+		everything.
+
+		Two modes, chosen by the group's data-dk-filter-mode:
+
+		  "hide"   (default) — show/hide the non-matching cards. What Gallery
+		                       wants: a wall of items, narrowed to one category.
+		  "scroll"           — leave every card visible and scroll to the
+		                       matching one. What Our Services wants, per the
+		                       client brief: "When someone clicks on a service
+		                       name, it will take them to that service section on
+		                       the same page." See TASK-BRIEF.md §1.5.
+
+		The mode is a data attribute rather than two components because the pill
+		row, its markup and its active-state bookkeeping are identical — only
+		what a click does differs.
+		---------------------------------------------------------- */
+	const initFilterTabs = () => {
+		document.querySelectorAll('[data-dk-filter-group]').forEach((group) => {
+			const targetSelector = group.getAttribute('data-dk-filter-target');
+			const target = targetSelector ? document.querySelector(targetSelector) : null;
+			const pills = group.querySelectorAll('[data-dk-filter]');
+			if (!target || !pills.length) {
+				return;
+			}
+
+			const isScrollMode = group.getAttribute('data-dk-filter-mode') === 'scroll';
+			const cards = target.querySelectorAll('[data-dk-filter-cats]');
+
+			const matches = (card, slug) =>
+				card.getAttribute('data-dk-filter-cats').split(/\s+/).includes(slug);
+
+			const applyFilter = (slug) => {
+				cards.forEach((card) => {
+					card.classList.toggle('is-hidden', slug !== 'all' && !matches(card, slug));
+				});
+			};
+
+			/* "all" goes back to the top of the grid; anything else jumps to the
+			   first card carrying that category. Vertical offset for the fixed nav
+			   comes from `scroll-padding-block-start` on <html> (global.css), so it
+			   is not duplicated here. */
+			const scrollToCategory = (slug) => {
+				const destination = slug === 'all'
+					? target
+					: Array.from(cards).find((card) => matches(card, slug));
+
+				if (!destination) {
+					return;
+				}
+
+				destination.scrollIntoView({
+					behavior: prefersReducedMotion ? 'auto' : 'smooth',
+					block: 'start',
+				});
+			};
+
+			pills.forEach((pill) => {
+				pill.addEventListener('click', () => {
+					const slug = pill.getAttribute('data-dk-filter');
+					pills.forEach((p) => {
+						p.classList.toggle('is-active', p === pill);
+						p.setAttribute('aria-pressed', p === pill ? 'true' : 'false');
+					});
+
+					if (isScrollMode) {
+						scrollToCategory(slug);
+					} else {
+						applyFilter(slug);
+					}
+				});
+			});
+		});
+	};
+
+	/* ----------------------------------------------------------
+		Sticky pill nav.
+		The comp only ever draws the nav over the hero, but the client's own
+		animation reference (animation.mp4, analysed in TASK-BRIEF.md §3) keeps
+		the pill docked at the top of the viewport for the whole scroll. `.dk-nav`
+		is therefore `position: fixed` (it was already out of flow, so nothing
+		reflows); this only adds the `.is-stuck` state once the hero's own 22px
+		offset has been scrolled past, which tightens the offset and deepens the
+		shadow so the pill reads as docked rather than floating.
+
+		The `--solid` variant (templates with no dark hero) is `position: sticky`
+		in CSS instead — it is in flow, so sticky needs no padding compensation.
+		---------------------------------------------------------- */
+	const initStickyNav = () => {
+		const nav = document.querySelector('.dk-nav');
+		if (!nav) {
+			return;
+		}
+
+		/* Publish the nav's real height so `scroll-padding-block-start` (global.css)
+		   can clear it at every width. A hard-coded offset does not survive the
+		   ≤991px breakpoint, where the pill wraps to ~124px and an anchor target
+		   lands *underneath* the nav — measured at 375px, the card sat 6px under it.
+
+		   Recomputed on resize only. Not on scroll frames (it would be layout
+		   thrash for a value that cannot change), and deliberately *not* when the
+		   mobile drawer opens: an open drawer is several hundred px tall, and
+		   feeding that into the scroll offset would throw every anchor jump far
+		   past its target. */
+		const syncHeight = () => {
+			document.documentElement.style.setProperty(
+				'--dk-nav-height',
+				`${Math.round(nav.getBoundingClientRect().height)}px`
+			);
+		};
+
+		let queued = false;
+
+		const sync = () => {
+			queued = false;
+			nav.classList.toggle('is-stuck', window.scrollY > 40);
+		};
+
+		window.addEventListener('scroll', () => {
+			if (!queued) {
+				queued = true;
+				window.requestAnimationFrame(sync);
+			}
+		}, { passive: true });
+
+		window.addEventListener('resize', syncHeight, { passive: true });
+
+		syncHeight();
+		sync();
 	};
 
 	/* ----------------------------------------------------------
@@ -292,9 +398,10 @@
 	};
 
 	document.addEventListener('DOMContentLoaded', () => {
-		initScrollAnimations();
 		initStatCounters();
 		initNavToggle();
+		initStickyNav();
+		initFilterTabs();
 		initHeaderSearch();
 	});
 })();

@@ -28,9 +28,18 @@ if ($image === '') {
    return;
 }
 ?>
-<section class="home-seam" data-animate="zoom">
+<?php
+/* The zoom reveal is on the FIGURE, not the section. motion.js holds a
+   data-animate="zoom" element at scale(1.08) until it reveals, and this is the
+   only full-bleed element carrying that variant — so the section's own box grew
+   4% past the viewport and the document scrolled sideways by 58px at 1440 (and
+   77px at 1920) until the reveal fired. Scaling the 1088px-capped figure instead
+   keeps the growth inside the section, which now clips it, and it is the closer
+   reading of §9 anyway: the *image* settles from 1.08, not the whole band. */
+?>
+<section class="home-seam">
    <div class="home-seam__inner">
-      <figure class="home-seam__figure">
+      <figure class="home-seam__figure" data-animate="zoom">
          <img src="<?= esc_url($image); ?>" alt="" loading="lazy" decoding="async">
       </figure>
    </div>

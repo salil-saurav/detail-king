@@ -36,10 +36,10 @@ $image = $meta->imageUrl(
  * The icon badge is rendered unconditionally — an empty glyph value must not
  * remove a flex child, because losing it silently re-aligns the whole row.
  */
-$renderFeature = static function (array $row): void {
+$renderFeature = static function (array $row, string $from = 'fade-left'): void {
    $glyph = (string) ($row['feature_icon_glyph'] ?? 'crown');
    ?>
-   <li class="why-feature">
+   <li class="why-feature" data-animate="<?= esc_attr($from); ?>">
       <span class="why-feature__icon" aria-hidden="true">
          <?php get_template_part('template-parts/components/glyph', null, ['glyph' => $glyph]); ?>
       </span>
@@ -72,13 +72,13 @@ $renderFeature = static function (array $row): void {
       <div class="home-why__cols">
 
          <ul class="why-features why-features--left">
-            <?php foreach ($left as $row) { $renderFeature($row); } ?>
+            <?php foreach ($left as $row) { $renderFeature($row, 'fade-left'); } ?>
          </ul>
 
          <div class="home-why__figure">
             <span class="home-why__ring" aria-hidden="true"></span>
             <span class="home-why__ring home-why__ring--inner" aria-hidden="true"></span>
-            <figure class="home-why__photo">
+            <figure class="home-why__photo" data-animate="zoom-in">
                <img src="<?= esc_url($image); ?>" alt="" loading="lazy" decoding="async">
             </figure>
             <?php if ($badge !== '') : ?>
@@ -87,7 +87,7 @@ $renderFeature = static function (array $row): void {
          </div>
 
          <ul class="why-features why-features--right">
-            <?php foreach ($right as $row) { $renderFeature($row); } ?>
+            <?php foreach ($right as $row) { $renderFeature($row, 'fade-right'); } ?>
          </ul>
 
       </div>

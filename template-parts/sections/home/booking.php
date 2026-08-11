@@ -107,14 +107,39 @@ $input = static function (string $name, string $label, string $type = 'text', st
          ]);
          ?>
 
-         <?php $label = (string) $meta->fieldOr('booking_label', $D); ?>
-         <?php if ($label !== '') : ?>
-            <p class="home-booking__label subheading-xs text-gold-gradient"><?= esc_html($label); ?></p>
-         <?php endif; ?>
+         <?php
+         $label = (string) $meta->fieldOr('booking_label', $D);
 
-         <a class="home-booking__dial" href="#dk-booking-form" aria-label="<?php esc_attr_e('Go to the booking form', 'detailking'); ?>">
-            <span aria-hidden="true">&rarr;</span>
-         </a>
+         /* This label is a ring of text around the dial, not a line above it.
+            The export reads `BOOK YOUR DETAIL REMIUM CARE` — two fragments in the
+            wrong order with a letter missing — which figma-data/homepage-spec.md
+            filed as a comp defect. It is not: that is what a Figma text-on-a-
+            circle flattens to in a PNG export, and the reference recording shows
+            the same words curved around the disc and turning slowly (measured
+            ~4°/s, i.e. one revolution per 90s). Rendered as an SVG textPath so
+            the words stay real text — selectable, translatable, and readable by
+            a screen reader from the <title>. */
+         ?>
+         <div class="home-booking__seal">
+            <?php if ($label !== '') : ?>
+               <svg class="home-booking__sealtext" viewBox="0 0 200 200" role="img"
+                    aria-label="<?= esc_attr($label); ?>">
+                  <defs>
+                     <path id="dk-seal-path" fill="none"
+                           d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0"></path>
+                  </defs>
+                  <text>
+                     <textPath href="#dk-seal-path" startOffset="0">
+                        <?= esc_html($label); ?>&nbsp;&middot;&nbsp;
+                     </textPath>
+                  </text>
+               </svg>
+            <?php endif; ?>
+
+            <a class="home-booking__dial" href="#dk-booking-form" aria-label="<?php esc_attr_e('Go to the booking form', 'detailking'); ?>">
+               <span aria-hidden="true">&rarr;</span>
+            </a>
+         </div>
 
          <ul class="home-booking__chips">
             <?php if ($phone !== '') : ?>

@@ -46,7 +46,6 @@ class FormRegistry extends Singleton implements ServiceInterface
          return $this->forms;
       }
 
-      // One generic example form. Add your own (or change this) via the filter.
       $defaults = [
          'contact' => [
             'label'  => __('Contact'),
@@ -54,6 +53,36 @@ class FormRegistry extends Singleton implements ServiceInterface
                'name'    => ['label' => __('Full Name'), 'type' => 'text', 'required' => true],
                'email'   => ['label' => __('Email Address'), 'type' => 'email', 'required' => true],
                'message' => ['label' => __('Message'), 'type' => 'textarea', 'required' => false],
+            ],
+         ],
+
+         /**
+          * Homepage "Book in Minutes" quick-booking form.
+          *
+          * This existed in the markup with `data-sp-form="home-booking"` but was
+          * never registered here, so every submission failed as an unknown form
+          * id — the field labels and order below mirror
+          * template-parts/sections/home/booking.php exactly.
+          *
+          * Deliberately a *lead*, not a cart action. It is a short enquiry form
+          * with no package price or vehicle-size multiplier attached, so it
+          * cannot produce a priced line item the way the service-page widget
+          * will once BUILD-PLAN §7 step 7 turns that one into a cart
+          * configurator. Keeping the two distinct is the point.
+          */
+         'home-booking' => [
+            'label'  => __('Homepage Quick Booking'),
+            'fields' => [
+               'service'      => ['label' => __('Choose Service'), 'type' => 'select', 'required' => false],
+               'package'      => ['label' => __('Choose Package'), 'type' => 'select', 'required' => false],
+               'vehicle_type' => ['label' => __('Vehicle Type'), 'type' => 'select', 'required' => false],
+               'addons'       => ['label' => __('Optional Add-Ons'), 'type' => 'select', 'required' => false],
+               'name'         => ['label' => __('Name'), 'type' => 'text', 'required' => true],
+               'phone'        => ['label' => __('Phone Number'), 'type' => 'tel', 'required' => true],
+               'email'        => ['label' => __('Email'), 'type' => 'email', 'required' => true],
+               'location'     => ['label' => __('Location'), 'type' => 'select', 'required' => false],
+               'drop_date'    => ['label' => __('Drop Date'), 'type' => 'text', 'required' => false],
+               'drop_time'    => ['label' => __('Drop Time'), 'type' => 'text', 'required' => false],
             ],
          ],
       ];

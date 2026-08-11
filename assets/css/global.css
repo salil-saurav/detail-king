@@ -123,6 +123,22 @@
 /* ---------------------------------------------------------------
    2. Base
    --------------------------------------------------------------- */
+
+/* The pill nav is fixed (see layout/header.css), so anything scrolled to by an
+   in-page anchor — the Our Services jump pills, a `#id` in the address bar, a
+   future FAQ deep link — would land underneath it. Declaring the offset once on
+   the scroll container fixes every one of them, now and later, instead of each
+   target carrying its own `scroll-margin-top`.
+
+   `--dk-nav-height` is measured and published by initStickyNav() because a fixed
+   number does not survive the ≤991px breakpoint, where the pill wraps to roughly
+   124px tall and an anchor target ends up *behind* the nav. The fallback is the
+   desktop pill (86px) so the offset is still correct before JS runs; the +44px is
+   the nav's own top offset plus breathing room. */
+html {
+	scroll-padding-block-start: calc(var(--dk-nav-height, 86px) + 44px);
+}
+
 body {
 	font-family: var(--font-body);
 	font-size: 18px;
@@ -133,7 +149,12 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .font-display {
 	font-family: var(--font-display);
 	font-weight: 400;
@@ -142,28 +163,60 @@ h1, h2, h3, h4, h5, h6,
 	margin: 0;
 }
 
-p { margin: 0 0 1rem; }
-p:last-child { margin-bottom: 0; }
+p {
+	margin: 0 0 1rem;
+}
 
-a { text-decoration: none; }
-img { max-width: 100%; height: auto; }
+p:last-child {
+	margin-bottom: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
 
 /* Long words must never push a card wider than its grid track. */
-.faq-answer, .review-text, .card-text { overflow-wrap: anywhere; }
+.faq-answer,
+.review-text,
+.card-text {
+	overflow-wrap: anywhere;
+}
 
 /* Dark sections: invert the text colours in one place, not per component. */
 .section--dark {
 	background: var(--bg-dark);
 	color: var(--text-white-75);
 }
-.section--dark h1, .section--dark h2, .section--dark h3,
-.section--dark h4, .section--dark h5, .section--dark h6 { color: var(--text-white); }
 
-.section--light { background: var(--bg-light); color: var(--text-dark); }
+.section--dark h1,
+.section--dark h2,
+.section--dark h3,
+.section--dark h4,
+.section--dark h5,
+.section--dark h6 {
+	color: var(--text-white);
+}
+
+.section--light {
+	background: var(--bg-light);
+	color: var(--text-dark);
+}
+
 /* --bg-light-alt already existed for this — About's Our Approach is the first
    section to actually use it. */
-.section--beige { background: var(--bg-light-alt); color: var(--text-dark); }
-.section--beige .eyebrow { color: var(--gold-dark); }
+.section--beige {
+	background: var(--bg-light-alt);
+	color: var(--text-dark);
+}
+
+.section--beige .eyebrow {
+	color: var(--gold-dark);
+}
 
 /* ---------------------------------------------------------------
    3. Type scale
@@ -178,39 +231,138 @@ img { max-width: 100%; height: auto; }
    (120/112.8, 96/96, 64/64). So every Bebas class below uses the tight
    ratio, and the extra vertical space those AUTO boxes occupy in the comp
    is reproduced with padding on the section, where it belongs. */
-.display-mega { font: 400 320px/.8 var(--font-display); }
-.display-xxl  { font: 400 120px/.94 var(--font-display); letter-spacing: .03em; }
-.display-xl   { font: 400 96px/1 var(--font-display); }
-.display-lg   { font: 400 92px/1 var(--font-display); }
-.display-md   { font: 400 88px/1 var(--font-display); letter-spacing: .03em; }
-.display-sm   { font: 400 80px/1 var(--font-display); }
-.heading-xl   { font: 400 64px/1 var(--font-display); letter-spacing: .03em; }
-.heading-lg   { font: 400 60px/1 var(--font-display); letter-spacing: .03em; }
-.heading-md   { font: 400 54px/1 var(--font-display); }
-.heading-sm   { font: 400 50px/1 var(--font-display); }
-.heading-xs   { font: 400 46px/1 var(--font-display); letter-spacing: .03em; }
-.heading-xxs  { font: 400 44px/1 var(--font-display); letter-spacing: .03em; }
-.subheading-lg { font: 400 36px/1 var(--font-display); }
-.subheading-md { font: 400 34px/1 var(--font-display); letter-spacing: .03em; }
-.subheading-sm { font: 400 32px/1 var(--font-display); letter-spacing: .03em; }
-.subheading-xs { font: 400 30px/1 var(--font-display); letter-spacing: .03em; }
-.label-lg { font: 400 28px/1.1 var(--font-display); letter-spacing: .02em; }
-.label-md { font: 400 26px/1.1 var(--font-display); letter-spacing: .06em; }
-.label-sm { font: 400 22px/1.1 var(--font-display); letter-spacing: .15em; }
-.label-xs { font: 400 20px/1.1 var(--font-display); }
+.display-mega {
+	font: 400 320px/.8 var(--font-display);
+}
+
+.display-xxl {
+	font: 400 120px/.94 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.display-xl {
+	font: 400 96px/1 var(--font-display);
+}
+
+.display-lg {
+	font: 400 92px/1 var(--font-display);
+}
+
+.display-md {
+	font: 400 88px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.display-sm {
+	font: 400 80px/1 var(--font-display);
+}
+
+.heading-xl {
+	font: 400 64px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.heading-lg {
+	font: 400 60px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.heading-md {
+	font: 400 54px/1 var(--font-display);
+}
+
+.heading-sm {
+	font: 400 50px/1 var(--font-display);
+}
+
+.heading-xs {
+	font: 400 46px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.heading-xxs {
+	font: 400 44px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.subheading-lg {
+	font: 400 36px/1 var(--font-display);
+}
+
+.subheading-md {
+	font: 400 34px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.subheading-sm {
+	font: 400 32px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.subheading-xs {
+	font: 400 30px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.label-lg {
+	font: 400 28px/1.1 var(--font-display);
+	letter-spacing: .02em;
+}
+
+.label-md {
+	font: 400 26px/1.1 var(--font-display);
+	letter-spacing: .06em;
+}
+
+.label-sm {
+	font: 400 22px/1.1 var(--font-display);
+	letter-spacing: .15em;
+}
+
+.label-xs {
+	font: 400 20px/1.1 var(--font-display);
+}
 
 /* Poppins — body & UI. Here 1.65 IS the real line-height. */
-.body-xl        { font: 600 20px/1.65 var(--font-body); }
-.body-lg        { font: 300 20px/1.65 var(--font-body); }
-.body-md        { font: 300 19px/1.65 var(--font-body); }
-.body-base      { font: 300 18px/1.65 var(--font-body); }
-.body-base-reg  { font: 400 18px/1.65 var(--font-body); }
-.body-base-med  { font: 500 18px/1.65 var(--font-body); }
-.body-base-semi { font: 600 18px/1.65 var(--font-body); }
-.body-sm        { font: 300 16px/1.65 var(--font-body); }
+.body-xl {
+	font: 600 20px/1.65 var(--font-body);
+}
 
-.text-gold { color: var(--gold-primary); }
-.text-gold-dark { color: var(--gold-dark); }
+.body-lg {
+	font: 300 20px/1.65 var(--font-body);
+}
+
+.body-md {
+	font: 300 19px/1.65 var(--font-body);
+}
+
+.body-base {
+	font: 300 18px/1.65 var(--font-body);
+}
+
+.body-base-reg {
+	font: 400 18px/1.65 var(--font-body);
+}
+
+.body-base-med {
+	font: 500 18px/1.65 var(--font-body);
+}
+
+.body-base-semi {
+	font: 600 18px/1.65 var(--font-body);
+}
+
+.body-sm {
+	font: 300 16px/1.65 var(--font-body);
+}
+
+.text-gold {
+	color: var(--gold-primary);
+}
+
+.text-gold-dark {
+	color: var(--gold-dark);
+}
 
 /* Gold gradient applied to text — used on the second line of every hero. */
 .text-gold-gradient {
@@ -228,27 +380,81 @@ img { max-width: 100%; height: auto; }
    gaps. Named Bootstrap-style, defined once, reused everywhere —
    rather than a bespoke measurement inside each component.
    --------------------------------------------------------------- */
-.py-section    { padding-block: 120px; }
-.py-section-sm { padding-block: 110px; }
-.py-section-lg { padding-block: 130px; }
-.pt-section    { padding-top: 120px; }
-.pb-section    { padding-bottom: 120px; }
-.px-section    { padding-inline: 185px; }
-.px-section-sm { padding-inline: 90px; }
-.px-section-lg { padding-inline: 225px; }
+.py-section {
+	padding-block: 120px;
+}
 
-.gap-section { gap: 70px; }
-.gap-70 { gap: 70px; }
-.gap-64 { gap: 64px; }
-.gap-54 { gap: 54px; }
-.gap-46 { gap: 46px; }
-.gap-40 { gap: 40px; }
-.gap-22 { gap: 22px; }
+.py-section-sm {
+	padding-block: 110px;
+}
 
-.rounded-md { border-radius: var(--radius-md); }
-.rounded-lg { border-radius: var(--radius-lg); }
-.rounded-xl { border-radius: var(--radius-xl); }
-.rounded-pill-lg { border-radius: var(--radius-pill); }
+.py-section-lg {
+	padding-block: 130px;
+}
+
+.pt-section {
+	padding-top: 120px;
+}
+
+.pb-section {
+	padding-bottom: 120px;
+}
+
+.px-section {
+	padding-inline: 185px;
+}
+
+.px-section-sm {
+	padding-inline: 90px;
+}
+
+.px-section-lg {
+	padding-inline: 225px;
+}
+
+.gap-section {
+	gap: 70px;
+}
+
+.gap-70 {
+	gap: 70px;
+}
+
+.gap-64 {
+	gap: 64px;
+}
+
+.gap-54 {
+	gap: 54px;
+}
+
+.gap-46 {
+	gap: 46px;
+}
+
+.gap-40 {
+	gap: 40px;
+}
+
+.gap-22 {
+	gap: 22px;
+}
+
+.rounded-md {
+	border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+	border-radius: var(--radius-lg);
+}
+
+.rounded-xl {
+	border-radius: var(--radius-xl);
+}
+
+.rounded-pill-lg {
+	border-radius: var(--radius-pill);
+}
 
 /* The comp's content column, centred. Used instead of a bespoke .wrap.
    No horizontal padding at desktop — the 1470px max-width already produces the
@@ -263,10 +469,15 @@ img { max-width: 100%; height: auto; }
 }
 
 @media (max-width: 1550px) {
-	.container-dk { padding-inline: 40px; }
+	.container-dk {
+		padding-inline: 40px;
+	}
 }
+
 @media (max-width: 767.98px) {
-	.container-dk { padding-inline: 20px; }
+	.container-dk {
+		padding-inline: 20px;
+	}
 }
 
 /* ---------------------------------------------------------------
@@ -284,8 +495,15 @@ img { max-width: 100%; height: auto; }
 	text-transform: uppercase;
 	color: var(--gold-primary);
 }
-.eyebrow-wide { font-weight: 500; letter-spacing: .30em; }
-.section--light .eyebrow { color: var(--gold-dark); }
+
+.eyebrow-wide {
+	font-weight: 500;
+	letter-spacing: .30em;
+}
+
+.section--light .eyebrow {
+	color: var(--gold-dark);
+}
 
 /* Eyebrow rendered as a bordered pill with a leading dot — the hero /
    page-banner variant. page-banner.php already calls this class. */
@@ -300,6 +518,7 @@ img { max-width: 100%; height: auto; }
 	font-size: 16px;
 	letter-spacing: .18em;
 }
+
 .eyebrow--badge::before {
 	content: "";
 	width: 7px;
@@ -312,7 +531,12 @@ img { max-width: 100%; height: auto; }
 /* Eyebrow with a flanking rule. Most sections have a rule on the leading side
    only; the centred ones (why-us, membership) have both. */
 .eyebrow--line,
-.eyebrow--rule-start { display: inline-flex; align-items: center; gap: 14px; }
+.eyebrow--rule-start {
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+}
+
 .eyebrow--line::before,
 .eyebrow--line::after,
 .eyebrow--rule-start::before {
@@ -325,15 +549,27 @@ img { max-width: 100%; height: auto; }
 }
 
 /* Shared section-heading block (template-parts/components/section-heading.php). */
-.section-heading__title { margin-block: 18px 0; }
+.section-heading__title {
+	margin-block: 18px 0;
+}
+
 .section-heading__text {
 	max-width: 620px;
 	margin-block: 22px 0;
 	color: var(--text-muted);
 }
-.section--dark .section-heading__text { color: var(--text-white-70); }
-.section-heading--center { text-align: center; }
-.section-heading--center .section-heading__text { margin-inline: auto; }
+
+.section--dark .section-heading__text {
+	color: var(--text-white-70);
+}
+
+.section-heading--center {
+	text-align: center;
+}
+
+.section-heading--center .section-heading__text {
+	margin-inline: auto;
+}
 
 /* Big outlined wordmark used behind several sections. */
 .dk-watermark {
@@ -347,8 +583,14 @@ img { max-width: 100%; height: auto; }
 	pointer-events: none;
 	user-select: none;
 }
-.dk-watermark--dark  { -webkit-text-stroke: 1px var(--gold-16); }
-.dk-watermark--light { -webkit-text-stroke: 1px rgba(11, 11, 12, .07); }
+
+.dk-watermark--dark {
+	-webkit-text-stroke: 1px var(--gold-16);
+}
+
+.dk-watermark--light {
+	-webkit-text-stroke: 1px rgba(11, 11, 12, .07);
+}
 
 /* Buttons. The gold pill is the primary CTA on every page. */
 .btn-gold,
@@ -366,23 +608,27 @@ img { max-width: 100%; height: auto; }
 	transition: transform .25s ease, box-shadow .25s ease, background-color .25s ease;
 	cursor: pointer;
 }
+
 .btn-gold {
 	background: var(--gold-gradient-btn);
 	color: var(--text-dark);
 	box-shadow: var(--shadow-gold-btn);
 }
+
 .btn-gold:hover,
 .btn-gold:focus-visible {
 	color: var(--text-dark);
 	transform: translateY(-2px);
 	box-shadow: var(--shadow-gold);
 }
+
 /* Dark pill — the secondary CTA on every light section ("View All Services",
    "Shop All Products", the non-featured plan buttons). */
 .btn-dark {
 	background: var(--bg-dark);
 	color: var(--text-white);
 }
+
 .btn-dark:hover,
 .btn-dark:focus-visible {
 	background: var(--bg-dark-card);
@@ -395,17 +641,23 @@ img { max-width: 100%; height: auto; }
 	border-color: var(--glass-white-25);
 	color: var(--text-white);
 }
+
 .btn-outline-light-dk:hover,
 .btn-outline-light-dk:focus-visible {
 	background: var(--glass-white-12);
 	color: var(--text-white);
 }
+
 .section--light .btn-outline-light-dk {
 	background: transparent;
 	border-color: var(--text-dark);
 	color: var(--text-dark);
 }
-.btn-arrow::after { content: "→"; font-family: var(--font-body); }
+
+.btn-arrow::after {
+	content: "→";
+	font-family: var(--font-body);
+}
 
 /* Card surfaces — glassmorphism on dark, soft shadow on light. */
 .card-glass {
@@ -414,19 +666,25 @@ img { max-width: 100%; height: auto; }
 	border-radius: var(--radius-lg);
 	backdrop-filter: blur(8px);
 }
+
 .card-light {
 	background: #fff;
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-card);
 }
+
 /* Never let a long word or a wide child stretch a grid track. */
-.card-glass, .card-light { min-width: 0; }
+.card-glass,
+.card-light {
+	min-width: 0;
+}
 
 /* Radial gold glow used behind most dark sections. */
 .glow-gold {
 	position: relative;
 	isolation: isolate;
 }
+
 .glow-gold::before {
 	content: "";
 	position: absolute;
@@ -452,17 +710,20 @@ img { max-width: 100%; height: auto; }
 	color: var(--text-white-75);
 	isolation: isolate;
 }
+
 .page-banner__bg {
 	position: absolute;
 	inset: 0;
 	z-index: 0;
 }
+
 .page-banner__bg img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	object-position: center;
 }
+
 /* Same scrim recipe as the homepage hero (home.css .home-hero__bg::after) —
    dark-to-transparent left-weighted scrim plus a warm radial glow. Reused
    rather than the comp's mask-SVG machinery, which draws the identical
@@ -477,7 +738,12 @@ img { max-width: 100%; height: auto; }
 		linear-gradient(180deg, rgba(255, 255, 255, .02) .91%, rgba(255, 255, 255, 0) .91%),
 		linear-gradient(90deg, rgba(255, 255, 255, .02) .91%, rgba(255, 255, 255, 0) .91%);
 }
-.page-banner__inner { position: relative; z-index: 1; }
+
+.page-banner__inner {
+	position: relative;
+	z-index: 1;
+}
+
 .page-banner__breadcrumb .breadcrumb {
 	display: flex;
 	align-items: center;
@@ -488,14 +754,23 @@ img { max-width: 100%; height: auto; }
 	letter-spacing: .18em;
 	text-transform: uppercase;
 }
-.page-banner__breadcrumb .breadcrumb__link { color: var(--gold-primary); text-decoration: none; }
+
+.page-banner__breadcrumb .breadcrumb__link {
+	color: var(--gold-primary);
+	text-decoration: none;
+}
+
 .page-banner__breadcrumb .breadcrumb__current,
-.page-banner__breadcrumb .breadcrumb__separator { color: var(--text-white-55); }
+.page-banner__breadcrumb .breadcrumb__separator {
+	color: var(--text-white-55);
+}
+
 .page-banner__title {
 	font: 400 94px/1 var(--font-display);
 	letter-spacing: .03em;
 	color: var(--text-white);
 }
+
 .page-banner__text {
 	max-width: 620px;
 	margin-block-start: 22px;
@@ -511,12 +786,30 @@ img { max-width: 100%; height: auto; }
 	overflow: hidden;
 	box-shadow: 0 40px 100px rgba(11, 11, 12, .18);
 }
-.dk-framed-photo--neutral { border: 1px solid var(--line-white-08); }
-.dk-framed-photo--gold { border: 1px solid var(--line-gold-22); }
+
+.dk-framed-photo--neutral {
+	border: 1px solid var(--line-white-08);
+}
+
+.dk-framed-photo--gold {
+	border: 1px solid var(--line-gold-22);
+}
+
 .section--light .dk-framed-photo--neutral,
-.section--beige .dk-framed-photo--neutral { border-color: rgba(11, 11, 12, .1); }
-.dk-framed-photo__media { aspect-ratio: 555 / 560; }
-.dk-framed-photo__media img { width: 100%; height: 100%; object-fit: cover; }
+.section--beige .dk-framed-photo--neutral {
+	border-color: rgba(11, 11, 12, .1);
+}
+
+.dk-framed-photo__media {
+	aspect-ratio: 555 / 560;
+}
+
+.dk-framed-photo__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
 .dk-framed-photo::after {
 	content: "";
 	position: absolute;
@@ -525,6 +818,7 @@ img { max-width: 100%; height: auto; }
 	border-radius: var(--radius-md);
 	pointer-events: none;
 }
+
 .dk-framed-photo__badge {
 	position: absolute;
 	inset-block-end: 24px;
@@ -535,12 +829,16 @@ img { max-width: 100%; height: auto; }
 	padding: 19px 27px;
 	background: rgba(11, 11, 12, .82);
 }
+
 .dk-framed-photo__badge-year {
 	font: 400 40px/1 var(--font-display);
 	letter-spacing: .04em;
 	color: var(--gold-primary);
 }
-.dk-framed-photo__badge-text { color: var(--text-white-70); }
+
+.dk-framed-photo__badge-text {
+	color: var(--text-white-70);
+}
 
 /* Two-column split grid (copy + framed photo). Recurs 3x on the About page
    alone (Who We Are, Our Story, Our Approach) at identical proportions —
@@ -551,11 +849,18 @@ img { max-width: 100%; height: auto; }
 	align-items: center;
 	gap: 80px;
 }
+
 @media (max-width: 991.98px) {
-	.dk-split { grid-template-columns: 1fr; gap: 40px; }
+	.dk-split {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+
 	/* Media above copy on mobile regardless of desktop column order — same
 	   convention as .home-why__figure. */
-	.dk-split .dk-framed-photo { order: -1; }
+	.dk-split .dk-framed-photo {
+		order: -1;
+	}
 }
 
 /* Shared dark CTA card (global/cta-banner.php). Recurs on About, Services,
@@ -569,16 +874,19 @@ img { max-width: 100%; height: auto; }
 	text-align: center;
 	background: var(--bg-dark);
 }
+
 .dk-cta__title {
 	font: 400 90px/1 var(--font-display);
 	letter-spacing: .03em;
 	color: var(--text-white);
 }
+
 .dk-cta__text {
 	max-width: 600px;
 	margin: 20px auto 0;
 	color: var(--text-white-65);
 }
+
 .dk-cta__actions {
 	display: flex;
 	flex-wrap: wrap;
@@ -597,47 +905,72 @@ img { max-width: 100%; height: auto; }
 	padding: 0;
 	list-style: none;
 }
+
 .dk-stats__item {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	/* min-width:0 so a long value cannot stretch the row past its container. */
-	min-width: 0;
 }
-.dk-stats__value { display: block; }
-.dk-stats__label { color: var(--text-white-55); }
+
+.dk-stats__value {
+	display: block;
+}
+
+.dk-stats__label {
+	color: var(--text-white-55);
+}
 
 .dk-stats--craft {
 	position: relative;
 	z-index: 1;
 	gap: 0;
 }
+
 /* Measured: the homepage's craft numerals are 70px of cap height = a ~100px
    Bebas. About's own stats (about.css) override this to its own measured
    92px — a different comp value, not the same one re-measured. */
-.dk-stats--craft .dk-stats__value { font-size: 100px; }
+.dk-stats--craft .dk-stats__value {
+	font-size: 100px;
+}
+
 .dk-stats--craft .dk-stats__item {
 	flex: 1 1 0;
 	padding-inline: 46px;
 	border-inline-start: 1px solid var(--line-white-12);
 }
+
 .dk-stats--craft .dk-stats__item:first-child {
 	padding-inline-start: 0;
 	border-inline-start: 0;
 }
+
 @media (max-width: 1399.98px) {
-	.dk-stats--craft .dk-stats__item { padding-inline: 30px; }
+	.dk-stats--craft .dk-stats__item {
+		padding-inline: 30px;
+	}
 }
+
 @media (max-width: 991.98px) {
-	.dk-stats--craft { gap: 26px 0; }
-	.dk-stats--craft .dk-stats__item { flex: 1 0 40%; }
+	.dk-stats--craft {
+		gap: 26px 0;
+	}
+
+	.dk-stats--craft .dk-stats__item {
+		flex: 1 0 40%;
+	}
+
 	.dk-stats--craft .dk-stats__item:nth-child(odd) {
 		padding-inline-start: 0;
 		border-inline-start: 0;
 	}
 }
+
 @media (max-width: 575.98px) {
-	.dk-stats--craft .dk-stats__item { flex: 1 0 100%; padding-inline: 0; border-inline-start: 0; }
+	.dk-stats--craft .dk-stats__item {
+		flex: 1 0 100%;
+		padding-inline: 0;
+		border-inline-start: 0;
+	}
 }
 
 /* Gold marquee ticker (sections/home/marquee.php). Overlaps the base of
@@ -656,6 +989,7 @@ img { max-width: 100%; height: auto; }
 	/* Pull up over the preceding section's base, as the comp overlaps it. */
 	margin-block-start: -75.6px;
 }
+
 .dk-marquee__track {
 	display: flex;
 	flex: 0 0 auto;
@@ -664,8 +998,14 @@ img { max-width: 100%; height: auto; }
 	margin: 0;
 	padding: 0 27px;
 	list-style: none;
-	animation: dk-marquee 42s linear infinite;
+	/* Speed is the thing to match here, not duration: the reference recording
+	   moves the ticker left at 57px/s (measured by cross-correlating the band
+	   between frames over a stretch where the page itself was still). The track
+	   holds 4096px of content, so 72s lands on ~57px/s. The first pass ran 42s
+	   = 98px/s, nearly twice the reference and busy next to the rest of the page. */
+	animation: dk-marquee 72s linear infinite;
 }
+
 .dk-marquee__item {
 	display: flex;
 	align-items: center;
@@ -673,58 +1013,165 @@ img { max-width: 100%; height: auto; }
 	white-space: nowrap;
 	color: var(--bg-dark);
 }
+
 /* The separator is a pseudo-element, so the editor's field holds words not glyphs. */
 .dk-marquee__item::after {
 	content: "◆";
 	font-size: 30px;
 	opacity: .8;
 }
+
 @keyframes dk-marquee {
-	from { transform: translateX(0); }
-	to   { transform: translateX(-100%); }
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(-100%);
+	}
 }
-.dk-marquee:hover .dk-marquee__track { animation-play-state: paused; }
+
+.dk-marquee:hover .dk-marquee__track {
+	animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.dk-marquee__track { animation: none; }
+	.dk-marquee__track {
+		animation: none;
+	}
 }
+
 @media (max-width: 767.98px) {
-	.dk-marquee { min-height: 60px; margin-block-start: -60px; }
-	.dk-marquee__track { gap: 34px; }
-	.dk-marquee__item { gap: 34px; }
+	.dk-marquee {
+		min-height: 60px;
+		margin-block-start: -60px;
+	}
+
+	.dk-marquee__track {
+		gap: 34px;
+	}
+
+	.dk-marquee__item {
+		gap: 34px;
+	}
+}
+
+/* Form fields (`.dk-field`/`.dk-form__*`) — used by the homepage's short booking
+   form and every service page's full booking widget. Moved here from home.css
+   for the same reason `.dk-marquee`/`.dk-stats--craft` were: a shared part's CSS
+   has to actually live where every consumer's stylesheet loads it, not just
+   wherever it was first written. `.home-booking__card`/`__cardtitle` (the dark
+   card chrome around the homepage's own form) stay in home.css — those really
+   are homepage-only. */
+.dk-form__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px 24px;
+}
+
+.dk-field {
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+	min-width: 0;
+}
+
+.dk-field__label {
+	color: var(--text-white-70);
+}
+
+.dk-field__input {
+	width: 100%;
+	min-height: 56px;
+	padding: 14px 18px;
+	border: 1px solid var(--line-white-12);
+	border-radius: 12px;
+	background: var(--glass-white-04);
+	color: var(--text-white);
+	font: 300 17px/1.4 var(--font-body);
+	transition: border-color .2s ease, background-color .2s ease;
+}
+
+.dk-field__input::placeholder {
+	color: var(--text-white-35);
+}
+
+.dk-field__input:focus {
+	outline: none;
+	border-color: var(--gold-45);
+	background: var(--glass-white-08);
+}
+
+/* Dark UI needs this or the native date/time pickers render black-on-black. */
+.dk-field__input[type="date"],
+.dk-field__input[type="time"] {
+	color-scheme: dark;
+}
+
+select.dk-field__input {
+	appearance: none;
+	padding-inline-end: 44px;
+	background-image: linear-gradient(45deg, transparent 50%, var(--gold-primary) 50%), linear-gradient(135deg, var(--gold-primary) 50%, transparent 50%);
+	background-position: calc(100% - 22px) calc(50% + 2px), calc(100% - 16px) calc(50% + 2px);
+	background-size: 6px 6px, 6px 6px;
+	background-repeat: no-repeat;
+}
+
+.dk-form__submit {
+	width: 100%;
+	margin-block-start: 28px;
+}
+
+.dk-form__status {
+	margin-block: 14px 0;
+	color: var(--text-white-70);
+}
+
+.dk-form__status:empty {
+	display: none;
+}
+
+/* Honeypot — off-screen rather than display:none, which some bots detect. */
+.dk-form__trap {
+	position: absolute;
+	inset-inline-start: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
 }
 
 /* ---------------------------------------------------------------
    6. Mobile navigation ([data-sp-toggle] toggles `.is-open`)
    --------------------------------------------------------------- */
 @media (max-width: 991.98px) {
-	.primary-nav:not(.is-open) { display: none; }
-	.primary-nav.is-open { display: block; }
+	.primary-nav:not(.is-open) {
+		display: none;
+	}
+
+	.primary-nav.is-open {
+		display: block;
+	}
 }
 
 /* ---------------------------------------------------------------
    7. Scroll-reveal ([data-animate]) — house convention, put it on
    every section. Respects reduced-motion.
    --------------------------------------------------------------- */
+/* GSAP owns these elements now — see assets/js/motion.js, which implements
+   animation-implementation-spec.md. All this stylesheet still does is hide them
+   before the first frame so there is no flash of un-animated content.
+
+   No transform, no transition, no per-variant rules here: motion.js sets the
+   initial transform per variant and tweens it, and a CSS transform on the same
+   element would fight the tween. The variants themselves are documented there.
+
+   `aos-ready` is added by motion.js and *only* once it has confirmed it can
+   actually animate — not under prefers-reduced-motion, and not if GSAP failed
+   to load. So this rule is inert on exactly the paths where hiding content
+   would otherwise strand it at opacity 0 forever, which is the failure mode
+   this build has already been bitten by (see BUILD-PLAN §9). */
 .aos-ready [data-animate] {
 	opacity: 0;
-	transform: translateY(24px);
-	transition: opacity .6s ease, transform .6s ease;
-}
-.aos-ready [data-animate="fade-left"]  { transform: translateX(-24px); }
-.aos-ready [data-animate="fade-right"] { transform: translateX(24px); }
-.aos-ready [data-animate="zoom"]       { transform: scale(.94); }
-.aos-ready [data-animate="fade"]       { transform: none; }
-.aos-ready [data-animate].is-visible {
-	opacity: 1;
-	transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.aos-ready [data-animate] {
-		opacity: 1;
-		transform: none;
-		transition: none;
-	}
 }
 
 /* ---------------------------------------------------------------
@@ -739,21 +1186,144 @@ img { max-width: 100%; height: auto; }
 	opacity: 0;
 	transition: opacity .25s ease;
 }
-.search-overlay.is-open { opacity: 1; }
-.search-overlay[hidden] { display: none; }
+
+.search-overlay.is-open {
+	opacity: 1;
+}
+
+.search-overlay[hidden] {
+	display: none;
+}
+
 .search-panel {
 	background: var(--bg-dark-card);
 	border-bottom: 1px solid var(--line-white-08);
 	padding: 2rem 0;
 }
-.search-form { display: flex; gap: .5rem; }
-.search-results { margin-top: 1rem; }
+
+.search-form {
+	display: flex;
+	gap: .5rem;
+}
+
+.search-results {
+	margin-top: 1rem;
+}
+
 .search-result {
 	display: block;
 	padding: .5rem 0;
 	border-bottom: 1px solid var(--line-white-08);
 	color: var(--text-white-82);
 }
-.search-result:hover { color: var(--gold-primary); }
-.search-result__type { font-size: .8rem; color: var(--text-white-45); }
-body.search-open { overflow: hidden; }
+
+.search-result:hover {
+	color: var(--gold-primary);
+}
+
+.search-result__type {
+	font-size: .8rem;
+	color: var(--text-white-45);
+}
+
+body.search-open {
+	overflow: hidden;
+}
+
+/* ---------------------------------------------------------------
+   9. Motion — hover states (animation-implementation-spec.md §31)
+   The scroll-driven work lives in assets/js/motion.js; these are the
+   pointer-driven counterparts, kept in CSS because they are state, not
+   choreography, and should survive with JS off.
+
+   The spec is emphatic that hover stays restrained: image scale(1.05),
+   card -4px, button -1px, icon +2px, over 400-600ms. Explicitly not
+   scale(1.2), not rotation, not bounce.
+
+   Guarded on (hover: hover) so a touch device never sticks in a hover
+   state after a tap, and neutralised under reduced motion.
+   --------------------------------------------------------------- */
+@media (hover: hover) {
+
+	.plan-card,
+	.svc-card,
+	.prod-card,
+	.review-card {
+		transition: transform .45s cubic-bezier(.22, .61, .36, 1);
+	}
+
+	.plan-card:hover,
+	.svc-card:hover,
+	.prod-card:hover,
+	.review-card:hover {
+		transform: translateY(-4px);
+	}
+
+	.btn-gold,
+	.btn-dark,
+	.btn-outline-light-dk {
+		transition: transform .4s cubic-bezier(.22, .61, .36, 1),
+			background-color .4s ease,
+			border-color .4s ease,
+			color .4s ease;
+	}
+
+	.btn-gold:hover,
+	.btn-dark:hover,
+	.btn-outline-light-dk:hover {
+		transform: translateY(-1px);
+	}
+
+	/* §8/§15: the card stays put, the image zooms inside its clipped frame. */
+	.svc-card__media,
+	.prod-card__media {
+		overflow: hidden;
+	}
+
+	.svc-card__media img,
+	.prod-card__media img {
+		transition: transform .6s cubic-bezier(.22, .61, .36, 1);
+	}
+
+	.svc-card:hover .svc-card__media img,
+	.prod-card:hover .prod-card__media img {
+		transform: scale(1.05);
+	}
+
+	.btn-arrow:hover span[aria-hidden="true"] {
+		transform: translateX(2px);
+	}
+
+	.btn-arrow span[aria-hidden="true"] {
+		display: inline-block;
+		transition: transform .4s cubic-bezier(.22, .61, .36, 1);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.plan-card,
+	.svc-card,
+	.prod-card,
+	.review-card,
+	.btn-gold,
+	.btn-dark,
+	.btn-outline-light-dk,
+	.svc-card__media img,
+	.prod-card__media img,
+	.btn-arrow span[aria-hidden="true"] {
+		transition: none;
+	}
+
+	.plan-card:hover,
+	.svc-card:hover,
+	.prod-card:hover,
+	.review-card:hover,
+	.btn-gold:hover,
+	.btn-dark:hover,
+	.btn-outline-light-dk:hover,
+	.svc-card:hover .svc-card__media img,
+	.prod-card:hover .prod-card__media img {
+		transform: none;
+	}
+}

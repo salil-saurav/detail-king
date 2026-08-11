@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DetailKing\Theme\Meta;
+
+defined('ABSPATH') || exit;
+
+/**
+ * Package fields — the priced cards inside a service's booking widget
+ * (step 1, "Choose Package"). Each package belongs to exactly one service
+ * (`package_service`); `single-dk_service.php` queries by that relation, not
+ * by taxonomy, since packages are never shown outside their own service.
+ *
+ * Package count and copy genuinely vary per service in the comp — Window
+ * Tinting and Vinyl Wraps show 2 (Front Windows / Full Windows), Detailing
+ * shows 3 (Signature / Prestige / Concourse) — so this is a plain CPT loop,
+ * not a fixed-count repeater on the service itself.
+ */
+class PostTypeMeta_Package extends AbstractPostTypeMeta
+{
+   protected function postType(): string
+   {
+      return 'dk_package';
+   }
+
+   protected function groupKey(): string
+   {
+      return 'group_detailking_package';
+   }
+
+   protected function groupTitle(): string
+   {
+      return __('Package Details', 'detailking');
+   }
+
+   protected function keyNamespace(): string
+   {
+      return 'pkg';
+   }
+
+   protected function fields(): array
+   {
+      return [
+         $this->field('package_service', __('Service', 'detailking'), 'post_object', [
+            'post_type'     => ['dk_service'],
+            'return_format' => 'id',
+            'allow_null'    => 0,
+            'multiple'      => 0,
+            'ui'            => 1,
+            'instructions'  => __('Which service this package appears under.', 'detailking'),
+         ]),
+         $this->field('package_description', __('Description', 'detailking'), 'textarea', ['rows' => 2]),
+         $this->field('package_price', __('Price (from, $)', 'detailking'), 'number', [
+            'instructions' => __('NZD, before the vehicle-size multiplier.', 'detailking'),
+         ]),
+         $this->field('package_selected', __('Featured / Pre-selected', 'detailking'), 'true_false', [
+            'ui'           => 1,
+            'instructions' => __('Gold border + shadow, and the default choice shown in the booking widget.', 'detailking'),
+         ]),
+         $this->field('package_badge', __('Badge Text', 'detailking'), 'text', [
+            'default_value'     => '★ Most Popular',
+            'conditional_logic' => [[[
+               'field'    => $this->fieldKey('package_selected'),
+               'operator' => '==',
+               'value'    => '1',
+            ]]],
+         ]),
+      ];
+   }
+}

@@ -35,10 +35,10 @@ $bg = $meta->imageUrl(
    get_template_directory_uri() . '/assets/images/home/hero-bg.jpg'
 );
 ?>
-<section class="home-hero section--dark" data-animate="fade">
+<section class="home-hero section--dark" data-hero>
 
-   <div class="home-hero__bg" aria-hidden="true">
-      <img src="<?= esc_url($bg); ?>" alt="" fetchpriority="high" decoding="async">
+   <div class="home-hero__bg" aria-hidden="true" data-hero-bg data-parallax-scope>
+      <img src="<?= esc_url($bg); ?>" alt="" fetchpriority="high" decoding="async" data-parallax="4">
    </div>
 
    <div class="container-dk home-hero__inner">
@@ -89,7 +89,12 @@ $bg = $meta->imageUrl(
             : '';
          ?>
          <<?= $vidTag; ?> class="home-hero__video"<?= $vidAttr; ?>>
-            <span class="home-hero__videoicon" aria-hidden="true"></span>
+            <?php
+            // The icon carries two ripple rings: one on its ::after, one on this
+            // child span, so the two can run half a cycle apart (::before is the
+            // play triangle). Decorative — the whole icon is aria-hidden.
+            ?>
+            <span class="home-hero__videoicon" aria-hidden="true"><span class="home-hero__videowave"></span></span>
             <span><?= esc_html($vidText); ?></span>
          </<?= $vidTag; ?>>
       <?php endif; ?>

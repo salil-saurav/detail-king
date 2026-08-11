@@ -5,6 +5,12 @@
  *
  *   get_template_part('template-parts/components/membership-card', null, ['plan' => $post]);
  *
+ * Carries its own `data-animate`, so a row of plans resolves card by card
+ * instead of the whole section arriving on one frame — the client's animation
+ * reference does exactly this (TASK-BRIEF.md §3). The stagger index is assigned
+ * at runtime by initScrollAnimations(), which numbers siblings that cross the
+ * threshold together; nothing here needs to know its own position.
+ *
  * @package DetailKing Theme
  */
 
@@ -31,7 +37,7 @@ $ctaText  = (string) $meta->field('plan_cta_text', $id, __('Join Membership', 'd
 $ctaUrl   = (string) $meta->field('plan_cta_url', $id, '');
 $features = $meta->fieldRows('plan_features', $id);
 ?>
-<article class="plan-card<?= $featured ? ' plan-card--featured' : ''; ?>">
+<article class="plan-card<?= $featured ? ' plan-card--featured' : ''; ?>" data-animate>
 
    <?php if ($featured && $badge !== '') : ?>
       <span class="plan-card__badge body-base-med"><?= esc_html($badge); ?></span>

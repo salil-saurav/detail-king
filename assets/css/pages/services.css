@@ -1,0 +1,221 @@
+/* =====================================================================
+   Our Services — page CSS (pages/template-services.php)
+   Hero reuses global/page-banner untouched. Filter bar + card grid are new
+   here; the CTA reuses global/cta-banner untouched (no rules needed).
+   Section boundaries: projects/detail-king/figma-data/our-services-spec.md.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------
+   Filter bar (components/filter-tabs.php) — dark strip directly under the
+   hero. Self-contained dark background so the component works unchanged
+   wherever it's reused next (Gallery).
+   --------------------------------------------------------------- */
+.dk-filter-bar {
+	background: var(--bg-dark);
+	border-block: 1px solid var(--gold-16);
+}
+.dk-filter-bar__inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	padding-block: 20px;
+}
+.dk-filter-bar__label {
+	padding-inline-end: 8px;
+	font: 400 18px/1.65 var(--font-body);
+	letter-spacing: .2em;
+	text-transform: uppercase;
+	color: var(--text-white-45);
+	flex: 0 0 auto;
+}
+.dk-filter-pill {
+	flex: 0 0 auto;
+	padding: 13px 25px;
+	border: 1px solid var(--glass-white-15);
+	border-radius: var(--radius-pill);
+	background: transparent;
+	font: 400 18px/1 var(--font-body);
+	color: var(--text-white-75);
+	transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+.dk-filter-pill.is-active {
+	border-color: transparent;
+	background: var(--gold-gradient-btn);
+	color: var(--text-dark);
+	font-weight: 600;
+}
+.dk-filter-pill:not(.is-active):hover,
+.dk-filter-pill:not(.is-active):focus-visible {
+	border-color: var(--glass-white-25);
+	background: var(--glass-white-05);
+	color: var(--text-white);
+}
+
+/* ---------------------------------------------------------------
+   Card grid — zig-zag rows, photo card alternating sides via
+   :nth-child(even). Hidden by the filter behaviour via .is-hidden.
+   --------------------------------------------------------------- */
+.services-grid { padding-block: 120px; }
+
+.svc-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 96px;
+}
+
+.svc-article {
+	display: flex;
+	align-items: center;
+	gap: 60px;
+}
+.svc-article.is-hidden { display: none; }
+/* The wider 1.10fr column is always the LEFT-most one in the comp — photo on
+   odd cards, text on even cards — not "photo always wide". row-reverse alone
+   would keep the media flex-basis wide even after it moves to the right, so
+   the flex values swap here too. */
+.svc-article:nth-child(even) { flex-direction: row-reverse; }
+.svc-article:nth-child(even) .svc-article__media { flex: 1 1 0; }
+.svc-article:nth-child(even) .svc-article__body { flex: 1.10 1 0; }
+
+.svc-article__media {
+	position: relative;
+	flex: 1.10 1 0;
+	min-width: 0;
+	aspect-ratio: 738 / 508;
+	overflow: hidden;
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--text-dark);
+	box-shadow: var(--shadow-section);
+	background: linear-gradient(150deg, #1C1C20 0%, #0C0C0E 100%);
+}
+.svc-article__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Numbered badge + caption — only rendered when a service sets
+   service_grid_caption (the comp only fills this in for Add-On Services). */
+.svc-article__badge {
+	position: absolute;
+	inset-block-start: 24px;
+	inset-inline-start: 24px;
+	padding: 9px 21px;
+	border: 1px solid var(--gold-35);
+	border-radius: var(--radius-pill);
+	background: rgba(11, 11, 12, .6);
+	backdrop-filter: blur(4px);
+	font: 400 26px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--gold-primary);
+}
+.svc-article__caption {
+	position: absolute;
+	inset: auto 24px 24px 24px;
+	margin: 0;
+	padding: 40px 8px 4px;
+	background: linear-gradient(to top, rgba(8, 8, 9, .85) 0%, rgba(8, 8, 9, 0) 100%);
+	font: 300 18px/1.65 var(--font-body);
+	color: var(--text-white);
+}
+
+.svc-article__body {
+	flex: 1 1 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.svc-article__label {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	font: 500 18px/1.65 var(--font-body);
+	letter-spacing: .3em;
+	text-transform: uppercase;
+	color: var(--gold-dark);
+}
+.svc-article__rule {
+	width: 46px;
+	height: 1.5px;
+	background: var(--gold-mid);
+	flex: 0 0 46px;
+}
+
+.svc-article__title { color: var(--text-dark); }
+
+.svc-article__text {
+	max-width: 560px;
+	color: var(--text-muted-dark);
+}
+
+.svc-article__features {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.svc-article__feature {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 23px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-pill);
+	background: var(--text-white);
+	color: var(--text-muted-dark);
+}
+.svc-article__feature .dk-glyph { color: var(--gold-dark); flex: 0 0 auto; width: 15px; height: 15px; }
+
+.svc-article__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	padding-block-start: 16px;
+}
+.svc-article__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font: 500 18px/1.65 var(--font-body);
+	color: var(--gold-dark);
+}
+
+/* ---------------------------------------------------------------
+   CTA — global/cta-banner.php handles everything; only page-level spacing
+   lives here, matching about-cta's own pattern.
+   --------------------------------------------------------------- */
+.services-cta { padding-block: 110px; }
+
+/* ---------------------------------------------------------------
+   Responsive — collapse to a single column in order (media above copy),
+   zero horizontal overflow.
+   --------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+	.svc-article,
+	.svc-article:nth-child(even) {
+		flex-direction: column;
+	}
+	/* flex-basis: 0 (set for the desktop row's width split) maps onto HEIGHT
+	   once flex-direction turns column, and an auto-height parent has no
+	   extra space to grow into — the photo collapsed to a sliver. Both
+	   children go back to sizing off their own content/aspect-ratio. */
+	.svc-article__media,
+	.svc-article:nth-child(even) .svc-article__media,
+	.svc-article__body,
+	.svc-article:nth-child(even) .svc-article__body {
+		flex: none;
+		width: 100%;
+	}
+	.svc-article__text { max-width: none; }
+}
+
+@media (max-width: 575.98px) {
+	.dk-filter-bar__label { flex-basis: 100%; }
+	.svc-article__feature { flex: 1 1 auto; justify-content: center; }
+}

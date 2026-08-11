@@ -92,78 +92,17 @@
 	};
 
 	/* ----------------------------------------------------------------
-	   Stat counters.
+	   Stat counters live in global.js, NOT here.
 
-	   The values are strings like "4,800+", "5.0★", "98%" and "2016" — not plain
-	   integers. So the numeric part is animated and the surrounding characters are
-	   preserved verbatim, rather than parsing to a number and rebuilding a format
-	   that would drop the suffix.
+	   This file used to carry its own [data-count-to] observer (1400ms,
+	   threshold .6) while global.js carried another (now 1900ms, threshold .4).
+	   Both files load on the homepage, so both observed the same 7 elements and
+	   ran two requestAnimationFrame loops writing textContent to the same nodes:
+	   the shorter one finished and wrote the final string, then the longer one
+	   carried on writing its own lower values over the top, so the number fell
+	   back and re-climbed. Deleted here rather than there because global.js's
+	   copy also serves the About page's stat row.
 	   ---------------------------------------------------------------- */
-	const initCounters = () => {
-		const targets = document.querySelectorAll('[data-count-to]');
-		if (!targets.length || !('IntersectionObserver' in window)) {
-			return;
-		}
-
-		const animate = (el) => {
-			const raw = el.getAttribute('data-count-to') || '';
-			const match = raw.match(/^(\D*)([\d.,]+)(.*)$/);
-			if (!match) {
-				return;
-			}
-
-			const [, prefix, numStr, suffix] = match;
-			const hasComma = numStr.includes(',');
-			const decimals = (numStr.split('.')[1] || '').length;
-			const target = parseFloat(numStr.replace(/,/g, ''));
-
-			if (!isFinite(target)) {
-				return;
-			}
-
-			if (reduceMotion) {
-				el.textContent = raw;
-				return;
-			}
-
-			const duration = 1400;
-			const start = performance.now();
-
-			const format = (value) => {
-				let out = value.toFixed(decimals);
-				if (hasComma) {
-					const [int, dec] = out.split('.');
-					out = int.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (dec ? `.${dec}` : '');
-				}
-				return prefix + out + suffix;
-			};
-
-			const step = (now) => {
-				const t = Math.min(1, (now - start) / duration);
-				// easeOutCubic — fast start, settles rather than stopping dead.
-				const eased = 1 - Math.pow(1 - t, 3);
-				el.textContent = format(target * eased);
-				if (t < 1) {
-					requestAnimationFrame(step);
-				} else {
-					el.textContent = raw;
-				}
-			};
-
-			requestAnimationFrame(step);
-		};
-
-		const obs = new IntersectionObserver((entries, o) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					o.unobserve(entry.target);
-					animate(entry.target);
-				}
-			});
-		}, { threshold: 0.6 });
-
-		targets.forEach((el) => obs.observe(el));
-	};
 
 	/* ----------------------------------------------------------------
 	   Horizontal rails.
@@ -285,7 +224,6 @@
 
 	const init = () => {
 		initCompare();
-		initCounters();
 		initRails();
 		initAccordion();
 	};

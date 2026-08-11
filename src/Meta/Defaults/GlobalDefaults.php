@@ -61,6 +61,17 @@ final class GlobalDefaults implements DefaultsProvider
 
          /* ── Social proof / Instagram ────────────────────────────── */
          'instagram_handle' => '@DETAILING.NZ',
+
+         /* ── Booking widget — identical heading on every service page ── */
+         'booking_widget_eyebrow'    => 'Build Your Booking',
+         'booking_widget_title'      => 'Choose &',
+         'booking_widget_title_gold' => 'Book In Minutes',
+         'vehicle_sizes' => [
+            ['size_label' => 'Small (hatch / coupe)',    'size_multiplier' => 1.0],
+            ['size_label' => 'Medium (sedan / wagon)',   'size_multiplier' => 1.15],
+            ['size_label' => 'Large (SUV / ute / van)',  'size_multiplier' => 1.35],
+            ['size_label' => 'Supercar / Exotic',        'size_multiplier' => 1.6],
+         ],
       ];
    }
 }

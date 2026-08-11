@@ -9,21 +9,51 @@
    no explicit widths are needed.
    ===================================================================== */
 
+/* `fixed`, not `absolute`: the client's animation reference keeps the pill docked
+   at the top of the viewport for the whole scroll (TASK-BRIEF.md §3), and the nav
+   was already out of flow so nothing reflows. Anchor-scroll offset for the fixed
+   bar lives once on `html { scroll-padding-block-start }` in global.css. */
 .dk-nav {
-	position: absolute;
+	position: fixed;
 	inset-block-start: 22px;
 	inset-inline: 0;
 	z-index: 1030;
 	padding-inline: 185px;
+	transition: inset-block-start .3s ease;
+}
+
+/* Docked state, added by initStickyNav() past 40px of scroll. Derived — the comp
+   has no scrolled frame to copy — so it stays deliberately small: pull the pill
+   a little closer to the edge and deepen its shadow so it reads as sitting above
+   the page rather than floating in the hero. */
+.dk-nav.is-stuck {
+	inset-block-start: 12px;
+}
+.dk-nav.is-stuck .dk-nav__pill {
+	box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
 }
 
 /* Pages without a dark hero behind the nav opt into a solid bar instead, so
-   white-on-transparent text never lands on a light background. */
+   white-on-transparent text never lands on a light background. This variant is
+   in flow, so it pins with `sticky` and needs no padding compensation.
+
+   The sticky lives on the wrapping `.site-header--solid`, NOT on `.dk-nav--solid`.
+   A sticky element can only travel inside its own parent's box, and `.site-header`
+   is exactly nav-height — sticking the nav to it gives it 0px of travel, so it
+   scrolls away with the header. Verified: it scrolled off at scrollY 215 before
+   this was moved up a level. */
 .dk-nav--solid {
 	position: relative;
 	inset-block-start: 0;
 	padding-block: 22px;
 	background: var(--bg-dark);
+	transition: none;
+}
+
+.site-header--solid {
+	position: sticky;
+	inset-block-start: 0;
+	z-index: 1030;
 }
 
 .dk-nav__pill {
@@ -154,6 +184,41 @@
 	white-space: nowrap;
 }
 
+/* ---------------- cart ----------------
+   The brief replaces the header's "Book Now" with a cart ("On header, where it
+   says Book now, it should be cart" — TASK-BRIEF.md §1.1). The designer's updated
+   header has not landed yet, so this deliberately occupies the CTA's measured
+   slot and inherits `.btn-gold`: the pill's geometry was measured against a
+   159x58 gold button in that position, and swapping it for a bare text link
+   would shift the whole measured layout for a treatment we are about to be given.
+
+   No icon on purpose. The comp contains no cart glyph to crop, and this build's
+   rule is to crop real icons from the export rather than draw substitute SVGs —
+   so the label carries it until the real artwork arrives. */
+.dk-nav__cart {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 14px 28px;
+	min-height: 58px;
+	font-size: 18px;
+	white-space: nowrap;
+}
+
+.dk-nav__cart-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	height: 24px;
+	padding-inline: 6px;
+	border-radius: var(--radius-pill);
+	background: var(--bg-dark);
+	color: var(--gold-primary);
+	font: 500 14px/1 var(--font-body);
+	font-variant-numeric: tabular-nums;
+}
+
 /* ---------------- mobile toggler ---------------- */
 .dk-nav__toggle {
 	display: none;
@@ -197,6 +262,7 @@
 	.dk-nav__actions { gap: 16px; }
 	.dk-nav__account { font-size: 16px; }
 	.dk-nav__cta { padding: 12px 24px; }
+	.dk-nav__cart { padding: 12px 20px; gap: 8px; }
 }
 
 @media (max-width: 1199.98px) {
@@ -212,6 +278,15 @@
 		row-gap: 0;
 		padding: 14px 20px;
 		border-radius: var(--radius-lg);
+
+		/* The nav is fixed, so an open drawer taller than the viewport would be
+		   unreachable — the page scrolls underneath it and the pill does not.
+		   Six menu items clear a 640px-tall phone today, but the menu is editable
+		   and second-level items render in flow at this width, so cap it and let
+		   the pill scroll itself. dvh accounts for mobile browser chrome. */
+		max-height: calc(100vh - 28px);
+		max-height: calc(100dvh - 28px);
+		overflow-y: auto;
 	}
 	.dk-nav__toggle { display: flex; order: 3; }
 	.dk-nav__actions { order: 2; margin-inline-start: auto; }
@@ -258,4 +333,6 @@
 	.site-brand__logo,
 	.site-brand .custom-logo { height: 46px; }
 	.dk-nav__cta { padding: 11px 20px; font-size: 16px; min-height: 48px; }
+	.dk-nav__cart { padding: 11px 16px; font-size: 16px; min-height: 48px; gap: 7px; }
+	.dk-nav__cart-count { min-width: 21px; height: 21px; font-size: 13px; }
 }

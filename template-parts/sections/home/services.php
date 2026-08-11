@@ -83,7 +83,7 @@ $shortName = static function (WP_Post $service) use ($meta): string {
             $thumb = get_the_post_thumbnail_url($service, 'large');
             $isWide = in_array($i, $wide, true);
             ?>
-            <article class="svc-card<?= $isWide ? ' svc-card--wide' : ''; ?>">
+            <article class="svc-card<?= $isWide ? ' svc-card--wide' : ''; ?>" data-animate>
                <a class="svc-card__link" href="<?= esc_url((string) get_permalink($service)); ?>">
                   <span class="svc-card__media">
                      <?php if ($thumb) : ?>
@@ -96,6 +96,18 @@ $shortName = static function (WP_Post $service) use ($meta): string {
 
                   <span class="svc-card__body">
                      <span class="svc-card__title subheading-md"><?= esc_html($shortName($service)); ?></span>
+                     <?php
+                     /* The teaser is hidden until hover and expands upward from the
+                        bottom-anchored body — measured off the reference recording
+                        (t 7.0–7.8: the hovered card's title sits 52px higher than
+                        its neighbour's while both CTAs stay on the same line).
+                        Clamped to two lines in CSS, so a long editor teaser cannot
+                        push the title off the photo. */
+                     $teaser = (string) $meta->field('service_teaser', $service->ID, '');
+                     ?>
+                     <?php if ($teaser !== '') : ?>
+                        <span class="svc-card__text body-sm"><?= esc_html($teaser); ?></span>
+                     <?php endif; ?>
                      <?php if ($linkLabel !== '') : ?>
                         <span class="svc-card__cta body-sm"><?= esc_html($linkLabel); ?> <span aria-hidden="true">&rarr;</span></span>
                      <?php endif; ?>

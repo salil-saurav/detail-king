@@ -116,6 +116,26 @@ class GlobalFields extends Singleton implements ServiceInterface
          $this->field('reviews_count', __('Review Count', 'detailking')),
          $this->field('instagram_handle', __('Instagram Handle', 'detailking')),
 
+         /* ===== BOOKING WIDGET =====
+            The heading is identical on every service page's booking widget in
+            the comp ("Build Your Booking" / "Choose & Book In Minutes") — one
+            value, not one per service. Vehicle sizes are shared across the
+            homepage's short form and every service page's full widget, and
+            drive the estimated-price calculation (price x multiplier). */
+         $this->tab('tab_booking_widget', __('Booking Widget', 'detailking')),
+         $this->field('booking_widget_eyebrow', __('Eyebrow', 'detailking')),
+         $this->field('booking_widget_title', __('Title', 'detailking')),
+         $this->field('booking_widget_title_gold', __('Title — gold tail', 'detailking')),
+         $this->repeater('vehicle_sizes', __('Vehicle Sizes', 'detailking'), [
+            $this->field('size_label', __('Label', 'detailking'), 'text', [
+               'instructions' => __('e.g. "Medium (sedan / wagon)".', 'detailking'),
+            ]),
+            $this->field('size_multiplier', __('Price Multiplier', 'detailking'), 'number', [
+               'step'         => '0.01',
+               'instructions' => __('Applied to a package\'s base price, e.g. 1.15 for +15%. Not yet confirmed by the client — see BUILD-PLAN §10.', 'detailking'),
+            ]),
+         ], ['button_label' => __('Add Vehicle Size', 'detailking')]),
+
          /* ===== FORMS / LEADS ===== */
          $this->tab('tab_forms', __('Forms & Leads')),
          $this->field('forms_thank_you_page', __('Thank You Page'), 'page_link', [

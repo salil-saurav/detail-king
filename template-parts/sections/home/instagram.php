@@ -49,18 +49,37 @@ $handle  = (string) $meta->fieldOr('instagram_eyebrow', $D);
    </div>
 
    <?php if ($images) : ?>
-      <ul class="home-instagram__row" style="--dk-ig-count:<?= esc_attr((string) count($images)); ?>">
+      <ul class="home-instagram__row" data-hscroll style="--dk-ig-count:<?= esc_attr((string) count($images)); ?>">
          <?php foreach ($images as $row) :
             $url = $meta->imageUrl($row['ig_image'] ?? null, '');
             if ($url === '') {
                continue;
             }
+            /* Per-tile permalink when the editor has one (and the real feed
+               integration will fill these in — see TASK-BRIEF §1.3); until then
+               the tile still goes somewhere sensible, the profile the section's
+               own CTA points at. Without this every tile renders as a bare image
+               and the recording's "View Post" hover has nothing to hang on. */
             $link = (string) ($row['ig_url'] ?? '');
+            if ($link === '') {
+               $link = $ctaUrl;
+            }
             ?>
-            <li class="home-instagram__cell">
+            <li class="home-instagram__cell" data-animate="zoom">
                <?php if ($link !== '') : ?>
-                  <a href="<?= esc_url($link); ?>" target="_blank" rel="noopener noreferrer">
+                  <?php
+                  /* Hovering a tile in the reference recording washes it gold and
+                     labels it "View Post" (t 58-61, on whichever tile the pointer
+                     is over). The label doubles as the link's accessible name,
+                     which the bare image — alt="" by design, it is decorative
+                     feed art — did not previously give it. */
+                  ?>
+                  <a class="home-instagram__link" href="<?= esc_url($link); ?>" target="_blank" rel="noopener noreferrer">
                      <img src="<?= esc_url($url); ?>" alt="" loading="lazy" decoding="async">
+                     <span class="home-instagram__overlay">
+                        <?= esc_html__('View Post', 'detailking'); ?>
+                        <span aria-hidden="true">&#8599;</span>
+                     </span>
                   </a>
                <?php else : ?>
                   <img src="<?= esc_url($url); ?>" alt="" loading="lazy" decoding="async">

@@ -77,6 +77,18 @@ class AssetsService extends Singleton implements ServiceInterface
       $this->addStyle('sp-global', '/css/global.css', ['bootstrap', 'dk-fonts']);
       $this->addScript('sp-main', '/js/global.js', ['bootstrap'], '1.0', true);
 
+      /* Motion layer — implements animation-implementation-spec.md.
+         GSAP 3.13 is free including ScrollTrigger (GreenSock standard licence,
+         no Club membership needed); Lenis supplies the inertial scrolling the
+         spec calls Critical #1, which CSS cannot express. Vendored locally
+         rather than CDN-loaded so the theme has no third-party runtime
+         dependency. ~50KB gzipped for all three (GSAP 25, ScrollTrigger 17, Lenis 6).
+         motion.js self-disables under prefers-reduced-motion. */
+      $this->addScript('gsap', '/lib/motion/gsap.min.js', [], '3.13.0', true);
+      $this->addScript('gsap-scrolltrigger', '/lib/motion/ScrollTrigger.min.js', ['gsap'], '3.13.0', true);
+      $this->addScript('lenis', '/lib/motion/lenis.min.js', [], '1.3.11', true);
+      $this->addScript('dk-motion', '/js/motion.js', ['gsap', 'gsap-scrolltrigger', 'lenis'], '1.0', true);
+
       // Layout chrome — on every page, so unconditional.
       $this->addStyle('dk-header', '/css/layout/header.css', ['sp-global']);
       $this->addStyle('dk-footer', '/css/layout/footer.css', ['sp-global']);
@@ -103,6 +115,14 @@ class AssetsService extends Singleton implements ServiceInterface
       $isAbout = static fn(): bool => is_page_template('pages/template-about.php');
 
       $this->addStyle('dk-about', '/css/pages/about.css', ['sp-global'], '1.0', 'all', $isAbout);
+
+      $isServices = static fn(): bool => is_page_template('pages/template-services.php');
+
+      $this->addStyle('dk-services', '/css/pages/services.css', ['sp-global'], '1.0', 'all', $isServices);
+
+      $isSingleService = static fn(): bool => is_singular('dk_service');
+
+      $this->addStyle('dk-single-service', '/css/pages/single-service.css', ['sp-global'], '1.0', 'all', $isSingleService);
    }
 
    // -------------------------------------------------------------------------

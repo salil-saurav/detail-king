@@ -13,7 +13,17 @@
  *             justify-content:space-between reproduces exactly
  *
  * The nav overlays the hero on every frame, so it is positioned rather than in
- * flow, and the hero owns the top padding it needs.
+ * flow, and the hero owns the top padding it needs. It is `position: fixed` and
+ * docks on scroll — the comp never draws that, but the client's animation
+ * reference requires it (TASK-BRIEF.md §3); see layout/header.css.
+ *
+ * The CTA slot holds the **cart**, not "Book Now" — "On header, where it says
+ * Book now, it should be cart" (TASK-BRIEF.md §1.1). The `header_cta_*` options
+ * survive as the no-WooCommerce fallback rather than being deleted, so the slot
+ * is never empty if the shop is deactivated. Deciding this in code rather than by
+ * re-seeding `header_cta_text` to '' is deliberate: the option row is already
+ * stored as "Book Now" in this database, so changing the defaults provider alone
+ * would not have changed the rendered header.
  *
  * @package DetailKing Theme
  */
@@ -47,6 +57,21 @@ if (function_exists('wc_get_page_id')) {
    if ($accountPermalink) {
       $accountUrl = $accountPermalink;
    }
+}
+
+/* Cart. `WC()->cart` is null in plenty of real contexts (admin, REST, early
+   boot), so the null check is load-bearing, not defensive noise.
+
+   The count is rendered server-side only. Live updating it after an AJAX
+   add-to-cart needs `woocommerce_add_to_cart_fragments`, which belongs with the
+   rest of the shop wiring in a WooCommerceService — BUILD-PLAN §7 step 5 — not
+   bolted onto the header part. `[data-dk-cart-count]` is the hook it will target. */
+$cartUrl   = '';
+$cartCount = 0;
+
+if (function_exists('wc_get_cart_url') && function_exists('WC') && WC() && WC()->cart) {
+   $cartUrl   = (string) wc_get_cart_url();
+   $cartCount = (int) WC()->cart->get_cart_contents_count();
 }
 ?>
 <nav class="dk-nav<?= !empty($args['solid']) ? ' dk-nav--solid' : ''; ?>" aria-label="<?php esc_attr_e('Primary', 'detailking'); ?>">
@@ -95,7 +120,25 @@ if (function_exists('wc_get_page_id')) {
             <?= esc_html($account); ?>
          </a>
 
-         <?php if ($ctaText !== '') : ?>
+         <?php if ($cartUrl !== '') : ?>
+            <a class="btn-gold dk-nav__cart" href="<?= esc_url($cartUrl); ?>">
+               <?php esc_html_e('Cart', 'detailking'); ?>
+               <?php // aria-hidden so the count isn't announced twice — the
+                     // visually-hidden sentence below is the accessible version. ?>
+               <span class="dk-nav__cart-count" data-dk-cart-count aria-hidden="true">
+                  <?= esc_html((string) $cartCount); ?>
+               </span>
+               <span class="visually-hidden">
+                  <?php
+                  printf(
+                     /* translators: %d: number of items currently in the cart. */
+                     esc_html(_n('%d item in cart', '%d items in cart', $cartCount, 'detailking')),
+                     (int) $cartCount
+                  );
+                  ?>
+               </span>
+            </a>
+         <?php elseif ($ctaText !== '') : ?>
             <a class="btn-gold dk-nav__cta" href="<?= esc_url($ctaUrl ?: home_url('/contact/')); ?>">
                <?= esc_html($ctaText); ?>
             </a>
