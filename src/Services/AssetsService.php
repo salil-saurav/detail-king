@@ -99,6 +99,10 @@ class AssetsService extends Singleton implements ServiceInterface
 
       $this->addStyle('dk-home', '/css/pages/home.css', ['sp-global'], '1.0', 'all', $isHome);
       $this->addScript('dk-home', '/js/pages/home.js', [], '1.0', true, $isHome);
+
+      $isAbout = static fn(): bool => is_page_template('pages/template-about.php');
+
+      $this->addStyle('dk-about', '/css/pages/about.css', ['sp-global'], '1.0', 'all', $isAbout);
    }
 
    // -------------------------------------------------------------------------

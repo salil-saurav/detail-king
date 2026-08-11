@@ -122,24 +122,8 @@ a.home-hero__video:focus-visible {
 	border-color: transparent transparent transparent var(--bg-dark);
 }
 
-/* ═══════════════════ STAT ROWS (hero + video) ═══════════════════ */
-.dk-stats {
-	display: flex;
-	flex-wrap: wrap;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-.dk-stats__item {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	/* min-width:0 so a long value cannot stretch the row past its container. */
-	min-width: 0;
-}
-.dk-stats__value { display: block; }
-.dk-stats__label { color: var(--text-white-55); }
-
+/* ═══════════════════ STAT ROWS (hero only — base + --craft moved to
+   global.css, .dk-stats--craft is now also used on the About page) ═══ */
 .dk-stats--hero {
 	gap: 0;
 	/* Measured: the pill ends 830 and the stat rule sits at 876. */
@@ -159,49 +143,8 @@ a.home-hero__video:focus-visible {
 /* Measured: "2016" is 40px of cap height = a ~57px Bebas, not heading-xs (46). */
 .dk-stats--hero .dk-stats__value { font-size: 57px; color: var(--gold-primary); }
 
-/* ═══════════════════ MARQUEE — node 59:3063, h 75.6 ═══════════════════ */
-.dk-marquee {
-	position: relative;
-	z-index: 2;
-	display: flex;
-	overflow: hidden;
-	min-height: 75.6px;
-	align-items: center;
-	background: var(--gold-gradient);
-	/* Pull up over the hero's base, as the comp overlaps it at y=1080. */
-	margin-block-start: -75.6px;
-}
-.dk-marquee__track {
-	display: flex;
-	flex: 0 0 auto;
-	align-items: center;
-	gap: 54px;
-	margin: 0;
-	padding: 0 27px;
-	list-style: none;
-	animation: dk-marquee 42s linear infinite;
-}
-.dk-marquee__item {
-	display: flex;
-	align-items: center;
-	gap: 54px;
-	white-space: nowrap;
-	color: var(--bg-dark);
-}
-/* The separator is a pseudo-element, so the editor's field holds words not glyphs. */
-.dk-marquee__item::after {
-	content: "◆";
-	font-size: .7em;
-	opacity: .8;
-}
-@keyframes dk-marquee {
-	from { transform: translateX(0); }
-	to   { transform: translateX(-100%); }
-}
-.dk-marquee:hover .dk-marquee__track { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) {
-	.dk-marquee__track { animation: none; }
-}
+/* Marquee ticker moved to global.css — it overlaps the hero on every page
+   that uses it (About, homepage, service pages), not just this one. */
 
 /* ═══════════════════ SERVICES — band 1155.6…2953 ═══════════════════ */
 .home-services {
@@ -466,23 +409,7 @@ a.home-video__play::before {
 	transform: translateX(-50%);
 	font-size: 190px;
 }
-.dk-stats--craft {
-	position: relative;
-	z-index: 1;
-	gap: 0;
-}
-/* Measured: the craft numerals are 70px of cap height = a ~100px Bebas, not the
-   60px heading-lg they were using. */
-.dk-stats--craft .dk-stats__value { font-size: 100px; }
-.dk-stats--craft .dk-stats__item {
-	flex: 1 1 0;
-	padding-inline: 46px;
-	border-inline-start: 1px solid var(--line-white-12);
-}
-.dk-stats--craft .dk-stats__item:first-child {
-	padding-inline-start: 0;
-	border-inline-start: 0;
-}
+/* .dk-stats--craft itself moved to global.css. */
 
 /* ═══════════════════ WHY US — band 4970.2…5795.1 ═══════════════════ */
 .home-why {
@@ -1367,8 +1294,7 @@ select.dk-field__input {
 	.home-services, .home-membership { padding-block: 100px 80px; }
 	.home-why { padding-block: 90px; }
 	.home-why__cols { grid-template-columns: minmax(0, 1fr) 330px minmax(0, 1fr); }
-	.dk-stats--hero .dk-stats__item,
-	.dk-stats--craft .dk-stats__item { padding-inline: 30px; }
+	.dk-stats--hero .dk-stats__item { padding-inline: 30px; }
 	.dk-watermark { font-size: 150px !important; }
 	.home-booking__card { padding: 34px 32px 36px; }
 }
@@ -1429,15 +1355,12 @@ select.dk-field__input {
 	.home-membership__grid { grid-template-columns: minmax(0, 1fr); max-width: 480px; margin-inline: auto; }
 	.plan-card--featured { padding-block: 46px 40px; }
 
-	.dk-stats--hero,
-	.dk-stats--craft { gap: 26px 0; }
+	.dk-stats--hero { gap: 26px 0; }
 	.dk-stats--hero .dk-stats__item { flex: 1 0 40%; }
-	.dk-stats--craft .dk-stats__item { flex: 1 0 40%; }
 	/* Once the row wraps, the rules no longer separate columns — they land in
 	   the middle of a stack. Show them only on the items that still have a
 	   sibling to their left. */
-	.dk-stats--hero .dk-stats__item:nth-child(odd),
-	.dk-stats--craft .dk-stats__item:nth-child(odd) {
+	.dk-stats--hero .dk-stats__item:nth-child(odd) {
 		padding-inline-start: 0;
 		border-inline-start: 0;
 	}
@@ -1468,9 +1391,6 @@ select.dk-field__input {
 	.home-booking__card { padding: 26px 22px 30px; }
 
 	.home-services__features { gap: 26px; }
-	.dk-marquee { min-height: 60px; margin-block-start: -60px; }
-	.dk-marquee__track { gap: 34px; }
-	.dk-marquee__item { gap: 34px; }
 }
 
 @media (max-width: 575.98px) {
@@ -1481,6 +1401,5 @@ select.dk-field__input {
 	.dk-watermark { font-size: 88px !important; }
 	.home-instagram__row { grid-template-columns: minmax(0, 1fr); }
 	.plan-card { padding: 32px 24px 30px; }
-	.dk-stats--hero .dk-stats__item,
-	.dk-stats--craft .dk-stats__item { flex: 1 0 100%; padding-inline: 0; border-inline-start: 0; }
+	.dk-stats--hero .dk-stats__item { flex: 1 0 100%; padding-inline: 0; border-inline-start: 0; }
 }

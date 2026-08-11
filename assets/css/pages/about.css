@@ -1,0 +1,141 @@
+/* ===================================================================
+   About page — template-about.php
+   Section bands: projects/detail-king/figma-data/about-spec.md
+   =================================================================== */
+
+.about-who,
+.about-story,
+.about-approach__inner {
+	padding-block: 150px;
+}
+
+/* ─────────────── Who We Are (y 833…1695, light) ─────────────── */
+.about-who__copy .section-heading__title { font-size: 40px; } /* measured off the export, no utility class lands here */
+.about-who__copy p { color: var(--text-muted-dark); }
+.about-who__copy p + p { margin-block-start: 22px; }
+
+/* ─────────────── Our Story (y 1695…2789.6, dark) ─────────────── */
+.about-story { position: relative; overflow: hidden; }
+.about-story__watermark {
+	position: absolute;
+	z-index: 0;
+	inset-inline-start: -40px;
+	inset-block-end: 20px;
+	font-size: 320px;
+}
+.about-story__copy p { color: var(--text-white-65); }
+.about-story__copy p + p { margin-block-start: 22px; }
+/* Gold-tinted frame side sits on the grid's first column here (mirrored vs
+   Who We Are / Our Approach), which .dk-split's column order already gives
+   for free since the photo is first in this section's markup. */
+
+/* ─────────────── Equipment (y 2789.6…3723.4, light) ─────────────── */
+.about-equip { position: relative; overflow: hidden; padding-block: 150px; }
+.about-equip__watermark {
+	position: absolute;
+	z-index: 0;
+	inset-inline-start: -40px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 320px;
+}
+.about-equip__inner {
+	position: relative;
+	z-index: 1;
+	max-width: 1630px; /* 1550 inner container + 40px inset each side, per the comp */
+	margin-inline: auto;
+	padding-inline: 40px;
+}
+.about-equip .section-heading__text { max-width: 740px; margin-inline: auto; }
+.about-equip__row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 26px;
+	margin-block-start: 60px;
+}
+.about-equip__card {
+	flex: 1 1 240px;
+	padding: 45px 39px;
+	border: 1px solid rgba(11, 11, 12, .1);
+}
+.about-equip__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 70px;
+	height: 70px;
+	border-radius: var(--radius-md);
+	background: var(--bg-dark);
+	color: var(--gold-primary);
+	margin-block-end: 14px;
+}
+.about-equip__card-title {
+	font: 400 32px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-dark);
+	margin-block-end: 8px;
+}
+.about-equip__card-text { color: var(--text-muted); }
+
+/* ─────────────── Our Approach (y 3723.4…4931.7, beige) ─────────────── */
+.about-approach__copy p { color: var(--text-muted-dark); }
+.about-approach__copy p + p { margin-block-start: 22px; }
+.about-approach__steps {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 26px;
+	max-width: 1630px;
+	margin: 60px auto 0;
+	padding-inline: 40px;
+}
+.about-approach__step {
+	flex: 1 1 220px;
+	padding: 45px 37px;
+	border: 1px solid rgba(11, 11, 12, .1);
+}
+/* Outlined-numeral pattern, same stroke mechanism as .dk-watermark but at
+   card scale — doesn't exist anywhere else on the site yet. */
+.dk-step__num {
+	display: block;
+	font: 400 64px/1 var(--font-display);
+	color: transparent;
+	-webkit-text-stroke: 1.5px var(--gold-25);
+	margin-block-end: 10px;
+}
+.about-approach__step-title {
+	font: 400 30px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-dark);
+	margin-block-end: 8px;
+}
+.about-approach__step-text { color: var(--text-muted); }
+
+/* ─────────────── Stats (y 4931.7…5420.4, dark) ─────────────── */
+/* Measured off the export: About's numerals land at ~92px, not the
+   homepage craft-stats' already-corrected 100px — a different comp value,
+   not the same one re-measured. */
+.about-stats__row .dk-stats__value { font-size: 92px; }
+.about-stats { padding-block: 0; }
+
+/* ─────────────── CTA (y 5420.4…6021) ─────────────── */
+.about-cta { padding-block: 110px; }
+
+/* ---------------------------------------------------------------
+   Responsive — collapse in order, media above copy already comes free
+   from .dk-split's single-column fallback; these tune the rest.
+   --------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+	.about-who, .about-story, .about-approach__inner { padding-block: 90px; }
+	.about-equip { padding-block: 90px; }
+	.page-banner__title { font-size: 64px; }
+	.dk-cta__title { font-size: 54px; }
+	.about-story__watermark, .about-equip__watermark { font-size: 180px; }
+}
+
+@media (max-width: 575.98px) {
+	.about-equip__row, .about-approach__steps { flex-direction: column; }
+	.page-banner { padding-block: 160px 40px; }
+	.page-banner__title { font-size: 46px; }
+	.dk-cta { padding: 50px 24px; }
+	.dk-cta__title { font-size: 40px; }
+}

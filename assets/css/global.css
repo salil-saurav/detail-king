@@ -160,6 +160,10 @@ img { max-width: 100%; height: auto; }
 .section--dark h4, .section--dark h5, .section--dark h6 { color: var(--text-white); }
 
 .section--light { background: var(--bg-light); color: var(--text-dark); }
+/* --bg-light-alt already existed for this — About's Our Approach is the first
+   section to actually use it. */
+.section--beige { background: var(--bg-light-alt); color: var(--text-dark); }
+.section--beige .eyebrow { color: var(--gold-dark); }
 
 /* ---------------------------------------------------------------
    3. Type scale
@@ -432,6 +436,259 @@ img { max-width: 100%; height: auto; }
 		radial-gradient(circle at 72% 18%, rgba(40, 34, 15, 1) 0%, rgba(40, 34, 15, 0) 58%),
 		radial-gradient(circle at 10% 95%, rgba(25, 21, 7, 1) 0%, rgba(25, 21, 7, 0) 55%);
 	pointer-events: none;
+}
+
+/* Inner-page hero banner (global/page-banner.php). Dark bg + optional photo,
+   breadcrumb, two-tone title, optional lead paragraph. First real consumer:
+   the About page — unstyled until then. */
+.page-banner {
+	position: relative;
+	overflow: hidden;
+	/* Bottom padding covers the marquee's -75.6px pull-up (see .dk-marquee)
+	   plus its own 55px breathing room, so the ticker never overlaps the
+	   banner's own text when a page follows the banner with one. */
+	padding-block: 210px 131px;
+	background: var(--bg-dark);
+	color: var(--text-white-75);
+	isolation: isolate;
+}
+.page-banner__bg {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+}
+.page-banner__bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+}
+/* Same scrim recipe as the homepage hero (home.css .home-hero__bg::after) —
+   dark-to-transparent left-weighted scrim plus a warm radial glow. Reused
+   rather than the comp's mask-SVG machinery, which draws the identical
+   result. */
+.page-banner__bg::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background:
+		linear-gradient(90deg, rgba(11, 11, 12, .9) 0%, rgba(11, 11, 12, .55) 60%, rgba(11, 11, 12, .2) 100%),
+		radial-gradient(circle at 75% 10%, rgba(40, 34, 15, .85) 0%, rgba(40, 34, 15, 0) 58%);
+}
+.page-banner__inner { position: relative; z-index: 1; }
+.page-banner__breadcrumb .breadcrumb {
+	display: flex;
+	align-items: center;
+	list-style: none;
+	margin: 0 0 22px;
+	padding: 0;
+	font: 500 18px/1.65 var(--font-body);
+	letter-spacing: .18em;
+	text-transform: uppercase;
+}
+.page-banner__breadcrumb .breadcrumb__link { color: var(--gold-primary); text-decoration: none; }
+.page-banner__breadcrumb .breadcrumb__current,
+.page-banner__breadcrumb .breadcrumb__separator { color: var(--text-white-55); }
+.page-banner__title {
+	font: 400 94px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-white);
+}
+.page-banner__text {
+	max-width: 620px;
+	margin-block-start: 22px;
+	color: var(--text-white-70);
+}
+
+/* Framed photo card (components/framed-photo.php) — rounded frame + shadow,
+   inset gold hairline, optional glass badge over the bottom-left corner.
+   Recurs 3x on the About page; only the outer border colour changes. */
+.dk-framed-photo {
+	position: relative;
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	box-shadow: 0 40px 100px rgba(11, 11, 12, .18);
+}
+.dk-framed-photo--neutral { border: 1px solid var(--line-white-08); }
+.dk-framed-photo--gold { border: 1px solid var(--line-gold-22); }
+.section--light .dk-framed-photo--neutral,
+.section--beige .dk-framed-photo--neutral { border-color: rgba(11, 11, 12, .1); }
+.dk-framed-photo__media { aspect-ratio: 555 / 560; }
+.dk-framed-photo__media img { width: 100%; height: 100%; object-fit: cover; }
+.dk-framed-photo::after {
+	content: "";
+	position: absolute;
+	inset: 14px;
+	border: 1px solid var(--line-gold-22);
+	border-radius: var(--radius-md);
+	pointer-events: none;
+}
+.dk-framed-photo__badge {
+	position: absolute;
+	inset-block-end: 24px;
+	inset-inline-start: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 19px 27px;
+	background: rgba(11, 11, 12, .82);
+}
+.dk-framed-photo__badge-year {
+	font: 400 40px/1 var(--font-display);
+	letter-spacing: .04em;
+	color: var(--gold-primary);
+}
+.dk-framed-photo__badge-text { color: var(--text-white-70); }
+
+/* Two-column split grid (copy + framed photo). Recurs 3x on the About page
+   alone (Who We Are, Our Story, Our Approach) at identical proportions —
+   which side the photo lands on is just markup order, not a CSS switch. */
+.dk-split {
+	display: grid;
+	grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+	align-items: center;
+	gap: 80px;
+}
+@media (max-width: 991.98px) {
+	.dk-split { grid-template-columns: 1fr; gap: 40px; }
+	/* Media above copy on mobile regardless of desktop column order — same
+	   convention as .home-why__figure. */
+	.dk-split .dk-framed-photo { order: -1; }
+}
+
+/* Shared dark CTA card (global/cta-banner.php). Recurs on About, Services,
+   Gallery and Blog with different copy each time. */
+.dk-cta {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid var(--line-gold-22);
+	border-radius: var(--radius-xl);
+	padding: 90px 60px;
+	text-align: center;
+	background: var(--bg-dark);
+}
+.dk-cta__title {
+	font: 400 90px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-white);
+}
+.dk-cta__text {
+	max-width: 600px;
+	margin: 20px auto 0;
+	color: var(--text-white-65);
+}
+.dk-cta__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 22px;
+	margin-block-start: 32px;
+}
+
+/* Stat rows — base + the --craft variant (moved from home.css: it's now used
+   on the About page's stats section too, not just the homepage's video
+   section). The --hero variant stays homepage-only, in home.css. */
+.dk-stats {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.dk-stats__item {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	/* min-width:0 so a long value cannot stretch the row past its container. */
+	min-width: 0;
+}
+.dk-stats__value { display: block; }
+.dk-stats__label { color: var(--text-white-55); }
+
+.dk-stats--craft {
+	position: relative;
+	z-index: 1;
+	gap: 0;
+}
+/* Measured: the homepage's craft numerals are 70px of cap height = a ~100px
+   Bebas. About's own stats (about.css) override this to its own measured
+   92px — a different comp value, not the same one re-measured. */
+.dk-stats--craft .dk-stats__value { font-size: 100px; }
+.dk-stats--craft .dk-stats__item {
+	flex: 1 1 0;
+	padding-inline: 46px;
+	border-inline-start: 1px solid var(--line-white-12);
+}
+.dk-stats--craft .dk-stats__item:first-child {
+	padding-inline-start: 0;
+	border-inline-start: 0;
+}
+@media (max-width: 1399.98px) {
+	.dk-stats--craft .dk-stats__item { padding-inline: 30px; }
+}
+@media (max-width: 991.98px) {
+	.dk-stats--craft { gap: 26px 0; }
+	.dk-stats--craft .dk-stats__item { flex: 1 0 40%; }
+	.dk-stats--craft .dk-stats__item:nth-child(odd) {
+		padding-inline-start: 0;
+		border-inline-start: 0;
+	}
+}
+@media (max-width: 575.98px) {
+	.dk-stats--craft .dk-stats__item { flex: 1 0 100%; padding-inline: 0; border-inline-start: 0; }
+}
+
+/* Gold marquee ticker (sections/home/marquee.php). Overlaps the base of
+   whatever dark hero precedes it — the homepage's hero, the About page's
+   page-banner, and (per the part's own doc comment) every service page.
+   Moved here from home.css: it was built home-page-scoped even though it
+   was already documented as a shared, multi-page component. */
+.dk-marquee {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	overflow: hidden;
+	min-height: 75.6px;
+	align-items: center;
+	background: var(--gold-gradient);
+	/* Pull up over the preceding section's base, as the comp overlaps it. */
+	margin-block-start: -75.6px;
+}
+.dk-marquee__track {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: 54px;
+	margin: 0;
+	padding: 0 27px;
+	list-style: none;
+	animation: dk-marquee 42s linear infinite;
+}
+.dk-marquee__item {
+	display: flex;
+	align-items: center;
+	gap: 54px;
+	white-space: nowrap;
+	color: var(--bg-dark);
+}
+/* The separator is a pseudo-element, so the editor's field holds words not glyphs. */
+.dk-marquee__item::after {
+	content: "◆";
+	font-size: .7em;
+	opacity: .8;
+}
+@keyframes dk-marquee {
+	from { transform: translateX(0); }
+	to   { transform: translateX(-100%); }
+}
+.dk-marquee:hover .dk-marquee__track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+	.dk-marquee__track { animation: none; }
+}
+@media (max-width: 767.98px) {
+	.dk-marquee { min-height: 60px; margin-block-start: -60px; }
+	.dk-marquee__track { gap: 34px; }
+	.dk-marquee__item { gap: 34px; }
 }
 
 /* ---------------------------------------------------------------

@@ -18,6 +18,9 @@
  *      'text'      => 'Optional lead paragraph.',
  *      'tag'       => 'h2',            // default h2
  *      'class'     => 'extra classes',
+ *      'break'     => true,            // gold portion on its own line — a real
+ *                                      // clause break in the comp, not a reflow
+ *                                      // artefact (default false: space-joined)
  *   ]);
  *
  * @package DetailKing Theme
@@ -34,6 +37,7 @@ $align   = isset($args['align'])   ? (string) $args['align']   : 'start';
 $rules   = isset($args['rules'])   ? (string) $args['rules']   : 'start';
 $tag     = isset($args['tag'])     ? (string) $args['tag']     : 'h2';
 $extra   = isset($args['class'])   ? (string) $args['class']   : '';
+$break   = !empty($args['break']);
 
 // Only h1-h6 and a couple of neutral wrappers; never interpolate a raw tag name.
 $tag = in_array($tag, ['h1', 'h2', 'h3', 'h4', 'p', 'div'], true) ? $tag : 'h2';
@@ -68,7 +72,7 @@ if ($extra !== '') {
             echo esc_html($title);
          }
          if ($gold !== '') {
-            echo $title !== '' ? ' ' : '';
+            echo $break ? '<br>' : ($title !== '' ? ' ' : '');
             echo '<span class="text-gold-gradient">' . esc_html($gold) . '</span>';
          }
          ?>
