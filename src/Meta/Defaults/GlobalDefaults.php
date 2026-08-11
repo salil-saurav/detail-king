@@ -13,11 +13,14 @@ defined('ABSPATH') || exit;
  * test for "global option" rather than "page field": duplicating the footer
  * address or the review summary onto each page guarantees they drift apart.
  *
- * NOTE — the comp contradicts itself about location. The footer on every frame
- * reads "12 Showroom Lane, Auckland, NZ", while the Gallery hero eyebrow reads
- * "OUR WORK · CHRISTCHURCH & DUNEDIN" and the Contact page shows two studios in
- * Christchurch and Dunedin. Seeded with the footer's literal copy; this is a
- * client decision, not something to quietly reconcile.
+ * NOTE — the comp contradicted itself about location: the footer on every frame
+ * read "12 Showroom Lane, Auckland, NZ" while the Gallery hero eyebrow and the
+ * Contact page ("VISIT ONE OF OUR TWO STUDIOS") read Christchurch & Dunedin.
+ * Client resolved 2026-08-11: Christchurch (72 Byron Street, Sydenham,
+ * Christchurch 8011) is the headquarters, Dunedin (31 Otaki Street, South
+ * Dunedin, Dunedin 9012) is the branch. `contact_address` now carries the
+ * Christchurch HQ address; the Contact page's two-studio cards (built in a
+ * later pass) will source both from `dk_location`.
  */
 final class GlobalDefaults implements DefaultsProvider
 {
@@ -44,7 +47,7 @@ final class GlobalDefaults implements DefaultsProvider
          ],
 
          /* ── Contact block — footer + Contact page + booking form ── */
-         'contact_address' => '12 Showroom Lane, Auckland, NZ',
+         'contact_address' => '72 Byron Street, Sydenham, Christchurch 8011',
          'contact_phone'   => '+64 9 000 0000',
          'contact_email'   => 'hello@detailking.nz',
          'contact_hours'   => 'Mon–Sat · 8:00am – 6:00pm',
