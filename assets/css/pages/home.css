@@ -328,17 +328,24 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 	height: 44px;
 	border: 1px solid var(--glass-white-25);
 	border-radius: 50%;
-	background: var(--glass-dark-82);
+	background: none;
 	backdrop-filter: blur(4px);
+	transition: transform 0.2 s ease-in-out;
 }
 
 .svc-card__num {
 	inset-inline-start: 22px;
-	color: var(--gold-primary);
+	border-radius: 60px;
+	border: 1px solid rgba(233, 201, 124, 0.35);
+	background: rgba(11, 11, 12, 0.55);
+	backdrop-filter: blur(4px);
 }
 
 .svc-card__arrow {
 	inset-inline-end: 22px;
+	border-radius: 28px;
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	backdrop-filter: blur(4px);
 }
 
 .svc-card__arrow::before {
@@ -359,6 +366,7 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 .svc-card__link:hover .svc-card__arrow {
 	background: var(--gold-gradient-btn);
 	border-color: transparent;
+	transform: rotate(-45deg);
 }
 
 .svc-card__link:hover .svc-card__arrow::before {
@@ -485,18 +493,27 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 }
 
 .home-seam__figure {
+	position: relative;
 	max-width: 1088px;
 	margin: 0 auto;
+	/* Moved off the img below — it's now absolutely positioned for the parallax
+	   and can no longer size the figure through flow. */
+	aspect-ratio: 1088 / 562;
 	border-radius: var(--radius-lg);
 	overflow: hidden;
 	box-shadow: var(--shadow-dark-xl);
 }
 
 .home-seam__figure img {
-	display: block;
+	position: absolute;
+	inset-inline: 0;
+	/* Oversized so motion.js's data-parallax="6" (yPercent -6…+6, scrubbed to
+	   scroll) never exposes an edge at either extreme: for +/-N% travel the
+	   image must be at least H/(1-2N) tall — same maths as .home-hero__bg img,
+	   with the same margin of buffer over the minimum. */
+	inset-block-start: -8%;
 	width: 100%;
-	height: auto;
-	aspect-ratio: 1088 / 562;
+	height: 116%;
 	object-fit: cover;
 }
 
@@ -515,12 +532,12 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 
 .home-video__frame {
 	position: relative;
-	/* Measured: heading box ends 305, frame starts 327. */
 	margin-block-start: 22px;
 	border: 1px solid var(--line-white-08);
 	border-radius: var(--radius-lg);
 	overflow: hidden;
 	background: var(--bg-dark-card);
+	padding: 30px 0;
 }
 
 .home-video__media {
@@ -534,6 +551,7 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 	/* Measured: frame spans design y 327…992 = 665 tall. */
 	aspect-ratio: 1470 / 665;
 	object-fit: cover;
+	filter: brightness(0.5);
 }
 
 .home-video__badge,
@@ -541,23 +559,27 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 .home-video__caption {
 	position: absolute;
 	z-index: 2;
-	color: var(--text-white-82);
 }
 
 .home-video__badge {
-	inset-block-start: 30px;
+	inset-block-start: 50px;
 	inset-inline-start: 34px;
+	color: rgba(255, 255, 255, 0.45);
+
 }
 
 .home-video__meta {
-	inset-block-start: 30px;
+	inset-block-start: 50px;
 	inset-inline-end: 34px;
 	color: var(--text-white-55);
+	color: rgba(255, 255, 255, 0.45);
+
 }
 
 .home-video__caption {
-	inset-block-end: 30px;
+	inset-block-end: 50px;
 	inset-inline-start: 34px;
+	color: var(--gold-primary);
 }
 
 /* The comp's badge carries a small filled dot before the label. */

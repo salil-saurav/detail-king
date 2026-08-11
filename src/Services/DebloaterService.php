@@ -68,6 +68,21 @@ class DebloaterService extends Singleton implements ServiceInterface
             'wp-embed',
             // 'jquery-migrate'
          ],
+         /* WooCommerce registers these on every front-end request regardless of
+            whether the page has any WooCommerce content — the header's cart link
+            is themed entirely by dk-nav__cart in header.css and needs none of it.
+            136KB of CSS + 2 scripts, dequeued everywhere except actual shop
+            pages (kept there since those templates DO use WC's own markup). */
+         'woocommerce_styles' => [
+            'wc-blocks-style',
+            'woocommerce-layout',
+            'woocommerce-smallscreen',
+            'woocommerce-general',
+         ],
+         'woocommerce_scripts' => [
+            'sourcebuster-js',
+            'wc-order-attribution',
+         ],
          'head_cleanup' => [
             'wp_generator',
             'rsd_link',
@@ -121,6 +136,10 @@ class DebloaterService extends Singleton implements ServiceInterface
       }
 
       add_action('wp_enqueue_scripts', [$this, 'cleanFrontendAssets'], 100);
+
+      if (class_exists('WooCommerce')) {
+         add_action('wp_enqueue_scripts', [$this, 'dequeueWooCommerceAssetsOnNonShopPages'], 100);
+      }
 
       if ($this->config['features']['disable_xmlrpc']) {
          add_filter('xmlrpc_enabled', '__return_false');
@@ -231,6 +250,33 @@ class DebloaterService extends Singleton implements ServiceInterface
       foreach ($this->config['frontend_scripts'] as $script) {
          wp_dequeue_script($script);
          wp_deregister_script($script);
+      }
+   }
+
+   /**
+    * WooCommerce enqueues its own layout/blocks CSS and order-attribution JS
+    * on every front-end request, regardless of whether the page has any
+    * WooCommerce content. The header's cart link is themed entirely by
+    * dk-nav__cart in the theme's own header.css and needs none of it, so this
+    * ~136KB of CSS + 2 scripts only has anywhere to matter on shop pages.
+    *
+    * Runs at priority 100 on wp_enqueue_scripts, after WooCommerce registers
+    * everything at its default priority 10.
+    */
+   public function dequeueWooCommerceAssetsOnNonShopPages(): void
+   {
+      $isShopPage = is_woocommerce() || is_cart() || is_checkout() || is_account_page();
+
+      if ($isShopPage) {
+         return;
+      }
+
+      foreach ($this->config['woocommerce_styles'] as $style) {
+         wp_dequeue_style($style);
+      }
+
+      foreach ($this->config['woocommerce_scripts'] as $script) {
+         wp_dequeue_script($script);
       }
    }
 

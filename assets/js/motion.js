@@ -12,13 +12,19 @@
    and a real timeline for the hero.
 
    Load order matters and is declared in AssetsService: gsap, ScrollTrigger,
-   lenis, then this file. Everything is deferred.
+   then this file. Everything is deferred.
 
    Accessibility (§33): under prefers-reduced-motion this file does almost
-   nothing — no Lenis, no ScrollTrigger, no transforms. It never adds the
-   `aos-ready` class, so the CSS that hides [data-animate] never applies and all
-   content is visible and functional. That is also the no-JS / GSAP-failed-to-
-   load path, which is why the hiding rule is class-gated rather than plain.
+   nothing — no ScrollTrigger, no transforms. It never adds the `aos-ready`
+   class, so the CSS that hides [data-animate] never applies and all content
+   is visible and functional. That is also the no-JS / GSAP-failed-to-load
+   path, which is why the hiding rule is class-gated rather than plain.
+
+   §4's Lenis-driven inertial scroll was here and was removed: measured on this
+   page under a synthetic wheel-scroll burst, it roughly halved rendered frame
+   throughput and nearly doubled the worst single stall versus native scroll
+   (see the AssetsService motion-layer comment for the numbers). Scrolling is
+   native now; ScrollTrigger reads it directly and needs no scroll proxy.
    ===================================================================== */
 (() => {
 	'use strict';
@@ -49,36 +55,6 @@
 		x: isMobile ? 15 : 30,        // §12 directional reveal distance
 		parallax: isMobile ? 4 : 8,   // §30 yPercent, "discovered rather than obvious"
 	};
-
-	/* ------------------------------------------------------------------
-	   §4 Smooth inertial scrolling.
-	   Lenis drives the scroll; ScrollTrigger must be told about every frame or
-	   scrub-linked animations lag behind the content. Driving Lenis from GSAP's
-	   own ticker (rather than its internal rAF) keeps both on one clock, which
-	   is what stops parallax from jittering against the page.
-	   ------------------------------------------------------------------ */
-	let lenis = null;
-
-	if (window.Lenis) {
-		lenis = new window.Lenis({
-			duration: 1.1,
-			easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-			smoothWheel: true,
-			// Native momentum on touch is better than anything we can emulate,
-			// and hijacking it breaks the address-bar collapse on mobile Safari.
-			smoothTouch: false,
-		});
-
-		lenis.on('scroll', ScrollTrigger.update);
-		gsap.ticker.add((time) => lenis.raf(time * 1000));
-		gsap.ticker.lagSmoothing(0);
-
-		// The pill nav's sticky state and the filter jump links both read
-		// window.scrollY / call scrollIntoView, which Lenis proxies natively, so
-		// global.js needs no changes. Expose it anyway for later sections that
-		// may want lenis.scrollTo with an offset.
-		window.dkLenis = lenis;
-	}
 
 	/* ------------------------------------------------------------------
 	   §28/§29 The reveal system.
@@ -298,9 +274,17 @@
 
 	/* ------------------------------------------------------------------
 	   §30 Parallax. Deliberately small — the spec wants it "discovered rather
-	   than obvious", yPercent -8..+8 with scrub 0.5-1. Opt-in per element via
-	   [data-parallax] so it lands on chosen imagery instead of everything.
-	   ------------------------------------------------------------------ */
+	   than obvious", yPercent -8..+8. Opt-in per element via [data-parallax] so
+	   it lands on chosen imagery instead of everything.
+
+	   `scrub: true`, not a number: a numeric scrub adds a second interpolation
+	   tween on top of ScrollTrigger's own scroll read, recalculating every
+	   frame for the life of the gesture — the same shape of extra per-frame
+	   cost Lenis added, just scoped to this one property instead of the whole
+	   page. `true` sets the value directly off scroll position with no second
+	   tween. There are now three scrub-linked triggers on this page (this one,
+	   the hero bg, and the §17 pinned gallery below) with Lenis gone, so this
+	   one is worth keeping cheap. */
 	gsap.utils.toArray('[data-parallax]').forEach((el) => {
 		const amount = parseFloat(el.getAttribute('data-parallax')) || D.parallax;
 
@@ -314,7 +298,7 @@
 					trigger: el.closest('[data-parallax-scope]') || el.parentElement,
 					start: 'top bottom',
 					end: 'bottom top',
-					scrub: 0.8,
+					scrub: true,
 				},
 			}
 		);

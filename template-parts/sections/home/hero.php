@@ -88,7 +88,7 @@ $bg = $meta->imageUrl(
             ? ' href="' . esc_url($vidUrl) . '" data-dk-lightbox'
             : '';
          ?>
-         <<?= $vidTag; ?> class="home-hero__video"<?= $vidAttr; ?>>
+         <<?= $vidTag; ?> class="home-hero__video" <?= $vidAttr; ?>>
             <?php
             // The icon carries two ripple rings: one on its ::after, one on this
             // child span, so the two can run half a cycle apart (::before is the
@@ -103,7 +103,7 @@ $bg = $meta->imageUrl(
          <ul class="dk-stats dk-stats--hero">
             <?php foreach ($stats as $row) : ?>
                <li class="dk-stats__item">
-                  <span class="dk-stats__value heading-xs" data-count-to="<?= esc_attr((string) ($row['stat_value'] ?? '')); ?>">
+                  <span class="text-gold-gradient heading-xs" data-count-to="<?= esc_attr((string) ($row['stat_value'] ?? '')); ?>">
                      <?= esc_html((string) ($row['stat_value'] ?? '')); ?>
                   </span>
                   <span class="dk-stats__label body-sm"><?= esc_html((string) ($row['stat_label'] ?? '')); ?></span>

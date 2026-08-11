@@ -60,7 +60,7 @@ add_filter('detailking/theme/redirects', function (array $map): array {
 
 Tune what `DebloaterService` removes. The value is a nested config array with
 `admin_bar_nodes`, `dashboard_widgets`, `frontend_styles`, `frontend_scripts`,
-`head_cleanup`, and a `features` map.
+`head_cleanup`, `woocommerce_styles`, `woocommerce_scripts`, and a `features` map.
 
 ```php
 add_filter('detailking/theme/debloater/config', function (array $config): array {
@@ -73,12 +73,27 @@ add_filter('detailking/theme/debloater/config', function (array $config): array 
     // Stop stripping a specific core style.
     $config['frontend_styles'] = array_diff($config['frontend_styles'], ['classic-theme-styles']);
 
+    // Also keep one WooCommerce style on non-shop pages (e.g. a page that
+    // embeds a product shortcode and needs its layout CSS).
+    $config['woocommerce_styles'] = array_diff($config['woocommerce_styles'], ['woocommerce-general']);
+
     return $config;
 });
 ```
 
 Available `features` flags (all default `true`): `disable_emojis`,
 `disable_comments`, `disable_xmlrpc`, `disable_global_styles`, `disable_jquery`.
+
+`woocommerce_styles` / `woocommerce_scripts` are only acted on when
+WooCommerce is active (`class_exists('WooCommerce')`): the listed handles are
+dequeued on every page except `is_woocommerce()`, `is_cart()`, `is_checkout()`,
+and `is_account_page()`, via `dequeueWooCommerceAssetsOnNonShopPages()`. This
+covers the bulk of WooCommerce's frontend CSS/JS (~136KB across 4 stylesheets
+plus the sourcebuster/order-attribution scripts), which WooCommerce otherwise
+enqueues on every request regardless of whether the page has any WooCommerce
+content — the theme's own product-card and cart-link markup doesn't need it.
+`wc-blocks-style` is enqueued later by WooCommerce's own notice system
+(outside `wp_enqueue_scripts`) and isn't reliably dequeueable from this hook.
 
 ---
 

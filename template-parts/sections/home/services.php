@@ -69,9 +69,14 @@ $shortName = static function (WP_Post $service) use ($meta): string {
 
          <?php $cta = (string) $meta->fieldOr('services_cta_text', $D); ?>
          <?php if ($cta !== '') : ?>
-            <a class="btn-dark btn-arrow home-services__cta"
+            <a class="btn-dark home-services__cta"
                href="<?= esc_url((string) $meta->fieldOr('services_cta_url', $D) ?: home_url('/our-services/')); ?>">
                <?= esc_html($cta); ?>
+               <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="19" height="8" viewBox="0 0 19 8" fill="none">
+                     <path d="M14.4141 0C15.2799 0.94401 16.0286 1.66178 16.6602 2.15332C17.2917 2.64486 17.8874 3.01107 18.4473 3.25195V3.69141C17.8027 4.00391 17.1777 4.40267 16.5723 4.8877C15.9668 5.37272 15.2441 6.08398 14.4043 7.02148H13.6523C14.2643 5.71289 14.9056 4.70703 15.5762 4.00391H0V3.01758H15.5762C15.0814 2.38607 14.7363 1.91732 14.541 1.61133C14.3457 1.30534 14.056 0.768229 13.6719 0H14.4141Z" fill="white" />
+                  </svg>
+               </span>
             </a>
          <?php endif; ?>
       </div>
@@ -82,7 +87,7 @@ $shortName = static function (WP_Post $service) use ($meta): string {
          foreach ($services as $service) :
             $thumb = get_the_post_thumbnail_url($service, 'large');
             $isWide = in_array($i, $wide, true);
-            ?>
+         ?>
             <article class="svc-card<?= $isWide ? ' svc-card--wide' : ''; ?>" data-animate>
                <a class="svc-card__link" href="<?= esc_url((string) get_permalink($service)); ?>">
                   <span class="svc-card__media">
@@ -122,7 +127,7 @@ $shortName = static function (WP_Post $service) use ($meta): string {
          <?php if ($promoTitle !== '') :
             $promoImg = $meta->imageUrl($meta->field('services_promo_image'), $fallbackImg . 'promo-custom-build.jpg');
             $promoLabel = (string) $meta->fieldOr('services_promo_link_text', $D);
-            ?>
+         ?>
             <article class="svc-card svc-card--promo<?= in_array($i, $wide, true) ? ' svc-card--wide' : ''; ?>">
                <a class="svc-card__link" href="<?= esc_url((string) $meta->fieldOr('services_promo_url', $D) ?: home_url('/build-your-package/')); ?>">
                   <span class="svc-card__media">

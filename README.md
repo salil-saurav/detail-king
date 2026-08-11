@@ -19,7 +19,10 @@ framework and a minimal set of templates.
   module support, and a critical-CSS preload pattern.
 - **`DebloaterService`** — removes WordPress bloat (emojis, head meta, block
   library CSS, comments, XML-RPC, front-end jQuery, dashboard widgets) and
-  enforces the Classic Editor. Filterable via `detailking/theme/debloater/config`.
+  enforces the Classic Editor. When WooCommerce is active, also dequeues its
+  frontend styles/scripts (~136KB CSS + 2 scripts) on every page that isn't a
+  shop/cart/checkout/account page. Filterable via
+  `detailking/theme/debloater/config`.
 - **`SecurityService`** — adds security response headers, removes the
   `X-Pingback` header, blocks `?author=N` username enumeration, hides the REST
   users endpoints from anonymous requests, and returns generic login errors.

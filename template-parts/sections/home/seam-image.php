@@ -39,8 +39,8 @@ if ($image === '') {
 ?>
 <section class="home-seam">
    <div class="home-seam__inner">
-      <figure class="home-seam__figure" data-animate="zoom">
-         <img src="<?= esc_url($image); ?>" alt="" loading="lazy" decoding="async">
+      <figure class="home-seam__figure" data-animate="zoom" data-parallax-scope>
+         <img src="<?= esc_url($image); ?>" alt="" loading="lazy" decoding="async" data-parallax="6">
       </figure>
    </div>
 </section>
