@@ -41,14 +41,30 @@ $watermark = (string) $meta->fieldOr('equip_watermark', $D);
       <?php if ($cards) : ?>
          <div class="about-equip__row">
             <?php foreach ($cards as $card) :
-               $glyph = (string) ($card['equip_glyph'] ?? 'gear');
-               $title = (string) ($card['equip_title'] ?? '');
-               $text  = (string) ($card['equip_text'] ?? '');
+               $iconSlug = sanitize_file_name((string) ($card['equip_icon'] ?? ''));
+               $glyph    = (string) ($card['equip_glyph'] ?? 'gear');
+               $title    = (string) ($card['equip_title'] ?? '');
+               $text     = (string) ($card['equip_text'] ?? '');
+
+               // Cards seeded against the export get a pixel-accurate cropped
+               // PNG (the comp's icons are Segoe UI Symbol glyphs with no
+               // equivalent in the house SVG set). Anything an editor adds
+               // beyond those falls back to the SVG glyph.
+               $iconPath = $iconSlug !== ''
+                  ? get_template_directory() . '/assets/images/about/icons/icon-' . $iconSlug . '.png'
+                  : '';
+               $iconUrl  = $iconPath !== '' && file_exists($iconPath)
+                  ? get_template_directory_uri() . '/assets/images/about/icons/icon-' . $iconSlug . '.png'
+                  : '';
             ?>
                <div class="about-equip__card card-light">
-                  <span class="about-equip__icon" aria-hidden="true">
-                     <?php get_template_part('template-parts/components/glyph', null, ['glyph' => $glyph]); ?>
-                  </span>
+                  <?php if ($iconUrl !== '') : ?>
+                     <img class="about-equip__icon about-equip__icon--img" src="<?= esc_url($iconUrl); ?>" width="70" height="70" alt="" loading="lazy">
+                  <?php else : ?>
+                     <span class="about-equip__icon" aria-hidden="true">
+                        <?php get_template_part('template-parts/components/glyph', null, ['glyph' => $glyph]); ?>
+                     </span>
+                  <?php endif; ?>
                   <?php if ($title !== '') : ?>
                      <h3 class="about-equip__card-title"><?= esc_html($title); ?></h3>
                   <?php endif; ?>

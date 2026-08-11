@@ -87,7 +87,10 @@ class PageMeta_About extends AbstractPageMeta
          $this->field('equip_text', __('Lead Text', 'detailking'), 'textarea', ['rows' => 2]),
          $this->field('equip_watermark', __('Background Watermark', 'detailking')),
          $this->repeater('about_equipment', __('Equipment Cards', 'detailking'), [
-            $this->field('equip_glyph', __('Icon', 'detailking'), 'select', [
+            $this->field('equip_icon', __('Icon Image Slug', 'detailking'), 'text', [
+               'instructions' => __('Filename slug for a pre-cropped icon in assets/images/about/icons/icon-{slug}.png (e.g. "pro-equipment"). Leave blank to fall back to the SVG glyph below.', 'detailking'),
+            ]),
+            $this->field('equip_glyph', __('Fallback SVG Icon', 'detailking'), 'select', [
                'choices'       => $this->glyphChoices(),
                'default_value' => 'gear',
             ]),

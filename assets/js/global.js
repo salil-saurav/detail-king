@@ -58,6 +58,83 @@
 	};
 
 	/* ----------------------------------------------------------
+		Stat counters ([data-count-to]).
+		Every `.dk-stats__value` carries this attribute (hero stats, the
+		homepage's craft stats, About's stats) but nothing ever read it —
+		count-up was named as an interaction in the comp's own layer name
+		("Counters animate count-up when scrolled into view") and never wired
+		up. Parses the server-rendered display string itself (e.g. "4,134+",
+		"2HR", "4.0★") into a numeric target plus whatever non-numeric prefix/
+		suffix it carries, animates 0 → target, and re-applies the exact same
+		formatting so the final frame is pixel-identical to the static markup.
+		---------------------------------------------------------- */
+	const initStatCounters = () => {
+		const items = document.querySelectorAll('[data-count-to]');
+		if (!items.length || prefersReducedMotion || !('IntersectionObserver' in window)) {
+			return; // leave the server-rendered static value in place
+		}
+
+		const parse = (raw) => {
+			const match = raw.match(/^([\d,]*\.?\d+)(.*)$/);
+			if (!match) {
+				return null;
+			}
+			const numberPart = match[1];
+			return {
+				target: parseFloat(numberPart.replace(/,/g, '')),
+				decimals: numberPart.includes('.') ? numberPart.split('.')[1].length : 0,
+				useGrouping: numberPart.includes(','),
+				suffix: match[2],
+			};
+		};
+
+		const format = (value, { decimals, useGrouping, suffix }) => {
+			const fixed = value.toFixed(decimals);
+			const body = useGrouping
+				? Number(fixed).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+				: fixed;
+			return body + suffix;
+		};
+
+		const duration = 1600;
+
+		const animate = (el, parsed) => {
+			let start = null;
+
+			const step = (timestamp) => {
+				if (start === null) {
+					start = timestamp;
+				}
+				const progress = Math.min((timestamp - start) / duration, 1);
+				const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+				el.textContent = format(parsed.target * eased, parsed);
+				if (progress < 1) {
+					requestAnimationFrame(step);
+				}
+			};
+			requestAnimationFrame(step);
+		};
+
+		const observer = new IntersectionObserver((entries, obs) => {
+			entries.forEach((entry) => {
+				if (!entry.isIntersecting) {
+					return;
+				}
+				obs.unobserve(entry.target);
+
+				const parsed = parse(entry.target.getAttribute('data-count-to').trim());
+				if (!parsed) {
+					return; // not a countable value — leave the static text alone
+				}
+				entry.target.textContent = format(0, parsed);
+				animate(entry.target, parsed);
+			});
+		}, { threshold: 0.4 });
+
+		items.forEach((el) => observer.observe(el));
+	};
+
+	/* ----------------------------------------------------------
 		Mobile navigation toggle.
 		Any [data-sp-toggle="<id>"] toggles `.is-open` on #<id>.
 		---------------------------------------------------------- */
@@ -216,6 +293,7 @@
 
 	document.addEventListener('DOMContentLoaded', () => {
 		initScrollAnimations();
+		initStatCounters();
 		initNavToggle();
 		initHeaderSearch();
 	});

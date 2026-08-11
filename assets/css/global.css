@@ -472,8 +472,10 @@ img { max-width: 100%; height: auto; }
 	position: absolute;
 	inset: 0;
 	background:
-		linear-gradient(90deg, rgba(11, 11, 12, .9) 0%, rgba(11, 11, 12, .55) 60%, rgba(11, 11, 12, .2) 100%),
-		radial-gradient(circle at 75% 10%, rgba(40, 34, 15, .85) 0%, rgba(40, 34, 15, 0) 58%);
+		linear-gradient(90deg, rgba(11, 11, 12, .96) 0%, rgba(11, 11, 12, .82) 60%, rgba(11, 11, 12, .58) 100%),
+		radial-gradient(circle at 75% 10%, rgba(40, 34, 15, .85) 0%, rgba(40, 34, 15, 0) 58%),
+		linear-gradient(180deg, rgba(255, 255, 255, .02) .91%, rgba(255, 255, 255, 0) .91%),
+		linear-gradient(90deg, rgba(255, 255, 255, .02) .91%, rgba(255, 255, 255, 0) .91%);
 }
 .page-banner__inner { position: relative; z-index: 1; }
 .page-banner__breadcrumb .breadcrumb {
@@ -674,7 +676,7 @@ img { max-width: 100%; height: auto; }
 /* The separator is a pseudo-element, so the editor's field holds words not glyphs. */
 .dk-marquee__item::after {
 	content: "◆";
-	font-size: .7em;
+	font-size: 30px;
 	opacity: .8;
 }
 @keyframes dk-marquee {

@@ -21,7 +21,7 @@ if (!$stats) {
    return;
 }
 ?>
-<section class="about-stats section--dark glow-gold" data-animate="fade">
+<section class="about-stats section--dark" data-animate="fade">
    <div class="container-dk">
       <ul class="dk-stats dk-stats--craft about-stats__row">
          <?php foreach ($stats as $row) : ?>

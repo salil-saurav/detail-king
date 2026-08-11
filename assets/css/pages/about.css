@@ -65,9 +65,17 @@
 	width: 70px;
 	height: 70px;
 	border-radius: var(--radius-md);
+	margin-block-end: 14px;
+}
+/* The cropped export PNG already contains its own dark badge — no CSS
+   background/colour needed, just the box size. */
+.about-equip__icon--img {
+	display: block;
+	object-fit: cover;
+}
+.about-equip__icon:not(.about-equip__icon--img) {
 	background: var(--bg-dark);
 	color: var(--gold-primary);
-	margin-block-end: 14px;
 }
 .about-equip__card-title {
 	font: 400 32px/1 var(--font-display);
@@ -99,7 +107,7 @@
 	display: block;
 	font: 400 64px/1 var(--font-display);
 	color: transparent;
-	-webkit-text-stroke: 1.5px var(--gold-25);
+	-webkit-text-stroke: 1.5px rgba(201, 161, 74, .55);
 	margin-block-end: 10px;
 }
 .about-approach__step-title {
@@ -111,11 +119,17 @@
 .about-approach__step-text { color: var(--text-muted); }
 
 /* ─────────────── Stats (y 4931.7…5420.4, dark) ─────────────── */
+.about-stats { padding-block: 110px; }
+/* The comp draws a full-width top rule above the row (128:152
+   "HorizontalBorder") with 48px of breathing room before each number —
+   .dk-stats--craft alone doesn't have either, they're specific to this
+   section's own wrapper. */
+.about-stats__row { border-block-start: 1px solid var(--line-white-12); }
+.about-stats__row .dk-stats__item { padding-block-start: 48px; }
 /* Measured off the export: About's numerals land at ~92px, not the
    homepage craft-stats' already-corrected 100px — a different comp value,
    not the same one re-measured. */
 .about-stats__row .dk-stats__value { font-size: 92px; }
-.about-stats { padding-block: 0; }
 
 /* ─────────────── CTA (y 5420.4…6021) ─────────────── */
 .about-cta { padding-block: 110px; }

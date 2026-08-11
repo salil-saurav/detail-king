@@ -15,12 +15,12 @@ defined('ABSPATH') || exit;
  * vs the homepage's own craft-stats set) — same test as HomepageDefaults, same
  * conclusion each time it's checked.
  *
- * Departures from the comp, recorded rather than silently fixed:
- *   - Equipment card 3's glyph (comp: ❖) and card 4's (comp: ◈) have no exact
- *     match in the house glyph set (crown/sparkle/diamond/hexagon/gear/spark/
- *     shield, all SVG rather than the comp's system-font Segoe UI Symbol
- *     characters — see components/glyph.php). Mapped to the closest faceted
- *     shapes: hexagon and diamond.
+ * Equipment card icons are pre-cropped PNGs lifted straight from the export
+ * (assets/images/about/icons/icon-{slug}.png, via `equip_icon`) rather than
+ * the house SVG glyph set — the comp's icons are specific system-font
+ * (Segoe UI Symbol) glyphs with no equivalent shape in components/glyph.php.
+ * `equip_glyph` stays as a fallback for any card an editor adds beyond these
+ * four, which won't have a matching cropped asset.
  */
 final class AboutDefaults implements DefaultsProvider
 {
@@ -60,10 +60,10 @@ final class AboutDefaults implements DefaultsProvider
          'equip_text'      => 'From rotary buffing machines to steam shampooing, we reach every area of your car for a pristine, show-quality finish.',
          'equip_watermark' => 'THE CRAFT',
          'about_equipment' => [
-            ['equip_glyph' => 'gear',    'equip_title' => 'Pro Equipment',       'equip_text' => 'Rotary buffing machines, high-end pads, stain extraction and steam shampooing.'],
-            ['equip_glyph' => 'sparkle', 'equip_title' => 'High-Speed Polishing', 'equip_text' => 'Waxing and paint protection that restores deep, lasting gloss.'],
-            ['equip_glyph' => 'hexagon', 'equip_title' => 'Detail Brushes',       'equip_text' => "Every texture and size to reach every contour of your car's fabric."],
-            ['equip_glyph' => 'diamond', 'equip_title' => 'World-Class Products', 'equip_text' => 'Affordable service without compromising on premium chemistry.'],
+            ['equip_icon' => 'pro-equipment',        'equip_glyph' => 'gear',    'equip_title' => 'Pro Equipment',       'equip_text' => 'Rotary buffing machines, high-end pads, stain extraction and steam shampooing.'],
+            ['equip_icon' => 'high-speed-polishing', 'equip_glyph' => 'sparkle', 'equip_title' => 'High-Speed Polishing', 'equip_text' => 'Waxing and paint protection that restores deep, lasting gloss.'],
+            ['equip_icon' => 'detail-brushes',       'equip_glyph' => 'hexagon', 'equip_title' => 'Detail Brushes',       'equip_text' => "Every texture and size to reach every contour of your car's fabric."],
+            ['equip_icon' => 'world-class-products', 'equip_glyph' => 'diamond', 'equip_title' => 'World-Class Products', 'equip_text' => 'Affordable service without compromising on premium chemistry.'],
          ],
 
          /* ═══════════ OUR APPROACH ═══════════ */
