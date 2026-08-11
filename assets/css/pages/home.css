@@ -1,0 +1,1486 @@
+/* =====================================================================
+   home.css — the twelve homepage sections.
+
+   Vertical paddings are the frame declarations from figma-data/homepage.txt;
+   horizontal geometry comes from .container-dk (1470px, see global.css).
+   Section bands are recorded in figma-data/homepage-sections.txt.
+
+   Bootstrap is used for structure wherever it reaches. What remains here is
+   either a comp measurement its 0.25rem scale cannot express, or a decorative
+   treatment (glass cards, gold rings, outlined wordmarks) that no utility
+   framework has an opinion about.
+   ===================================================================== */
+
+/* ═══════════════════ HERO — band 0…1155.6 ═══════════════════ */
+/* Measured: badge ink starts 200, the stat row ends 1030, band is 1155.6. */
+.home-hero {
+	position: relative;
+	overflow: hidden;
+	padding-block: 195px 126px;
+	background: var(--bg-dark);
+}
+
+.home-hero__bg {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+}
+.home-hero__bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+}
+/* Left-weighted scrim so the copy stays legible over the car, plus the comp's
+   two warm radial glows. */
+.home-hero__bg::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background:
+		linear-gradient(90deg, rgba(11, 11, 12, .94) 0%, rgba(11, 11, 12, .84) 30%, rgba(11, 11, 12, .70) 62%, rgba(11, 11, 12, .74) 100%),
+		radial-gradient(circle at 72% 18%, rgba(40, 34, 15, .85) 0%, rgba(40, 34, 15, 0) 58%);
+}
+
+/* No max-width here. This element also carries .container-dk, whose
+   `margin-inline: auto` centres it — so capping it at 980px centred the hero copy
+   in the viewport, putting it at x=470 instead of the comp's x=225. A 245px error
+   that looked perfectly fine by eye and only surfaced in the band-diff. The copy
+   column is capped on the children that need it (title 870px, text 560px). */
+.home-hero__inner { position: relative; }
+
+/* 90px line pitch, measured: the three lines span design y 270…540. */
+.home-hero__title {
+	margin-block: 30px 0;
+	/* 870px, measured: the heading block spans design x 222…1086 = 864 wide.
+	   A ch-based width wrapped it onto four lines instead of the comp's three. */
+	max-width: 870px;
+	line-height: calc(90 / 88);
+	color: var(--text-white);
+}
+
+.home-hero__text {
+	max-width: 560px;
+	margin-block: 30px 0;
+	color: var(--text-white-75);
+}
+.home-hero__text strong {
+	font-weight: 600;
+	color: var(--text-white);
+}
+
+.home-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 18px;
+	/* Measured: text box ends 630, buttons start 676. */
+	margin-block-start: 46px;
+}
+/* Measured: the comp's hero CTA row is 68 tall; the shared 18px padding gives 56. */
+.home-hero__actions .btn-gold,
+.home-hero__actions .btn-outline-light-dk { padding-block: 24px; }
+
+/* The video pill sits on its own row below the CTA pair in the comp. */
+.home-hero__video {
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+	/* Measured: buttons end 744, the pill starts 770. */
+	margin-block-start: 26px;
+	padding: 10px 26px 10px 10px;
+	border: 1px solid var(--glass-white-15);
+	border-radius: var(--radius-pill);
+	background: var(--glass-white-05);
+	font: 500 18px/1 var(--font-body);
+	color: var(--text-white);
+	backdrop-filter: blur(4px);
+	transition: border-color .25s ease, background-color .25s ease;
+}
+a.home-hero__video:hover,
+a.home-hero__video:focus-visible {
+	border-color: var(--gold-40);
+	background: var(--gold-08);
+	color: var(--text-white);
+}
+.home-hero__videoicon {
+	position: relative;
+	flex: 0 0 40px;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--gold-gradient-btn);
+}
+/* Play triangle, drawn with borders so it needs no asset. */
+.home-hero__videoicon::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 54%;
+	transform: translate(-50%, -50%);
+	border-style: solid;
+	border-width: 6px 0 6px 10px;
+	border-color: transparent transparent transparent var(--bg-dark);
+}
+
+/* ═══════════════════ STAT ROWS (hero + video) ═══════════════════ */
+.dk-stats {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.dk-stats__item {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	/* min-width:0 so a long value cannot stretch the row past its container. */
+	min-width: 0;
+}
+.dk-stats__value { display: block; }
+.dk-stats__label { color: var(--text-white-55); }
+
+.dk-stats--hero {
+	gap: 0;
+	/* Measured: the pill ends 830 and the stat rule sits at 876. */
+	margin-block-start: 46px;
+	padding-block-start: 34px;
+	border-block-start: 1px solid var(--line-white-12);
+}
+.dk-stats--hero .dk-stats__item {
+	padding-inline: 46px;
+	border-inline-start: 1px solid var(--line-white-12);
+}
+/* First item aligns with the copy above it, so no rule and no left padding. */
+.dk-stats--hero .dk-stats__item:first-child {
+	padding-inline-start: 0;
+	border-inline-start: 0;
+}
+/* Measured: "2016" is 40px of cap height = a ~57px Bebas, not heading-xs (46). */
+.dk-stats--hero .dk-stats__value { font-size: 57px; color: var(--gold-primary); }
+
+/* ═══════════════════ MARQUEE — node 59:3063, h 75.6 ═══════════════════ */
+.dk-marquee {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	overflow: hidden;
+	min-height: 75.6px;
+	align-items: center;
+	background: var(--gold-gradient);
+	/* Pull up over the hero's base, as the comp overlaps it at y=1080. */
+	margin-block-start: -75.6px;
+}
+.dk-marquee__track {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: 54px;
+	margin: 0;
+	padding: 0 27px;
+	list-style: none;
+	animation: dk-marquee 42s linear infinite;
+}
+.dk-marquee__item {
+	display: flex;
+	align-items: center;
+	gap: 54px;
+	white-space: nowrap;
+	color: var(--bg-dark);
+}
+/* The separator is a pseudo-element, so the editor's field holds words not glyphs. */
+.dk-marquee__item::after {
+	content: "◆";
+	font-size: .7em;
+	opacity: .8;
+}
+@keyframes dk-marquee {
+	from { transform: translateX(0); }
+	to   { transform: translateX(-100%); }
+}
+.dk-marquee:hover .dk-marquee__track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+	.dk-marquee__track { animation: none; }
+}
+
+/* ═══════════════════ SERVICES — band 1155.6…2953 ═══════════════════ */
+.home-services {
+	position: relative;
+	padding-block: 130px 110px;
+}
+
+.home-services__head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 40px;
+	margin-block-end: 54px;
+}
+.home-services__cta { flex: 0 0 auto; }
+
+/* 3 tracks of 474px with 24px gaps = 1470, the content box exactly.
+   minmax(0,1fr) rather than 474px so the same rule holds at every width. */
+.home-services__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px 24px;
+}
+.svc-card--wide { grid-column: span 2; }
+
+.svc-card {
+	position: relative;
+	min-width: 0;
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	background: var(--bg-dark);
+	box-shadow: var(--shadow-card);
+}
+.svc-card__link {
+	position: relative;
+	display: block;
+	height: 100%;
+	min-height: 396px;
+	color: var(--text-white);
+}
+.svc-card__media {
+	position: absolute;
+	inset: 0;
+	display: block;
+	overflow: hidden;
+}
+.svc-card__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform .7s cubic-bezier(.2, .7, .3, 1);
+}
+/* Comp note: "image zooms on hover, hidden description slides up". */
+.svc-card__link:hover .svc-card__media img,
+.svc-card__link:focus-visible .svc-card__media img {
+	transform: scale(1.06);
+}
+/* Bottom scrim so the title stays legible whatever the photo. */
+.svc-card__media::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, rgba(11, 11, 12, .1) 0%, rgba(11, 11, 12, 0) 38%, rgba(11, 11, 12, .88) 100%);
+}
+
+.svc-card__num,
+.svc-card__arrow {
+	position: absolute;
+	inset-block-start: 22px;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border: 1px solid var(--glass-white-25);
+	border-radius: 50%;
+	background: var(--glass-dark-82);
+	backdrop-filter: blur(4px);
+}
+.svc-card__num   { inset-inline-start: 22px; color: var(--gold-primary); }
+.svc-card__arrow { inset-inline-end: 22px; }
+.svc-card__arrow::before {
+	content: "→";
+	font-family: var(--font-body);
+	font-size: 17px;
+	color: var(--text-white);
+}
+.svc-card__link:hover .svc-card__arrow { background: var(--gold-gradient-btn); border-color: transparent; }
+.svc-card__link:hover .svc-card__arrow::before { color: var(--bg-dark); }
+
+.svc-card__body {
+	position: absolute;
+	inset-block-end: 0;
+	inset-inline: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 26px 28px 24px;
+}
+.svc-card__title { color: var(--text-white); }
+.svc-card__cta { color: var(--gold-primary); }
+
+/* Feature strip closing the section. */
+.home-services__features {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 30px 70px;
+	margin: 74px 0 0;
+	padding: 0;
+	list-style: none;
+}
+.svc-feature {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	min-width: 0;
+}
+.svc-feature__icon {
+	flex: 0 0 26px;
+	width: 26px;
+	height: 26px;
+	margin-block-start: 4px;
+	border-radius: 50%;
+	background: var(--gold-gradient);
+	box-shadow: var(--shadow-gold-sm);
+}
+.svc-feature__body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.svc-feature__text { color: var(--text-muted); }
+
+/* ═══════════════════ SEAM IMAGE — band 2953…3643.2 ═══════════════════ */
+.home-seam {
+	/* One gradient stop at 52%, exactly as the comp's frame fill declares it. */
+	background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg-light) 52%, var(--bg-dark) 52%, var(--bg-dark) 100%);
+	padding-block: 130px 0;
+}
+.home-seam__inner {
+	max-width: var(--content-max);
+	margin-inline: auto;
+	padding-inline: 40px;
+}
+.home-seam__figure {
+	max-width: 1088px;
+	margin: 0 auto;
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	box-shadow: var(--shadow-dark-xl);
+}
+.home-seam__figure img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 1088 / 562;
+	object-fit: cover;
+}
+
+/* ═══════════════════ VIDEO — band 3643.2…4970.2 ═══════════════════ */
+.home-video {
+	position: relative;
+	padding-block: 80px 83px;
+	background: var(--bg-dark);
+}
+
+/* Comp: "WATCH OBSESSION" occupies design x 222…750, so the measure has to cap
+   near 620 or the heading sits on one line instead of the comp's two. */
+.home-video .section-heading__title { max-width: 620px; }
+
+.home-video__frame {
+	position: relative;
+	/* Measured: heading box ends 305, frame starts 327. */
+	margin-block-start: 22px;
+	border: 1px solid var(--line-white-08);
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	background: var(--bg-dark-card);
+}
+.home-video__media { margin: 0; }
+.home-video__media img {
+	display: block;
+	width: 100%;
+	height: auto;
+	/* Measured: frame spans design y 327…992 = 665 tall. */
+	aspect-ratio: 1470 / 665;
+	object-fit: cover;
+}
+
+.home-video__badge,
+.home-video__meta,
+.home-video__caption {
+	position: absolute;
+	z-index: 2;
+	color: var(--text-white-82);
+}
+.home-video__badge { inset-block-start: 30px; inset-inline-start: 34px; }
+.home-video__meta  { inset-block-start: 30px; inset-inline-end: 34px; color: var(--text-white-55); }
+.home-video__caption { inset-block-end: 30px; inset-inline-start: 34px; }
+
+/* The comp's badge carries a small filled dot before the label. */
+.home-video__badge::before {
+	content: "";
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	margin-inline-end: 10px;
+	border-radius: 50%;
+	background: var(--gold-primary);
+	vertical-align: middle;
+}
+
+.home-video__play {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	background: var(--gold-gradient-btn);
+	box-shadow: var(--shadow-gold);
+	transition: transform .3s ease;
+}
+a.home-video__play:hover { transform: translate(-50%, -50%) scale(1.06); }
+.home-video__play > span {
+	display: block;
+	border-style: solid;
+	border-width: 13px 0 13px 21px;
+	border-color: transparent transparent transparent var(--bg-dark);
+	margin-inline-start: 6px;
+}
+/* Comp note: "pulsing play". */
+a.home-video__play::before {
+	content: "";
+	position: absolute;
+	inset: -10px;
+	border-radius: 50%;
+	border: 1px solid var(--gold-40);
+	animation: dk-pulse 2.6s ease-out infinite;
+}
+@keyframes dk-pulse {
+	0%   { transform: scale(.9); opacity: .9; }
+	100% { transform: scale(1.35); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+	a.home-video__play::before { animation: none; }
+}
+
+.home-video__statswrap {
+	position: relative;
+	/* Measured: frame ends 992, the stat values' box starts 1104. */
+	margin-block-start: 112px;
+	display: flex;
+	align-items: center;
+}
+.home-video__statswrap .dk-watermark {
+	inset-block-start: -8px;
+	inset-inline-start: 50%;
+	transform: translateX(-50%);
+	font-size: 190px;
+}
+.dk-stats--craft {
+	position: relative;
+	z-index: 1;
+	gap: 0;
+}
+/* Measured: the craft numerals are 70px of cap height = a ~100px Bebas, not the
+   60px heading-lg they were using. */
+.dk-stats--craft .dk-stats__value { font-size: 100px; }
+.dk-stats--craft .dk-stats__item {
+	flex: 1 1 0;
+	padding-inline: 46px;
+	border-inline-start: 1px solid var(--line-white-12);
+}
+.dk-stats--craft .dk-stats__item:first-child {
+	padding-inline-start: 0;
+	border-inline-start: 0;
+}
+
+/* ═══════════════════ WHY US — band 4970.2…5795.1 ═══════════════════ */
+.home-why {
+	position: relative;
+	overflow: hidden;
+	padding-block: 115px;
+}
+.home-why__watermark {
+	inset-block-end: 40px;
+	inset-inline-start: -30px;
+	font-size: 200px;
+}
+
+.home-why__cols {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 420px minmax(0, 1fr);
+	align-items: center;
+	gap: 40px;
+	margin-block-start: 56px;
+}
+
+.why-features {
+	display: flex;
+	flex-direction: column;
+	gap: 34px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.why-feature {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+	min-width: 0;
+}
+.why-feature__body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.why-feature__text { color: var(--text-muted); }
+
+/* Fixed basis, and never conditional — a missing glyph must not delete a flex
+   child, because losing it silently re-aligns everything beside it. */
+.why-feature__icon {
+	flex: 0 0 54px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 54px;
+	height: 54px;
+	border-radius: 14px;
+	background: var(--bg-dark);
+	color: var(--gold-primary);
+}
+
+/* The left column reads inward: text right-aligned, icon after the copy. */
+.why-features--left .why-feature { flex-direction: row-reverse; text-align: right; }
+.why-features--left .why-feature__body { align-items: flex-end; }
+
+.home-why__figure {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+}
+.home-why__photo {
+	position: relative;
+	z-index: 2;
+	width: 74%;
+	margin: 0;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	overflow: hidden;
+	border: 10px solid var(--bg-light);
+	box-shadow: var(--shadow-section);
+}
+.home-why__photo img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Comp note: "dashed gold rings slowly rotate around the centre car". */
+.home-why__ring {
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	border: 1px dashed var(--gold-30);
+	animation: dk-spin 46s linear infinite;
+}
+.home-why__ring--inner {
+	inset: 9%;
+	border-style: solid;
+	border-color: rgba(11, 11, 12, .06);
+	animation-direction: reverse;
+	animation-duration: 64s;
+}
+@keyframes dk-spin {
+	to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.home-why__ring { animation: none; }
+}
+
+.home-why__badge {
+	position: absolute;
+	inset-block-start: 8%;
+	inset-inline-start: 50%;
+	transform: translateX(-50%);
+	z-index: 3;
+	padding: 10px 26px;
+	border-radius: var(--radius-pill);
+	background: var(--bg-dark);
+	color: var(--gold-primary);
+	white-space: nowrap;
+}
+
+/* ═══════════════════ BEFORE / AFTER — band 5795.1…6515.1 ═══════════════════ */
+/* The frame declares `70px 225px 19px`, but the slider ends at design y 650 in a
+   720 band — so the bottom inset is 70, matching the top, not 19. */
+.home-ba {
+	padding-block: 70px;
+	background: var(--bg-dark);
+}
+.home-ba__inner {
+	display: grid;
+	/* Measured: copy column 598, slider 820, gap 52 (598+52+820 = 1470). */
+	grid-template-columns: minmax(0, 598fr) minmax(0, 820fr);
+	align-items: center;
+	gap: 52px;
+}
+
+.home-ba__presets {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	margin-block-start: 34px;
+	/* The comp wraps these 2 + 1; a max-width does that without a hard break. */
+	max-width: 400px;
+}
+.home-ba__preset {
+	padding: 13px 26px;
+	border: 1px solid var(--glass-white-25);
+	border-radius: var(--radius-pill);
+	background: var(--glass-white-05);
+	font: 400 17px/1 var(--font-body);
+	color: var(--text-white-82);
+	cursor: pointer;
+	transition: border-color .25s ease, background-color .25s ease, color .25s ease;
+}
+.home-ba__preset:hover { border-color: var(--gold-40); }
+.home-ba__preset.is-active {
+	background: var(--gold-gradient-btn);
+	border-color: transparent;
+	color: var(--bg-dark);
+}
+
+/* --- the comparison widget --- */
+.dk-compare {
+	position: relative;
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	/* Measured: slider spans design y 70…650 = 580 tall at 820 wide. */
+	aspect-ratio: 820 / 580;
+	background: var(--bg-dark-card);
+	touch-action: pan-y;
+}
+.dk-compare__img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+/* The before layer is clipped to the divider position. */
+/* Clip a full-size layer rather than shrinking a narrower one.
+   Sizing this box to the divider position and stretching the image inside it to
+   100vw meant the two halves showed different crops of the same photo, because
+   the widget is 820px wide and the viewport is 1920 — the "before" side was
+   effectively a different zoom level. clip-path leaves the image at the widget's
+   own size, so both halves stay registered at any divider position. */
+.dk-compare__before {
+	position: absolute;
+	inset: 0;
+	clip-path: inset(0 calc(100% - var(--dk-compare-pos, 60%)) 0 0);
+}
+/* When both sides are the same photo — which is how the comp itself fakes it —
+   grade the before side so the widget still reads as a comparison. */
+.dk-compare--faux .dk-compare__img--before {
+	filter: saturate(.45) brightness(.86) contrast(.92);
+}
+
+.dk-compare__label {
+	position: absolute;
+	inset-block-start: 26px;
+	z-index: 3;
+	padding: 9px 20px;
+	border-radius: var(--radius-pill);
+	background: var(--glass-dark-82);
+	color: var(--text-white-82);
+	backdrop-filter: blur(4px);
+	font-size: 15px;
+}
+.dk-compare__label--before { inset-inline-start: 26px; }
+.dk-compare__label--after  { inset-inline-end: 26px; }
+
+.dk-compare__divider {
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: var(--dk-compare-pos, 60%);
+	z-index: 4;
+	width: 2px;
+	margin-inline-start: -1px;
+	background: var(--gold-gradient);
+	pointer-events: none;
+}
+.dk-compare__handle {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: var(--dk-compare-pos, 60%);
+	z-index: 5;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 3px;
+	width: 54px;
+	height: 54px;
+	border-radius: 50%;
+	background: var(--gold-gradient-btn);
+	box-shadow: var(--shadow-gold);
+	pointer-events: none;
+}
+.dk-compare__handle::before,
+.dk-compare__handle::after {
+	content: "";
+	width: 2px;
+	height: 16px;
+	border-radius: 2px;
+	background: var(--bg-dark);
+}
+
+/* The range input IS the control — it sits invisibly over the whole widget, so
+   the slider is draggable, keyboard-operable and screen-reader-labelled without
+   any of that being reimplemented in JS. */
+.dk-compare__range {
+	position: absolute;
+	inset: 0;
+	z-index: 6;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	opacity: 0;
+	cursor: ew-resize;
+	appearance: none;
+	background: transparent;
+}
+.dk-compare__range::-webkit-slider-thumb {
+	appearance: none;
+	width: 54px;
+	height: 100%;
+}
+.dk-compare__range:focus-visible { outline: 2px solid var(--gold-primary); outline-offset: 3px; }
+
+/* ═══════════════════ MEMBERSHIP — band 6515.1…7743.1 ═══════════════════ */
+.home-membership {
+	position: relative;
+	overflow: hidden;
+	padding-block: 130px 79px;
+}
+.home-membership__watermark {
+	inset-block-start: 10px;
+	inset-inline-start: -40px;
+	font-size: 200px;
+}
+
+.home-membership__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	align-items: center;
+	gap: 30px;
+	margin-block-start: 54px;
+}
+
+.plan-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	/* Measured: standard card 660 tall, featured 700. */
+	min-height: 660px;
+	min-width: 0;
+	padding: 42px 38px 38px;
+	border-radius: var(--radius-lg);
+	background: #fff;
+	box-shadow: var(--shadow-card);
+}
+/* The featured card is taller and dark, and lifts out of the row. */
+.plan-card--featured {
+	min-height: 700px;
+	padding-block: 56px 46px;
+	background: var(--bg-dark);
+	color: var(--text-white-75);
+	box-shadow: var(--shadow-dark);
+}
+.plan-card--featured .plan-card__title { color: var(--text-white); }
+
+.plan-card__badge {
+	position: absolute;
+	inset-block-start: -20px;
+	inset-inline-start: 50%;
+	transform: translateX(-50%);
+	padding: 10px 26px;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	color: var(--bg-dark);
+	white-space: nowrap;
+	box-shadow: var(--shadow-gold-sm);
+}
+
+.plan-card__head { display: flex; flex-direction: column; gap: 8px; }
+.plan-card__tagline { color: var(--text-muted); }
+.plan-card--featured .plan-card__tagline { color: var(--text-white-55); }
+
+.plan-card__price {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-block: 30px 30px;
+}
+.plan-card__currency {
+	font: 400 22px/1 var(--font-body);
+	color: var(--gold-dark);
+}
+.plan-card--featured .plan-card__currency { color: var(--gold-primary); }
+.plan-card__period { color: var(--text-muted); }
+.plan-card--featured .plan-card__period { color: var(--text-white-55); }
+
+.plan-card__features {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin: 0 0 34px;
+	padding: 0;
+	list-style: none;
+}
+.plan-card__features li {
+	display: flex;
+	align-items: flex-start;
+	gap: 13px;
+	min-width: 0;
+}
+.plan-card__tick {
+	position: relative;
+	flex: 0 0 22px;
+	width: 22px;
+	height: 22px;
+	margin-block-start: 4px;
+	border: 1px solid var(--gold-45);
+	border-radius: 50%;
+}
+.plan-card__tick::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 6px;
+	inset-inline-start: 6px;
+	width: 8px;
+	height: 4px;
+	border-inline-start: 1.5px solid var(--gold-dark);
+	border-block-end: 1.5px solid var(--gold-dark);
+	transform: rotate(-45deg);
+}
+.plan-card--featured .plan-card__tick::before {
+	border-color: var(--gold-primary);
+}
+
+/* Pushed to the bottom so buttons align across cards of unequal content. */
+.plan-card__cta { margin-block-start: auto; width: 100%; }
+
+.home-membership__footnote {
+	margin-block-start: 34px;
+	text-align: center;
+	color: var(--text-muted);
+}
+
+/* ═══════════════════ SHOP — band 7743.1…8724.8 ═══════════════════ */
+.home-shop {
+	position: relative;
+	overflow: hidden;
+	padding-block: 70px;
+	background: var(--bg-light-alt);
+}
+.home-shop__watermark {
+	inset-block-end: 20px;
+	inset-inline-end: -30px;
+	font-size: 190px;
+}
+.home-shop__head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 40px;
+	/* Measured: the head row's box ends 236 and the cards start 337. */
+	margin-block-end: 101px;
+}
+
+/* --- shared horizontal rail (shop + reviews) --- */
+.dk-rail { position: relative; }
+.dk-rail__track {
+	display: flex;
+	gap: 28px;
+	margin: 0;
+	padding: 0 0 6px;
+	list-style: none;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	scroll-behavior: smooth;
+}
+.dk-rail__track::-webkit-scrollbar { display: none; }
+.dk-rail__item {
+	/* 358px measured, not a quarter of the container: the comp's fourth
+	   card is deliberately clipped, which is what signals the rail scrolls. */
+	flex: 0 0 358px;
+	min-width: 0;
+	scroll-snap-align: start;
+}
+.dk-rail--reviews .dk-rail__item { flex-basis: calc((100% - 2 * 28px) / 3); }
+
+.dk-rail__nav {
+	display: flex;
+	justify-content: flex-end;
+	gap: 14px;
+	/* Measured: 34px below the cards, circles 61px across. */
+	margin-block-start: 34px;
+}
+.dk-rail__btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 60px;
+	border: 1px solid rgba(11, 11, 12, .18);
+	border-radius: 50%;
+	background: transparent;
+	color: var(--text-dark);
+	font-size: 19px;
+	cursor: pointer;
+	transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+.dk-rail__btn:hover {
+	background: var(--bg-dark);
+	border-color: var(--bg-dark);
+	color: var(--gold-primary);
+}
+.dk-rail__btn[disabled] { opacity: .35; cursor: default; }
+
+/* --- product card --- */
+.prod-card {
+	display: flex;
+	flex-direction: column;
+	/* Measured: card spans design y 8073…8553 = 480 tall. */
+	min-height: 480px;
+	height: 100%;
+	min-width: 0;
+	border-radius: var(--radius-md);
+	overflow: hidden;
+	background: #fff;
+	box-shadow: var(--shadow-card);
+}
+.prod-card__media {
+	position: relative;
+	display: block;
+	/* Measured: card 358 wide, image 250 tall = 1.432. */
+	aspect-ratio: 358 / 250;
+	overflow: hidden;
+}
+.prod-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.prod-card__badge {
+	position: absolute;
+	inset-block-start: 18px;
+	inset-inline-start: 18px;
+	padding: 7px 18px;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	color: var(--bg-dark);
+	font-size: 15px;
+}
+.prod-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	flex: 1 1 auto;
+	padding: 24px 24px 26px;
+}
+.prod-card__title a { color: var(--text-dark); }
+.prod-card__title a:hover { color: var(--gold-dark); }
+.prod-card__text { color: var(--text-muted); }
+.prod-card__foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	margin-block-start: auto;
+	padding-block-start: 8px;
+}
+.prod-card__price { color: var(--text-dark); }
+.prod-card__price .woocommerce-Price-currencySymbol { font-size: .7em; vertical-align: top; }
+.prod-card__add { padding: 12px 20px; font-size: 16px; }
+
+/* ═══════════════════ TESTIMONIALS — band 8724.8…9605.2 ═══════════════════ */
+.home-reviews { padding-block: 100px; }
+.home-reviews__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 40px;
+	/* Measured: the summary card ends 300 and the review cards start 350. */
+	margin-block-end: 50px;
+}
+
+.google-summary {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 16px;
+	/* Measured: the card spans design y 90…300 = 210 tall. */
+	min-height: 210px;
+	min-width: 320px;
+	padding: 28px 32px;
+	border-radius: var(--radius-md);
+	background: #fff;
+	box-shadow: var(--shadow-card);
+}
+.google-summary__brand { display: flex; align-items: center; gap: 12px; }
+.google-summary__score {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-template-areas: "value stars" "value note";
+	align-items: center;
+	column-gap: 16px;
+}
+.google-summary__value { grid-area: value; }
+.google-summary .dk-stars { grid-area: stars; }
+.google-summary__note { grid-area: note; color: var(--text-muted); }
+
+.dk-stars { display: inline-flex; gap: 3px; color: var(--star-yellow); }
+
+/* --- review card --- */
+.review-card {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	/* Measured: cards span design y 350…690 within the band = 340 tall. */
+	min-height: 340px;
+	height: 100%;
+	min-width: 0;
+	padding: 30px 32px 32px;
+	border-radius: var(--radius-md);
+	background: #fff;
+	box-shadow: var(--shadow-card);
+}
+.review-card__top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 14px;
+}
+.review-card__text {
+	margin: 0;
+	color: var(--text-dark);
+	/* Pushes the footer down so avatars line up across cards of unequal length. */
+	flex: 1 1 auto;
+}
+.review-card__foot { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.review-card__avatar {
+	flex: 0 0 46px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	background: var(--bg-dark);
+	color: var(--gold-primary);
+	font-size: 15px;
+}
+.review-card__who { display: flex; flex-direction: column; min-width: 0; }
+.review-card__meta { color: var(--text-muted); }
+
+/* ═══════════════════ INSTAGRAM — band 9605.2…10215.1 ═══════════════════ */
+.home-instagram {
+	position: relative;
+	overflow: hidden;
+	padding-block: 67px 0;
+	background: var(--bg-dark);
+}
+.home-instagram__watermark {
+	inset-block-start: 30px;
+	inset-inline-start: 50%;
+	transform: translateX(-50%);
+	font-size: 150px;
+}
+/* Measured: 75px of cap height, which is a ~106px Bebas — larger than any other
+   section heading on the page. */
+.home-instagram .section-heading__title { font-size: 106px; }
+
+.home-instagram__head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 40px;
+	/* Measured: heading box ends ~220, the image row starts 290. */
+	padding-block-end: 70px;
+}
+
+/* Full-bleed row, per the comp note "no container". Equal columns at any count. */
+.home-instagram__row {
+	display: grid;
+	grid-template-columns: repeat(var(--dk-ig-count, 6), minmax(0, 1fr));
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.home-instagram__cell { min-width: 0; }
+.home-instagram__cell img,
+.home-instagram__cell a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.home-instagram__cell img {
+	/* Measured: the row is 320 tall for 320-wide cells. */
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	transition: transform .6s ease, filter .4s ease;
+}
+.home-instagram__cell img:hover { transform: scale(1.05); }
+
+/* ═══════════════════ BOOKING — band 10215.1…11267.5 ═══════════════════ */
+.home-booking {
+	position: relative;
+	overflow: hidden;
+	padding-block: 90px;
+	background: var(--bg-dark);
+	/* Comp note: "three fog/smoke layers drift slowly behind". */
+	background-image:
+		radial-gradient(60% 50% at 18% 30%, rgba(40, 34, 15, .55) 0%, rgba(40, 34, 15, 0) 100%),
+		radial-gradient(50% 40% at 80% 80%, rgba(25, 21, 7, .6) 0%, rgba(25, 21, 7, 0) 100%);
+}
+.home-booking__inner {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+	align-items: start;
+	gap: 70px;
+}
+.home-booking__label { margin-block: 40px 0; }
+
+.home-booking__dial {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100px;
+	height: 100px;
+	margin-block-start: 26px;
+	border-radius: 50%;
+	background: var(--gold-gradient-btn);
+	box-shadow: var(--shadow-gold);
+	color: var(--bg-dark);
+	font-size: 26px;
+	transition: transform .3s ease;
+}
+.home-booking__dial:hover { transform: translateY(-3px) scale(1.04); color: var(--bg-dark); }
+
+.home-booking__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 30px;
+	margin: 54px 0 0;
+	padding: 0;
+	list-style: none;
+}
+.home-booking__chips li { display: flex; align-items: center; gap: 12px; }
+.home-booking__chips a,
+.home-booking__chips span:not(.home-booking__chipicon) { color: var(--text-white-75); }
+.home-booking__chips a:hover { color: var(--gold-primary); }
+.home-booking__chipicon {
+	flex: 0 0 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border: 1px solid var(--line-white-12);
+	border-radius: 50%;
+	color: var(--gold-primary);
+}
+
+.home-booking__card {
+	/* Measured: the card spans design y 90…956 = 866 tall. */
+	min-height: 866px;
+	padding: 44px 46px 46px;
+	border: 1px solid var(--line-white-08);
+	border-radius: var(--radius-lg);
+	background: var(--bg-dark-card);
+	box-shadow: var(--shadow-dark-xl);
+}
+.home-booking__cardtitle { margin-block-end: 30px; color: var(--text-white); }
+
+/* --- form fields --- */
+.dk-form__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px 24px;
+}
+.dk-field { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.dk-field__label { color: var(--text-white-70); }
+.dk-field__input {
+	width: 100%;
+	min-height: 56px;
+	padding: 14px 18px;
+	border: 1px solid var(--line-white-12);
+	border-radius: 12px;
+	background: var(--glass-white-04);
+	color: var(--text-white);
+	font: 300 17px/1.4 var(--font-body);
+	transition: border-color .2s ease, background-color .2s ease;
+}
+.dk-field__input::placeholder { color: var(--text-white-35); }
+.dk-field__input:focus {
+	outline: none;
+	border-color: var(--gold-45);
+	background: var(--glass-white-08);
+}
+/* Dark UI needs this or the native date/time pickers render black-on-black. */
+.dk-field__input[type="date"],
+.dk-field__input[type="time"] { color-scheme: dark; }
+select.dk-field__input {
+	appearance: none;
+	padding-inline-end: 44px;
+	background-image: linear-gradient(45deg, transparent 50%, var(--gold-primary) 50%), linear-gradient(135deg, var(--gold-primary) 50%, transparent 50%);
+	background-position: calc(100% - 22px) calc(50% + 2px), calc(100% - 16px) calc(50% + 2px);
+	background-size: 6px 6px, 6px 6px;
+	background-repeat: no-repeat;
+}
+
+.dk-form__submit { width: 100%; margin-block-start: 28px; }
+.dk-form__status { margin-block: 14px 0; color: var(--text-white-70); }
+.dk-form__status:empty { display: none; }
+/* Honeypot — off-screen rather than display:none, which some bots detect. */
+.dk-form__trap {
+	position: absolute;
+	inset-inline-start: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+/* ═══════════════════ FAQ — band 11267.5…12303.1 ═══════════════════ */
+.home-faq {
+	position: relative;
+	overflow: hidden;
+	/* 15px, not the declared 90: the comp's accordion reaches y=1032 in a 1036
+	   band, so its real bottom inset is ~4px and the declaration is not what the
+	   frame lays out. Matching the measured 99px rows is the priority. */
+	padding-block: 90px 15px;
+}
+.home-faq__watermark {
+	inset-block-end: 60px;
+	inset-inline-end: -20px;
+	font-size: 200px;
+}
+.home-faq__inner {
+	display: grid;
+	/* Measured: panel 664x620, so 664 + 70 + 736 = 1470. */
+	grid-template-columns: minmax(0, 664fr) minmax(0, 736fr);
+	align-items: start;
+	gap: 70px;
+}
+
+.home-faq__panel {
+	position: relative;
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	box-shadow: var(--shadow-section);
+}
+.home-faq__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	/* Measured: the panel spans design y 89…798 = 709 tall at 664 wide. */
+	aspect-ratio: 664 / 709;
+	object-fit: cover;
+}
+.home-faq__overlay {
+	position: absolute;
+	inset-block-end: 22px;
+	inset-inline: 22px;
+	padding: 20px 24px;
+	border-radius: var(--radius-md);
+	background: var(--glass-dark-93);
+	color: var(--text-white-82);
+	backdrop-filter: blur(6px);
+}
+
+/* --- accordion --- */
+/* Comp: "QUESTIONS," and "ANSWERED" are on separate lines. */
+.home-faq .section-heading__title { max-width: 520px; }
+
+.dk-accordion {
+	display: flex;
+	flex-direction: column;
+	/* Measured: 18px between items. */
+	gap: 18px;
+	margin-block-start: 40px;
+}
+.dk-accordion__item {
+	border-radius: var(--radius-md);
+	background: #fff;
+	box-shadow: var(--shadow-card);
+	overflow: hidden;
+}
+.dk-accordion__item[open] {
+	background: #FDFBF5;
+	box-shadow: 0 0 0 1px var(--gold-30), var(--shadow-card);
+}
+.dk-accordion__summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	/* Measured: a closed row is 99 tall; 24px padding gave 86. */
+	padding: 30px 28px;
+	cursor: pointer;
+	list-style: none;
+}
+/* Hide the native disclosure triangle in both engines. */
+.dk-accordion__summary::-webkit-details-marker { display: none; }
+.dk-accordion__summary::marker { content: ""; }
+
+.dk-accordion__toggle {
+	position: relative;
+	flex: 0 0 38px;
+	width: 38px;
+	height: 38px;
+	border: 1px solid rgba(11, 11, 12, .2);
+	border-radius: 50%;
+	transition: background-color .25s ease, border-color .25s ease;
+}
+/* The + / x mark: two bars, one rotated 90deg, rotated together when open. */
+.dk-accordion__toggle::before,
+.dk-accordion__toggle::after {
+	content: "";
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	width: 13px;
+	height: 1.5px;
+	background: var(--text-dark);
+	transform: translate(-50%, -50%);
+	transition: transform .25s ease, background-color .25s ease;
+}
+.dk-accordion__toggle::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+.dk-accordion__item[open] .dk-accordion__toggle {
+	background: var(--gold-gradient-btn);
+	border-color: transparent;
+}
+.dk-accordion__item[open] .dk-accordion__toggle::before { transform: translate(-50%, -50%) rotate(45deg); }
+.dk-accordion__item[open] .dk-accordion__toggle::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.dk-accordion__answer {
+	padding: 0 28px 26px;
+	color: var(--text-muted);
+}
+.dk-accordion__answer > :first-child { margin-block-start: 0; }
+.dk-accordion__answer > :last-child { margin-block-end: 0; }
+
+/* =====================================================================
+   RESPONSIVE — derived, not designed. The comp is desktop-only at 1920.
+   Rules: collapse multi-column grids in reading order, keep media above
+   copy, step the display type down, never let anything overflow.
+   ===================================================================== */
+
+@media (max-width: 1399.98px) {
+	.home-hero { padding-block: 170px 90px; }
+	.home-hero__title { font-size: 92px; }
+	.home-services, .home-membership { padding-block: 100px 80px; }
+	.home-why { padding-block: 90px; }
+	.home-why__cols { grid-template-columns: minmax(0, 1fr) 330px minmax(0, 1fr); }
+	.dk-stats--hero .dk-stats__item,
+	.dk-stats--craft .dk-stats__item { padding-inline: 30px; }
+	.dk-watermark { font-size: 150px !important; }
+	.home-booking__card { padding: 34px 32px 36px; }
+}
+
+@media (max-width: 1199.98px) {
+	.home-hero__title { font-size: 78px; }
+	.section-heading__title.display-md,
+	.section-heading__title.display-sm { font-size: 64px; }
+
+	/* Reviews: the summary card drops under the heading rather than squeezing it. */
+	.home-reviews__head,
+	.home-services__head,
+	.home-shop__head,
+	.home-instagram__head {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.google-summary { width: 100%; }
+
+	.dk-rail__item { flex-basis: calc((100% - 2 * 24px) / 3); }
+	.dk-rail--reviews .dk-rail__item { flex-basis: calc((100% - 24px) / 2); }
+
+	.home-instagram__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 991.98px) {
+	.home-hero { padding-block: 150px 80px; }
+	.home-hero__title { font-size: 64px; }
+	.section-heading__title.display-md,
+	.section-heading__title.display-sm { font-size: 54px; }
+
+	/* Services: 3 tracks → 2, and the wide cards stop spanning so a row cannot
+	   be left with a single half-width orphan. */
+	.home-services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.svc-card--wide { grid-column: span 2; }
+	.svc-card__link { min-height: 320px; }
+
+	/* Why-us: the figure moves above the two feature columns, and the left column
+	   stops reading right-to-left, which only made sense flanking the image. */
+	.home-why__cols {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 46px;
+	}
+	.home-why__figure { order: -1; max-width: 380px; margin-inline: auto; }
+	.why-features--left .why-feature { flex-direction: row; text-align: left; }
+	.why-features--left .why-feature__body { align-items: flex-start; }
+
+	.home-ba__inner,
+	.home-booking__inner,
+	.home-faq__inner {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 44px;
+	}
+	.home-ba__viewer { order: -1; }
+	.home-faq__panel { order: -1; max-width: 520px; }
+	.home-ba__presets { max-width: none; }
+
+	.home-membership__grid { grid-template-columns: minmax(0, 1fr); max-width: 480px; margin-inline: auto; }
+	.plan-card--featured { padding-block: 46px 40px; }
+
+	.dk-stats--hero,
+	.dk-stats--craft { gap: 26px 0; }
+	.dk-stats--hero .dk-stats__item { flex: 1 0 40%; }
+	.dk-stats--craft .dk-stats__item { flex: 1 0 40%; }
+	/* Once the row wraps, the rules no longer separate columns — they land in
+	   the middle of a stack. Show them only on the items that still have a
+	   sibling to their left. */
+	.dk-stats--hero .dk-stats__item:nth-child(odd),
+	.dk-stats--craft .dk-stats__item:nth-child(odd) {
+		padding-inline-start: 0;
+		border-inline-start: 0;
+	}
+
+	.home-instagram__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.home-seam { padding-block-start: 90px; }
+}
+
+@media (max-width: 767.98px) {
+	.home-hero { padding-block: 130px 70px; }
+	.home-hero__title { font-size: 52px; }
+	.home-hero__text { font-size: 17px; }
+	.section-heading__title.display-md,
+	.section-heading__title.display-sm,
+	.section-heading__title.heading-xl { font-size: 44px; }
+
+	.home-services, .home-membership, .home-faq, .home-booking, .home-reviews {
+		padding-block: 70px;
+	}
+
+	.home-services__grid { grid-template-columns: minmax(0, 1fr); }
+	.svc-card--wide { grid-column: auto; }
+
+	.dk-rail__item,
+	.dk-rail--reviews .dk-rail__item { flex-basis: 84%; }
+
+	.dk-form__grid { grid-template-columns: minmax(0, 1fr); }
+	.home-booking__card { padding: 26px 22px 30px; }
+
+	.home-services__features { gap: 26px; }
+	.dk-marquee { min-height: 60px; margin-block-start: -60px; }
+	.dk-marquee__track { gap: 34px; }
+	.dk-marquee__item { gap: 34px; }
+}
+
+@media (max-width: 575.98px) {
+	.home-hero__title { font-size: 42px; }
+	.home-hero__actions { flex-direction: column; align-items: stretch; }
+	.home-hero__actions .btn-gold,
+	.home-hero__actions .btn-outline-light-dk { width: 100%; }
+	.dk-watermark { font-size: 88px !important; }
+	.home-instagram__row { grid-template-columns: minmax(0, 1fr); }
+	.plan-card { padding: 32px 24px 30px; }
+	.dk-stats--hero .dk-stats__item,
+	.dk-stats--craft .dk-stats__item { flex: 1 0 100%; padding-inline: 0; border-inline-start: 0; }
+}

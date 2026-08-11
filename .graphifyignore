@@ -1,0 +1,18 @@
+# graphify corpus scoping for the detailking theme.
+# Keep in step with the "graphify" section of the project CLAUDE.md.
+# Without these, the graph fills with third-party and empty-file noise.
+
+# Composer deps — 388 of the theme's 494 PHP files are intervention/image.
+# Already covered by .gitignore; repeated here so scoping survives if that changes.
+/vendor/
+
+# Bundled Bootstrap 5.3.8 dist. bootstrap.bundle.min.js alone produced ~344
+# single-letter minifier-symbol nodes — 46% of the first build, all junk, and
+# the source of every edge-collapse warning in the health check.
+/assets/lib/
+
+# WordPress "silence is golden" stubs, 28-30 bytes each (27 of them). They add
+# one singleton community apiece and carry no relationships.
+# The theme-root index.php is a real fallback template — re-include it.
+index.php
+!/index.php

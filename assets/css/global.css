@@ -1,0 +1,500 @@
+/* =====================================================================
+   Detail King — global.css
+   Design tokens, type scale, project spacing utilities and shared
+   components. Loaded on every page, after Bootstrap.
+
+   The comp has NO Figma variables (get_variable_defs → {}), so every
+   token below is *derived by measurement* from the 1920px frames, not
+   declared by the design system. Treat them as the single source of
+   truth and never hard-code a hex inline.
+
+   Bootstrap first: reach for a utility class before adding a rule here.
+   The utilities in §4 exist only for comp values Bootstrap's 0.25rem
+   scale (which stops at 3rem/48px) genuinely cannot express.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------
+   1. Design tokens
+   --------------------------------------------------------------- */
+:root {
+	/* Backgrounds */
+	--bg-dark: #0B0B0C;
+	--bg-dark-alt: #0E0E10;
+	--bg-dark-card: #131315;
+	--bg-light: #F6F4EF;
+	--bg-light-alt: #EDEAE2;
+
+	/* Gold accent system */
+	--gold-primary: #E9C97C;
+	--gold-dark: #A87D2E;
+	--gold-mid: #C9A14A;
+	--gold-pale: #F6E4AB;
+	--gold-gradient: linear-gradient(135deg, #A87D2E 0%, #E9C97C 40%, #F6E4AB 50%, #E9C97C 60%, #A87D2E 100%);
+	--gold-gradient-btn: linear-gradient(115deg, #A87D2E 0%, #E9C97C 39%, #F6E4AB 50%, #E9C97C 61%, #A87D2E 100%);
+
+	/* Text */
+	--text-white: #FFFFFF;
+	--text-white-94: rgba(255, 255, 255, .94);
+	--text-white-82: rgba(255, 255, 255, .82);
+	--text-white-75: rgba(255, 255, 255, .75);
+	--text-white-70: rgba(255, 255, 255, .70);
+	--text-white-65: rgba(255, 255, 255, .65);
+	--text-white-55: rgba(255, 255, 255, .55);
+	--text-white-45: rgba(255, 255, 255, .45);
+	--text-white-35: rgba(255, 255, 255, .35);
+	--text-dark: #0B0B0C;
+	--text-muted: #6C6C71;
+	--text-muted-dark: #3A3A3E;
+
+	/* Hairlines */
+	--line-dark: #3C3C40;
+	--line-white-08: rgba(255, 255, 255, .08);
+	--line-white-12: rgba(255, 255, 255, .12);
+	--line-gold-22: rgba(233, 201, 124, .22);
+
+	/* Glass surfaces */
+	--glass-dark-93: rgba(11, 11, 12, .93);
+	--glass-dark-82: rgba(11, 11, 12, .82);
+	--glass-white-04: rgba(255, 255, 255, .04);
+	--glass-white-05: rgba(255, 255, 255, .05);
+	--glass-white-08: rgba(255, 255, 255, .08);
+	--glass-white-10: rgba(255, 255, 255, .10);
+	--glass-white-12: rgba(255, 255, 255, .12);
+	--glass-white-15: rgba(255, 255, 255, .15);
+	--glass-white-25: rgba(255, 255, 255, .25);
+
+	/* Gold overlays */
+	--gold-06: rgba(233, 201, 124, .06);
+	--gold-08: rgba(233, 201, 124, .08);
+	--gold-16: rgba(233, 201, 124, .16);
+	--gold-20: rgba(233, 201, 124, .20);
+	--gold-25: rgba(233, 201, 124, .25);
+	--gold-30: rgba(233, 201, 124, .30);
+	--gold-35: rgba(233, 201, 124, .35);
+	--gold-40: rgba(233, 201, 124, .40);
+	--gold-45: rgba(233, 201, 124, .45);
+	--gold-70: rgba(233, 201, 124, .70);
+
+	/* Shadows */
+	--shadow-gold: 0 10px 32px rgba(201, 161, 74, .35);
+	--shadow-gold-btn: 0 10px 28px rgba(201, 161, 74, .40);
+	--shadow-gold-sm: 0 8px 22px rgba(201, 161, 74, .40);
+	--shadow-nav: 0 20px 60px rgba(0, 0, 0, .40);
+	--shadow-dark: 0 16px 26px rgba(0, 0, 0, .50);
+	--shadow-dark-xl: 0 60px 140px rgba(0, 0, 0, .50);
+	--shadow-card: 0 24px 60px rgba(11, 11, 12, .07);
+	--shadow-section: 0 40px 100px rgba(11, 11, 12, .18);
+
+	/* Radii — the comp uses three, consistently */
+	--radius-md: 16px;
+	--radius-lg: 24px;
+	--radius-xl: 34px;
+	--radius-pill: 100px;
+
+	/* Misc */
+	--star-yellow: #FBBC05;
+	--badge-muted: #BDB9B0;
+
+	/* Type families */
+	--font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
+	--font-body: 'Poppins', system-ui, -apple-system, sans-serif;
+
+	/* The comp's content column, measured: 225 … 1695 = 1470px.
+	   The section frames declare a 185px gutter, but every inner Container adds
+	   40px on top, and the sum lands on 225 whether the frame said 185 or 225.
+	   Verified independently on the footer, the services grid, before/after,
+	   testimonials, booking and FAQ. The nav pill is the one exception — it uses
+	   the bare 185px gutter and is 1550px wide. */
+	--content-max: 1470px;
+	--nav-max: 1550px;
+
+	/* Bootstrap overrides so its own components inherit the palette */
+	--bs-body-font-family: var(--font-body);
+	--bs-body-font-size: 18px;
+	--bs-body-font-weight: 300;
+	--bs-body-line-height: 1.65;
+	--bs-body-color: var(--text-dark);
+	--bs-body-bg: var(--bg-light);
+	--bs-link-color: var(--gold-dark);
+	--bs-link-hover-color: var(--gold-mid);
+	--bs-border-color: var(--line-dark);
+}
+
+/* ---------------------------------------------------------------
+   2. Base
+   --------------------------------------------------------------- */
+body {
+	font-family: var(--font-body);
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 1.65;
+	color: var(--text-dark);
+	background: var(--bg-light);
+	-webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-display {
+	font-family: var(--font-display);
+	font-weight: 400;
+	text-transform: uppercase;
+	line-height: 1;
+	margin: 0;
+}
+
+p { margin: 0 0 1rem; }
+p:last-child { margin-bottom: 0; }
+
+a { text-decoration: none; }
+img { max-width: 100%; height: auto; }
+
+/* Long words must never push a card wider than its grid track. */
+.faq-answer, .review-text, .card-text { overflow-wrap: anywhere; }
+
+/* Dark sections: invert the text colours in one place, not per component. */
+.section--dark {
+	background: var(--bg-dark);
+	color: var(--text-white-75);
+}
+.section--dark h1, .section--dark h2, .section--dark h3,
+.section--dark h4, .section--dark h5, .section--dark h6 { color: var(--text-white); }
+
+.section--light { background: var(--bg-light); color: var(--text-dark); }
+
+/* ---------------------------------------------------------------
+   3. Type scale
+   --------------------------------------------------------------- */
+
+/* Bebas Neue — display & headings.
+   NOTE on line-height: the Figma dump reports many single-line Bebas nodes
+   with a line box of exactly 1.65x the font size (80/132, 50/82.5, 36/59.4,
+   28/46.2, 22/36.3). That is Figma's AUTO line box, not intended leading —
+   it is invisible on a one-line node and would look broken the moment the
+   text wraps. Only the multi-line nodes carry a real, tight value
+   (120/112.8, 96/96, 64/64). So every Bebas class below uses the tight
+   ratio, and the extra vertical space those AUTO boxes occupy in the comp
+   is reproduced with padding on the section, where it belongs. */
+.display-mega { font: 400 320px/.8 var(--font-display); }
+.display-xxl  { font: 400 120px/.94 var(--font-display); letter-spacing: .03em; }
+.display-xl   { font: 400 96px/1 var(--font-display); }
+.display-lg   { font: 400 92px/1 var(--font-display); }
+.display-md   { font: 400 88px/1 var(--font-display); letter-spacing: .03em; }
+.display-sm   { font: 400 80px/1 var(--font-display); }
+.heading-xl   { font: 400 64px/1 var(--font-display); letter-spacing: .03em; }
+.heading-lg   { font: 400 60px/1 var(--font-display); letter-spacing: .03em; }
+.heading-md   { font: 400 54px/1 var(--font-display); }
+.heading-sm   { font: 400 50px/1 var(--font-display); }
+.heading-xs   { font: 400 46px/1 var(--font-display); letter-spacing: .03em; }
+.heading-xxs  { font: 400 44px/1 var(--font-display); letter-spacing: .03em; }
+.subheading-lg { font: 400 36px/1 var(--font-display); }
+.subheading-md { font: 400 34px/1 var(--font-display); letter-spacing: .03em; }
+.subheading-sm { font: 400 32px/1 var(--font-display); letter-spacing: .03em; }
+.subheading-xs { font: 400 30px/1 var(--font-display); letter-spacing: .03em; }
+.label-lg { font: 400 28px/1.1 var(--font-display); letter-spacing: .02em; }
+.label-md { font: 400 26px/1.1 var(--font-display); letter-spacing: .06em; }
+.label-sm { font: 400 22px/1.1 var(--font-display); letter-spacing: .15em; }
+.label-xs { font: 400 20px/1.1 var(--font-display); }
+
+/* Poppins — body & UI. Here 1.65 IS the real line-height. */
+.body-xl        { font: 600 20px/1.65 var(--font-body); }
+.body-lg        { font: 300 20px/1.65 var(--font-body); }
+.body-md        { font: 300 19px/1.65 var(--font-body); }
+.body-base      { font: 300 18px/1.65 var(--font-body); }
+.body-base-reg  { font: 400 18px/1.65 var(--font-body); }
+.body-base-med  { font: 500 18px/1.65 var(--font-body); }
+.body-base-semi { font: 600 18px/1.65 var(--font-body); }
+.body-sm        { font: 300 16px/1.65 var(--font-body); }
+
+.text-gold { color: var(--gold-primary); }
+.text-gold-dark { color: var(--gold-dark); }
+
+/* Gold gradient applied to text — used on the second line of every hero. */
+.text-gold-gradient {
+	background: var(--gold-gradient);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: var(--gold-primary);
+}
+
+/* ---------------------------------------------------------------
+   4. Project spacing utilities
+   Bootstrap's scale stops at 3rem (48px) in 0.25rem steps. The comp
+   asks for 110/120/130px section padding, 185px gutters and 70px
+   gaps. Named Bootstrap-style, defined once, reused everywhere —
+   rather than a bespoke measurement inside each component.
+   --------------------------------------------------------------- */
+.py-section    { padding-block: 120px; }
+.py-section-sm { padding-block: 110px; }
+.py-section-lg { padding-block: 130px; }
+.pt-section    { padding-top: 120px; }
+.pb-section    { padding-bottom: 120px; }
+.px-section    { padding-inline: 185px; }
+.px-section-sm { padding-inline: 90px; }
+.px-section-lg { padding-inline: 225px; }
+
+.gap-section { gap: 70px; }
+.gap-70 { gap: 70px; }
+.gap-64 { gap: 64px; }
+.gap-54 { gap: 54px; }
+.gap-46 { gap: 46px; }
+.gap-40 { gap: 40px; }
+.gap-22 { gap: 22px; }
+
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-pill-lg { border-radius: var(--radius-pill); }
+
+/* The comp's content column, centred. Used instead of a bespoke .wrap.
+   No horizontal padding at desktop — the 1470px max-width already produces the
+   comp's 225px gutter at 1920. Padding appears at narrow widths only, where the
+   column would otherwise touch the viewport edge. */
+.container-dk {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: var(--content-max);
+	margin-inline: auto;
+}
+
+@media (max-width: 1550px) {
+	.container-dk { padding-inline: 40px; }
+}
+@media (max-width: 767.98px) {
+	.container-dk { padding-inline: 20px; }
+}
+
+/* ---------------------------------------------------------------
+   5. Shared components
+   Grep here before building anything — these are reused across most
+   pages and inventing a parallel class beside one is the single most
+   common avoidable error in this build.
+   --------------------------------------------------------------- */
+
+/* Eyebrow — the "— OUR EXPERTISE —" label above most section headings. */
+.eyebrow {
+	display: inline-block;
+	font: 400 18px/1.65 var(--font-body);
+	letter-spacing: .22em;
+	text-transform: uppercase;
+	color: var(--gold-primary);
+}
+.eyebrow-wide { font-weight: 500; letter-spacing: .30em; }
+.section--light .eyebrow { color: var(--gold-dark); }
+
+/* Eyebrow rendered as a bordered pill with a leading dot — the hero /
+   page-banner variant. page-banner.php already calls this class. */
+.eyebrow--badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 22px;
+	border: 1px solid var(--line-gold-22);
+	border-radius: var(--radius-pill);
+	background: var(--gold-06);
+	font-size: 16px;
+	letter-spacing: .18em;
+}
+.eyebrow--badge::before {
+	content: "";
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--gold-primary);
+	flex: 0 0 7px;
+}
+
+/* Eyebrow with a flanking rule. Most sections have a rule on the leading side
+   only; the centred ones (why-us, membership) have both. */
+.eyebrow--line,
+.eyebrow--rule-start { display: inline-flex; align-items: center; gap: 14px; }
+.eyebrow--line::before,
+.eyebrow--line::after,
+.eyebrow--rule-start::before {
+	content: "";
+	width: 40px;
+	height: 1px;
+	background: currentColor;
+	opacity: .5;
+	flex: 0 0 40px;
+}
+
+/* Shared section-heading block (template-parts/components/section-heading.php). */
+.section-heading__title { margin-block: 18px 0; }
+.section-heading__text {
+	max-width: 620px;
+	margin-block: 22px 0;
+	color: var(--text-muted);
+}
+.section--dark .section-heading__text { color: var(--text-white-70); }
+.section-heading--center { text-align: center; }
+.section-heading--center .section-heading__text { margin-inline: auto; }
+
+/* Big outlined wordmark used behind several sections. */
+.dk-watermark {
+	position: absolute;
+	z-index: 0;
+	font-family: var(--font-display);
+	font-weight: 400;
+	line-height: .82;
+	white-space: nowrap;
+	color: transparent;
+	pointer-events: none;
+	user-select: none;
+}
+.dk-watermark--dark  { -webkit-text-stroke: 1px var(--gold-16); }
+.dk-watermark--light { -webkit-text-stroke: 1px rgba(11, 11, 12, .07); }
+
+/* Buttons. The gold pill is the primary CTA on every page. */
+.btn-gold,
+.btn-dark,
+.btn-outline-light-dk {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 18px 34px;
+	border-radius: var(--radius-pill);
+	font: 600 18px/1 var(--font-body);
+	letter-spacing: .04em;
+	border: 1px solid transparent;
+	transition: transform .25s ease, box-shadow .25s ease, background-color .25s ease;
+	cursor: pointer;
+}
+.btn-gold {
+	background: var(--gold-gradient-btn);
+	color: var(--text-dark);
+	box-shadow: var(--shadow-gold-btn);
+}
+.btn-gold:hover,
+.btn-gold:focus-visible {
+	color: var(--text-dark);
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-gold);
+}
+/* Dark pill — the secondary CTA on every light section ("View All Services",
+   "Shop All Products", the non-featured plan buttons). */
+.btn-dark {
+	background: var(--bg-dark);
+	color: var(--text-white);
+}
+.btn-dark:hover,
+.btn-dark:focus-visible {
+	background: var(--bg-dark-card);
+	color: var(--gold-primary);
+	transform: translateY(-2px);
+}
+
+.btn-outline-light-dk {
+	background: var(--glass-white-05);
+	border-color: var(--glass-white-25);
+	color: var(--text-white);
+}
+.btn-outline-light-dk:hover,
+.btn-outline-light-dk:focus-visible {
+	background: var(--glass-white-12);
+	color: var(--text-white);
+}
+.section--light .btn-outline-light-dk {
+	background: transparent;
+	border-color: var(--text-dark);
+	color: var(--text-dark);
+}
+.btn-arrow::after { content: "→"; font-family: var(--font-body); }
+
+/* Card surfaces — glassmorphism on dark, soft shadow on light. */
+.card-glass {
+	background: var(--glass-white-04);
+	border: 1px solid var(--line-white-08);
+	border-radius: var(--radius-lg);
+	backdrop-filter: blur(8px);
+}
+.card-light {
+	background: #fff;
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-card);
+}
+/* Never let a long word or a wide child stretch a grid track. */
+.card-glass, .card-light { min-width: 0; }
+
+/* Radial gold glow used behind most dark sections. */
+.glow-gold {
+	position: relative;
+	isolation: isolate;
+}
+.glow-gold::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background:
+		radial-gradient(circle at 72% 18%, rgba(40, 34, 15, 1) 0%, rgba(40, 34, 15, 0) 58%),
+		radial-gradient(circle at 10% 95%, rgba(25, 21, 7, 1) 0%, rgba(25, 21, 7, 0) 55%);
+	pointer-events: none;
+}
+
+/* ---------------------------------------------------------------
+   6. Mobile navigation ([data-sp-toggle] toggles `.is-open`)
+   --------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+	.primary-nav:not(.is-open) { display: none; }
+	.primary-nav.is-open { display: block; }
+}
+
+/* ---------------------------------------------------------------
+   7. Scroll-reveal ([data-animate]) — house convention, put it on
+   every section. Respects reduced-motion.
+   --------------------------------------------------------------- */
+.aos-ready [data-animate] {
+	opacity: 0;
+	transform: translateY(24px);
+	transition: opacity .6s ease, transform .6s ease;
+}
+.aos-ready [data-animate="fade-left"]  { transform: translateX(-24px); }
+.aos-ready [data-animate="fade-right"] { transform: translateX(24px); }
+.aos-ready [data-animate="zoom"]       { transform: scale(.94); }
+.aos-ready [data-animate="fade"]       { transform: none; }
+.aos-ready [data-animate].is-visible {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.aos-ready [data-animate] {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+}
+
+/* ---------------------------------------------------------------
+   8. Header live-search overlay (rendered by SearchService)
+   --------------------------------------------------------------- */
+.search-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 1080;
+	background: rgba(11, 11, 12, .82);
+	backdrop-filter: blur(4px);
+	opacity: 0;
+	transition: opacity .25s ease;
+}
+.search-overlay.is-open { opacity: 1; }
+.search-overlay[hidden] { display: none; }
+.search-panel {
+	background: var(--bg-dark-card);
+	border-bottom: 1px solid var(--line-white-08);
+	padding: 2rem 0;
+}
+.search-form { display: flex; gap: .5rem; }
+.search-results { margin-top: 1rem; }
+.search-result {
+	display: block;
+	padding: .5rem 0;
+	border-bottom: 1px solid var(--line-white-08);
+	color: var(--text-white-82);
+}
+.search-result:hover { color: var(--gold-primary); }
+.search-result__type { font-size: .8rem; color: var(--text-white-45); }
+body.search-open { overflow: hidden; }

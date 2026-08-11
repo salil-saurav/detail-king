@@ -1,0 +1,18 @@
+{
+   "name": "detailking/detailking",
+   "description": "Detail King — custom WordPress theme built on the StackPress boilerplate.",
+   "type": "wordpress-theme",
+   "license": "GPL-3.0-or-later",
+   "require": {
+      "php": ">=8.1",
+      "intervention/image": "^3.0"
+   },
+   "autoload": {
+      "psr-4": {
+         "DetailKing\\Theme\\": "src/"
+      }
+   },
+   "config": {
+      "optimize-autoloader": true
+   }
+}

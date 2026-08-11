@@ -1,0 +1,16 @@
+/*
+Theme Name: Detail King
+Theme URI:
+Description: Custom WordPress theme for Detail King (detailking.nz) — premium automotive detailing, ceramic coating, PPF, tinting and membership care. Built on the StackPress boilerplate: PSR-4 autoloaded, auto-discovered service architecture, configuration-driven asset manager, spam-hardened forms + leads, and an ACF "Site Content" options layer. Bundles Bootstrap 5.3.8.
+Author: Digital Web Solutions
+Author URI: https://digitalwebsolutions.in/
+Version: 1.0.0
+Requires at least: 6.0
+Requires PHP: 8.1
+Text Domain: detailking
+License: GNU General Public License v3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Tags: custom-menu, custom-logo, featured-images, translation-ready, threaded-comments
+*/
+
+/* Theme styles live in assets/css/. This file's header is required by WordPress. */

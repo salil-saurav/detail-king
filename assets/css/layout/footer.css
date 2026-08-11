@@ -1,0 +1,214 @@
+/* =====================================================================
+   footer.css — dark 4-column footer with the outlined wordmark.
+
+   Measured off the Blog Index export (footer band cropped to 1x):
+     top hairline    1px gold gradient
+     columns         brand 420 / quick / services / contact, 185px gutters
+     watermark       outlined display text, stroke sampled at #2F291E over
+                     #0B0B0C = rgba(233,201,124,.16) exactly — i.e. the
+                     existing --gold-16 token, not a new colour
+     bottom bar      1px rgba(255,255,255,.10) rule above the copyright row
+   ===================================================================== */
+
+.dk-footer {
+	position: relative;
+	overflow: hidden;
+	/* Every page frame wraps the footer in a container with 89px of top padding
+	   (homepage node 228:2154, Ceramic Pro node 232:3185 — both declare
+	   `padding: 89px 0px 0px`). That gap belongs to the page, not the footer, so
+	   it is a margin and shows the section colour above rather than the dark
+	   footer fill. Without it every page's footer band measures ~89px short. */
+	margin-block-start: 89px;
+	background: var(--bg-dark);
+	/* The comp shows a faint warm glow bleeding up from the bottom-left. */
+	background-image: radial-gradient(circle at 12% 108%, rgba(40, 34, 15, .9) 0%, rgba(40, 34, 15, 0) 55%);
+}
+
+/* Gold hairline across the top edge. */
+.dk-footer::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	height: 1px;
+	background: var(--gold-gradient);
+	opacity: .55;
+}
+
+/* 225px, not 185px: the comp's section gutter is 185px, but the footer's inner
+   container adds the 40px padding that every inner Container in this file
+   carries. Measured column starts (678 / 1021.5 / 1359) only reconcile at 225. */
+.dk-footer__inner {
+	position: relative;
+	padding: 96px 225px 0;
+}
+
+/* ---------------- columns ----------------
+   Tracks solved from the comp's measured column start positions rather than
+   assumed equal: with a 70px gap and a 1470px content box, 678/1021.5/1359 gives
+   383 / 273 / 268 / 336. The contact column is deliberately the widest — at
+   equal thirds (306px) the Auckland address wraps onto a second line, which it
+   does not do in the comp. */
+.dk-footer__cols {
+	display: grid;
+	grid-template-columns: 383px 273px 268px minmax(0, 1fr);
+	gap: 40px 70px;
+}
+
+.dk-footer__brandlink { display: inline-block; }
+.dk-footer__logo { display: block; width: auto; height: 60px; }
+
+.dk-footer__about {
+	max-width: 360px;
+	margin-block: 28px 0;
+	font: 300 18px/1.65 var(--font-body);
+	color: var(--text-white-65);
+}
+
+.dk-footer__heading {
+	margin-block-end: 26px;
+	color: var(--gold-primary);
+	text-transform: uppercase;
+}
+
+.dk-footer__menu,
+.dk-footer__contact {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.dk-footer__menu li + li { margin-block-start: 18px; }
+.dk-footer__menu a,
+.dk-footer__contact a,
+.dk-footer__contact span:not(.dk-footer__icon) {
+	font: 300 18px/1.65 var(--font-body);
+	color: var(--text-white-65);
+	transition: color .2s ease;
+}
+.dk-footer__menu a:hover,
+.dk-footer__menu a:focus-visible,
+.dk-footer__contact a:hover,
+.dk-footer__contact a:focus-visible { color: var(--gold-primary); }
+
+/* ---------------- contact rows ---------------- */
+.dk-footer__contact li {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+}
+.dk-footer__contact li + li { margin-block-start: 18px; }
+
+/* Fixed basis so a wrapping address cannot squeeze the glyph — and rendered
+   unconditionally, so an emptied field can never remove a flex child and
+   re-align the row. */
+.dk-footer__icon {
+	flex: 0 0 20px;
+	display: flex;
+	align-items: center;
+	height: 29.7px;
+	color: var(--gold-primary);
+}
+
+/* ---------------- watermark ----------------
+   Outlined display text. -webkit-text-stroke is the only way to get a true
+   inside-out outline; the paint-order fallback keeps it visible in engines that
+   ignore it. */
+/* Sized from the comp's measured glyph box: 836 x 170 at 1x, centred on the page
+   (bbox centre 961 against a 960 page centre). The cap-height estimate put this
+   at 243px, which rendered 876.8px wide — 4.9% over — so it is set from the
+   measured width instead: 243 x 836/876.8. */
+.dk-footer__watermark {
+	margin-block: 26px 0;
+	font: 400 232px/.86 var(--font-display);
+	text-align: center;
+	letter-spacing: 0;
+	white-space: nowrap;
+	color: transparent;
+	-webkit-text-stroke: 1px var(--gold-16);
+	user-select: none;
+}
+
+/* ---------------- bottom bar ---------------- */
+.dk-footer__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	padding-block: 26px 30px;
+	margin-block-start: -6px;
+	border-block-start: 1px solid rgba(255, 255, 255, .10);
+}
+
+.dk-footer__copy,
+.dk-footer__legal {
+	margin: 0;
+	font: 300 17px/1.65 var(--font-body);
+	color: var(--text-white-45);
+}
+
+.dk-footer__legalmenu {
+	display: flex;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.dk-footer__legalmenu li + li::before {
+	content: "·";
+	margin-inline-end: 10px;
+	color: var(--text-white-35);
+}
+.dk-footer__legalmenu li { display: flex; align-items: center; }
+.dk-footer__legalmenu a {
+	font: 300 17px/1.65 var(--font-body);
+	color: var(--text-white-45);
+}
+.dk-footer__legalmenu a:hover { color: var(--gold-primary); }
+
+/* ---------------- socials ---------------- */
+.dk-socials {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	margin-block: 30px 0;
+	padding: 0;
+	list-style: none;
+}
+.dk-socials__link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	border: 1px solid var(--line-white-12);
+	border-radius: 50%;
+	color: var(--gold-primary);
+	transition: background-color .25s ease, border-color .25s ease, transform .25s ease;
+}
+.dk-socials__link:hover,
+.dk-socials__link:focus-visible {
+	background: var(--gold-08);
+	border-color: var(--gold-40);
+	transform: translateY(-2px);
+}
+
+/* ---------------- responsive (derived) ---------------- */
+@media (max-width: 1599.98px) {
+	.dk-footer__inner { padding-inline: 60px; }
+	.dk-footer__cols { gap: 40px; grid-template-columns: 340px repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1199.98px) {
+	.dk-footer__inner { padding: 80px 32px 0; }
+	.dk-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.dk-footer__about { max-width: none; }
+}
+
+@media (max-width: 767.98px) {
+	.dk-footer__inner { padding: 64px 20px 0; }
+	.dk-footer__cols { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+	.dk-footer__bar { flex-direction: column; align-items: flex-start; }
+	/* At this width the wordmark is taller than it is useful. */
+	.dk-footer__watermark { font-size: 17vw; margin-block-start: 20px; }
+}
