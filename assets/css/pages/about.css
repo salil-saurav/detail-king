@@ -129,7 +129,7 @@
 /* Measured off the export: About's numerals land at ~92px, not the
    homepage craft-stats' already-corrected 100px — a different comp value,
    not the same one re-measured. */
-.about-stats__row .dk-stats__value { font-size: 92px; }
+.about-stats__row .dk-stats__value { font-size: 92px; font-family: var(--font-display); }
 
 /* ─────────────── CTA (y 5420.4…6021) ─────────────── */
 .about-cta { padding-block: 110px; }
