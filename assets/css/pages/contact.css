@@ -1,0 +1,433 @@
+/* =====================================================================
+   Detail King — contact.css
+   Contact page template styling (template-contact.php).
+   ===================================================================== */
+
+/* ---------------------------------------------------------------
+   1. Section 1: Form & Direct Contact Info (Light Background)
+   --------------------------------------------------------------- */
+.contact-section--form {
+	background-color: var(--bg-light);
+	padding-block: 110px;
+}
+
+.contact-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+	gap: 50px;
+	align-items: start;
+}
+
+/* Form Card */
+.contact-form-card {
+	background: var(--text-white);
+	border: 1px solid rgba(11, 11, 12, 0.1);
+	border-radius: 26px;
+	padding: 50px;
+	box-shadow: 0 30px 80px rgba(11, 11, 12, 0.08);
+}
+
+.contact-form-card__title {
+	font: 400 46px/1 var(--font-display);
+	letter-spacing: 0.03em;
+	color: var(--text-dark);
+	margin-block-end: 8px;
+}
+
+.contact-form-card__subtitle {
+	color: var(--text-muted);
+	margin-block-end: 28px;
+}
+
+.contact-form__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
+	margin-block-end: 24px;
+}
+
+.contact-form__grid .dk-field--full {
+	grid-column: span 2;
+}
+
+.contact-form .dk-field {
+	display: flex;
+	flex-direction: column;
+}
+
+.contact-form .dk-field__label {
+	font: 500 16px/1.4 var(--font-body);
+	color: var(--text-dark);
+	margin-block-end: 8px;
+}
+
+.contact-form .dk-field__input {
+	width: 100%;
+	background: var(--bg-light);
+	border: 1px solid rgba(11, 11, 12, 0.1);
+	border-radius: 14px;
+	padding: 14px 18px;
+	font: 400 16px/1.5 var(--font-body);
+	color: var(--text-dark);
+	outline: none;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form .dk-field__input::placeholder {
+	color: #757575;
+}
+
+.contact-form .dk-field__input:focus {
+	border-color: var(--gold-mid);
+	box-shadow: 0 0 0 3px var(--gold-20);
+}
+
+.contact-form .dk-field__input[aria-invalid="true"] {
+	border-color: #dc3545;
+	box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+}
+
+.contact-form .dk-field__select {
+	cursor: pointer;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18' fill='%230B0B0C'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 16px center;
+	padding-right: 42px;
+}
+
+.contact-form .dk-field__textarea {
+	resize: vertical;
+	min-height: 140px;
+}
+
+.contact-form__submit {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding-block: 18px;
+	font-size: 18px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	box-shadow: 0 10px 32px rgba(201, 161, 74, 0.35);
+	cursor: pointer;
+}
+
+.contact-form__submit .btn-arrow__icon {
+	transition: transform 0.2s ease;
+}
+
+.contact-form__submit:hover .btn-arrow__icon {
+	transform: translateX(4px);
+}
+
+.contact-form .sp-form-status {
+	margin-block-start: 16px;
+	font: 400 15px/1.4 var(--font-body);
+	text-align: center;
+}
+
+.contact-form .sp-form-status[data-state="error"] {
+	color: #dc3545;
+}
+
+/* ---------------------------------------------------------------
+   2. Direct Contact Info Cards (Right Column)
+   --------------------------------------------------------------- */
+.contact-info {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.contact-card {
+	position: relative;
+	overflow: hidden;
+	background: var(--bg-dark);
+	border-radius: 22px;
+	padding: 32px 30px;
+	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.contact-card__glow {
+	position: absolute;
+	top: -60px;
+	right: -20px;
+	width: 220px;
+	height: 220px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(233, 201, 124, 0.16) 0%, rgba(233, 201, 124, 0) 65%);
+	pointer-events: none;
+}
+
+.contact-card__title {
+	font: 400 28px/1 var(--font-display);
+	letter-spacing: 0.03em;
+	color: var(--text-white);
+	margin-block-end: 22px;
+}
+
+.contact-card__list {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.contact-card__item {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.contact-card__iconbox {
+	flex: 0 0 48px;
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(233, 201, 124, 0.12);
+	border: 1px solid rgba(233, 201, 124, 0.3);
+	border-radius: 12px;
+	color: var(--gold-primary);
+}
+
+.contact-card__details {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.contact-card__label {
+	font: 500 13px/1.2 var(--font-body);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--text-white);
+}
+
+.contact-card__value {
+	font: 300 16px/1.4 var(--font-body);
+	color: var(--text-white-82);
+	text-decoration: none;
+	transition: color 0.2s ease;
+	overflow-wrap: anywhere;
+}
+
+.contact-card__value--gold {
+	color: var(--gold-primary);
+}
+
+.contact-card__value--gold:hover {
+	color: var(--gold-pale);
+	text-decoration: underline;
+}
+
+.contact-card__value--muted {
+	color: var(--text-white-82);
+}
+
+.contact-card__value--address {
+	color: var(--text-white-82);
+	margin: 0;
+	line-height: 1.45;
+}
+
+.contact-locations-summary {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.contact-locations-summary__item {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+/* ---------------------------------------------------------------
+   3. Section 2: Studio Locations & Map Embeds (Dark Background)
+   --------------------------------------------------------------- */
+.contact-section--studios {
+	background-color: var(--bg-dark);
+	padding-block: 110px;
+}
+
+.contact-studios__head {
+	margin-block-end: 50px;
+	text-align: center;
+}
+
+.contact-studios__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 30px;
+}
+
+.contact-studio-card {
+	background: var(--bg-dark-card);
+	border: 1px solid var(--line-white-12);
+	border-radius: 24px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contact-studio-card:hover {
+	border-color: var(--line-gold-22);
+	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+.contact-studio-card__header {
+	padding: 28px 28px 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.contact-studio-card__headline {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	margin-block-end: 8px;
+}
+
+.contact-studio-card__title {
+	font: 400 30px/1 var(--font-display);
+	letter-spacing: 0.03em;
+	color: var(--text-white);
+	margin: 0;
+}
+
+.contact-studio-card__badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 16px;
+	border: 1px solid rgba(233, 201, 124, 0.35);
+	border-radius: 60px;
+	font: 400 14px/1.4 var(--font-body);
+	color: var(--gold-primary);
+	background: transparent;
+	white-space: nowrap;
+}
+
+.contact-studio-card__address {
+	font: 300 16px/1.5 var(--font-body);
+	color: var(--text-white-65);
+	margin: 0;
+}
+
+.contact-studio-card__map {
+	width: 100%;
+	height: 340px;
+	background: #1C1C20;
+	position: relative;
+}
+
+.contact-studio-card__map iframe {
+	width: 100%;
+	height: 340px;
+	display: block;
+	border: 0;
+}
+
+.contact-studio-card__footer {
+	padding: 18px 28px;
+	border-top: 1px solid var(--line-white-12);
+	text-align: center;
+	background: var(--bg-dark-card);
+}
+
+.contact-studio-card__dirlink {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font: 500 16px/1.5 var(--font-body);
+	color: var(--gold-primary);
+	text-decoration: none;
+	transition: color 0.2s ease, gap 0.2s ease;
+}
+
+.contact-studio-card__arrow {
+	transition: transform 0.2s ease;
+}
+
+.contact-studio-card__dirlink:hover {
+	color: var(--gold-pale);
+	gap: 12px;
+}
+
+.contact-studio-card__dirlink:hover .contact-studio-card__arrow {
+	transform: translateX(4px);
+}
+
+/* ---------------------------------------------------------------
+   4. Responsive Breakpoints
+   --------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+	.contact-section--form,
+	.contact-section--studios {
+		padding-block: 70px;
+	}
+
+	.contact-layout {
+		grid-template-columns: 1fr;
+		gap: 36px;
+	}
+
+	.contact-studios__grid {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.contact-section--form,
+	.contact-section--studios {
+		padding-block: 50px;
+	}
+
+	.contact-form-card {
+		padding: 30px 20px;
+		border-radius: 18px;
+	}
+
+	.contact-form-card__title {
+		font-size: 38px;
+	}
+
+	.contact-form__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.contact-form__grid .dk-field--full {
+		grid-column: span 1;
+	}
+
+	.contact-card {
+		padding: 24px 20px;
+		border-radius: 18px;
+	}
+
+	.contact-locations-summary {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.contact-studio-card__header {
+		padding: 20px;
+	}
+
+	.contact-studio-card__map,
+	.contact-studio-card__map iframe {
+		height: 260px;
+	}
+}

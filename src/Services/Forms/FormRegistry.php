@@ -50,9 +50,11 @@ class FormRegistry extends Singleton implements ServiceInterface
          'contact' => [
             'label'  => __('Contact'),
             'fields' => [
-               'name'    => ['label' => __('Full Name'), 'type' => 'text', 'required' => true],
-               'email'   => ['label' => __('Email Address'), 'type' => 'email', 'required' => true],
-               'message' => ['label' => __('Message'), 'type' => 'textarea', 'required' => false],
+               'name'     => ['label' => __('Name'), 'type' => 'text', 'required' => true],
+               'phone'    => ['label' => __('Phone'), 'type' => 'tel', 'required' => false],
+               'email'    => ['label' => __('Email'), 'type' => 'email', 'required' => true],
+               'location' => ['label' => __('Location'), 'type' => 'select', 'required' => false],
+               'message'  => ['label' => __('Message'), 'type' => 'textarea', 'required' => false],
             ],
          ],
 

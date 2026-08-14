@@ -1,67 +1,154 @@
 <?php
 
 /**
- * Single post.
+ * Single Blog Post Template.
+ *
+ * Implements Figma node 180:6582 ("Blog Inner").
+ * Bands:
+ *   1. Single Hero (template-parts/sections/blog/single-hero)
+ *   2. Main Article + Sidebar (TOC, CTA card)
+ *   3. Related Articles (template-parts/sections/blog/single-related)
+ *   4. CTA Banner (template-parts/global/cta-banner)
  *
  * @package DetailKing Theme
  */
 
 if (!defined('ABSPATH')) exit;
 
-get_header(); ?>
+get_header();
 
-<section class="single-section py-5">
-   <div class="container">
-      <div class="row g-5 justify-content-center">
-         <div class="col-lg-8">
-            <?php while (have_posts()) : the_post(); ?>
-               <article <?php post_class('single-post'); ?>>
+while (have_posts()) :
+   the_post();
 
-                  <header class="mb-4">
-                     <h1 class="entry-title"><?php the_title(); ?></h1>
-                     <div class="entry-meta text-muted small">
-                        <?= esc_html(get_the_date()); ?> · <?php the_author(); ?>
-                     </div>
-                     <?php get_template_part('template-parts/global/breadcrumb'); ?>
-                  </header>
+   $postId = get_the_ID();
+   $tags   = get_the_tags($postId);
+   $permalink = get_permalink($postId);
+   $title     = get_the_title($postId);
 
-                  <?php if (has_post_thumbnail()) : ?>
-                     <div class="single-post__image mb-4">
-                        <?php the_post_thumbnail('large', ['class' => 'img-fluid']); ?>
-                     </div>
-                  <?php endif; ?>
+   // Single Hero
+   get_template_part('template-parts/sections/blog/single-hero');
+   ?>
 
-                  <div class="entry-content">
-                     <?php the_content(); ?>
-                     <?php
-                     wp_link_pages([
-                        'before' => '<div class="page-links">' . esc_html__('Pages:'),
-                        'after'  => '</div>',
-                     ]);
-                     ?>
-                  </div>
+   <section class="single-body">
+      <div class="container-dk">
+         <div class="single-layout">
 
-                  <?php if (has_tag()) : ?>
-                     <div class="single-tags mt-4">
-                        <?php the_tags('<span class="label">' . esc_html__('Tags:') . '</span> ', ', '); ?>
-                     </div>
-                  <?php endif; ?>
-
-                  <nav class="post-nav d-flex justify-content-between mt-4" aria-label="<?php esc_attr_e('Post navigation'); ?>">
-                     <div><?php previous_post_link('%link', '&larr; %title'); ?></div>
-                     <div><?php next_post_link('%link', '%title &rarr;'); ?></div>
-                  </nav>
-
+            <main class="single-layout__main">
+               <article <?php post_class('single-article-content'); ?>>
                   <?php
-                  if (comments_open() || get_comments_number()) {
-                     comments_template();
-                  }
+                  // Output content, ensuring H2 tags carry id attributes for TOC jump links
+                  $content = get_the_content();
+                  $content = apply_filters('the_content', $content);
+
+                  // Inject IDs into H2s if they don't already have them
+                  $content = preg_replace_callback('/<h2([^>]*)>(.*?)<\/h2>/is', function ($matches) {
+                     $attrs = $matches[1];
+                     $text  = $matches[2];
+                     if (strpos($attrs, 'id=') !== false) {
+                        return $matches[0];
+                     }
+                     $slug = sanitize_title(strip_tags($text));
+                     return '<h2 id="' . esc_attr($slug) . '"' . $attrs . '>' . $text . '</h2>';
+                  }, $content);
+
+                  echo $content;
                   ?>
+
+                  <footer class="single-article-footer">
+                     <?php if ($tags && !is_wp_error($tags)) : ?>
+                        <div class="single-article-tags">
+                           <?php foreach ($tags as $tag) : ?>
+                              <a href="<?= esc_url(get_tag_link($tag->term_id)); ?>" class="single-tag-pill">
+                                 <?= esc_html($tag->name); ?>
+                              </a>
+                           <?php endforeach; ?>
+                        </div>
+                     <?php endif; ?>
+
+                     <div class="single-share-bar">
+                        <span class="single-share-bar__label"><?php esc_html_e('Share', 'detailking'); ?></span>
+                        <div class="single-share-bar__links">
+                           <a href="https://www.facebook.com/sharer/sharer.php?u=<?= rawurlencode($permalink); ?>"
+                              class="single-share-btn"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label="<?php esc_attr_e('Share on Facebook', 'detailking'); ?>">
+                              <span aria-hidden="true">f</span>
+                           </a>
+                           <a href="https://twitter.com/intent/tweet?url=<?= rawurlencode($permalink); ?>&text=<?= rawurlencode($title); ?>"
+                              class="single-share-btn"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label="<?php esc_attr_e('Share on X', 'detailking'); ?>">
+                              <span aria-hidden="true">𝕏</span>
+                           </a>
+                           <button type="button"
+                              class="single-share-btn"
+                              data-dk-copy-url="<?= esc_url($permalink); ?>"
+                              aria-label="<?php esc_attr_e('Copy article link', 'detailking'); ?>"
+                              title="<?php esc_attr_e('Copy Link', 'detailking'); ?>">
+                              <span aria-hidden="true">⧉</span>
+                           </button>
+                        </div>
+                     </div>
+                  </footer>
                </article>
-            <?php endwhile; ?>
+            </main>
+
+            <?php get_template_part('template-parts/sections/blog/single-sidebar'); ?>
+
          </div>
       </div>
-   </div>
-</section>
+   </section>
 
-<?php get_footer(); ?>
+   <?php
+   // Related Articles
+   get_template_part('template-parts/sections/blog/single-related');
+   ?>
+
+   <section class="single-cta">
+      <div class="container-dk">
+         <?php
+         $blogPageId = (int) get_option('page_for_posts');
+         $blogUrl    = $blogPageId ? get_permalink($blogPageId) : home_url('/blog/');
+
+         get_template_part('template-parts/global/cta-banner', null, [
+            'title'          => 'Ready To Treat',
+            'gold'           => 'Your Car?',
+            'text'           => 'Reading is great — results are better. Book a service or talk to our team today.',
+            'primary_text'   => 'Book Now',
+            'primary_url'    => home_url('/contact/'),
+            'secondary_text' => 'Back to Blog',
+            'secondary_url'  => $blogUrl,
+         ]);
+         ?>
+      </div>
+   </section>
+
+<?php
+endwhile;
+?>
+
+<script>
+(() => {
+   document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-dk-copy-url]');
+      if (!btn) return;
+      const url = btn.getAttribute('data-dk-copy-url');
+      if (url && navigator.clipboard) {
+         navigator.clipboard.writeText(url).then(() => {
+            const orig = btn.getAttribute('title') || 'Copy Link';
+            btn.setAttribute('title', 'Copied!');
+            btn.classList.add('is-copied');
+            setTimeout(() => {
+               btn.setAttribute('title', orig);
+               btn.classList.remove('is-copied');
+            }, 2000);
+         }).catch(() => {});
+      }
+   });
+})();
+</script>
+
+<?php
+get_footer();

@@ -7,6 +7,7 @@ namespace DetailKing\Theme\Services;
 use DetailKing\Theme\Core\Singleton;
 use DetailKing\Theme\Core\ServiceInterface;
 use DetailKing\Theme\Services\Forms\FormService;
+use DetailKing\Theme\Services\Booking\BookingWidgetService;
 
 defined('ABSPATH') || exit;
 
@@ -105,6 +106,15 @@ class AssetsService extends Singleton implements ServiceInterface
       // can appear anywhere; it self-disables when no [data-sp-form] element is
       // present on the page.
       $this->addScript('sp-forms', '/js/forms.js', [], '1.0', true);
+
+      // Recommendation modal / cross-sell add-to-cart. Same "loaded site-wide,
+      // self-disables" reasoning as sp-forms above — [data-dk-add-to-cart]
+      // isn't confined to Woo/single-product contexts (membership-card.php's
+      // CTA renders on the homepage), so a Woo-context-only gate silently
+      // stranded that button with no listener attached. Costs nothing on a
+      // page with none of its selectors present, same as the header search
+      // overlay SearchService already renders unconditionally.
+      $this->addScript('dk-cross-sell', '/js/cross-sell.js', [], '1.0', true);
    }
 
    /**
@@ -131,6 +141,26 @@ class AssetsService extends Singleton implements ServiceInterface
       $isSingleService = static fn(): bool => is_singular('dk_service');
 
       $this->addStyle('dk-single-service', '/css/pages/single-service.css', ['sp-global'], '1.0', 'all', $isSingleService);
+      $this->addScript('dk-booking-widget', '/js/booking-widget.js', [], '1.0', true, $isSingleService);
+
+      $this->addStyle('dk-shop', '/css/pages/shop.css', ['sp-global'], '1.0', 'all', [$this, 'isWooContext']);
+      $this->addScript('dk-shop', '/js/pages/shop.js', [], '1.0', true, [$this, 'isWooContext']);
+
+      $this->addStyle('dk-account', '/css/pages/account.css', ['sp-global'], '1.0', 'all', static fn(): bool => is_account_page());
+
+      $isGallery = static fn(): bool => is_page_template('pages/template-gallery.php');
+
+      $this->addStyle('dk-gallery', '/css/pages/gallery.css', ['sp-global'], '1.0', 'all', $isGallery);
+
+      $isContact = static fn(): bool => is_page_template('pages/template-contact.php');
+
+      $this->addStyle('dk-contact', '/css/pages/contact.css', ['sp-global'], '1.0', 'all', $isContact);
+
+      // Blog index (home.php, the posts page) and single post (single.php) share
+      // one stylesheet.
+      $isBlog = static fn(): bool => is_home() || is_singular('post');
+
+      $this->addStyle('dk-blog', '/css/pages/blog.css', ['sp-global'], '1.0', 'all', $isBlog);
    }
 
    // -------------------------------------------------------------------------
@@ -232,6 +262,16 @@ class AssetsService extends Singleton implements ServiceInterface
       // Hand the form handler its REST root, session nonce and time-trap token.
       if (wp_script_is('sp-forms', 'enqueued')) {
          wp_localize_script('sp-forms', 'DetailKingForms', FormService::getInstance()->frontendData());
+      }
+
+      // Same for the single-service booking widget's own REST endpoint.
+      if (wp_script_is('dk-booking-widget', 'enqueued')) {
+         wp_localize_script('dk-booking-widget', 'DetailKingBooking', BookingWidgetService::getInstance()->frontendData());
+      }
+
+      // Same for the recommendation modal / cross-sell REST endpoint.
+      if (wp_script_is('dk-cross-sell', 'enqueued')) {
+         wp_localize_script('dk-cross-sell', 'DetailKingCrossSell', \DetailKing\Theme\Services\CrossSell\CrossSellService::getInstance()->frontendData());
       }
    }
 

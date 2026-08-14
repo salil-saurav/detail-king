@@ -1,0 +1,302 @@
+/* =====================================================================
+   Gallery — Page CSS (pages/template-gallery.php)
+   Hero reuses global/page-banner. Masonry grid & filter pills are styled
+   for the light section background (#F6F4EF); CTA reuses global/cta-banner.
+   Section boundaries: Figma node 179:6033 (y 0…3985).
+   ===================================================================== */
+
+/* ---------------------------------------------------------------
+   1. Gallery Section (Filter Pills & Masonry Grid)
+   --------------------------------------------------------------- */
+.gallery-section {
+	background: #F6F4EF;
+	padding-block: 110px 220px;
+	position: relative;
+}
+
+/* ---------------------------------------------------------------
+   Filter Pill Bar (components/filter-tabs.php on light background)
+   --------------------------------------------------------------- */
+.gallery-filter-wrap {
+	margin-bottom: 56px;
+}
+
+.gallery-filter-wrap .dk-filter-bar {
+	background: transparent;
+	border: none;
+	padding: 0;
+}
+
+.gallery-filter-wrap .container-dk {
+	padding-inline: 0;
+}
+
+.gallery-filter-wrap .dk-filter-bar__inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding-block: 0;
+}
+
+.gallery-filter-wrap .dk-filter-bar__label {
+	display: none;
+}
+
+.gallery-filter-wrap .dk-filter-pill {
+	flex: 0 0 auto;
+	padding: 13px 26px;
+	border: 1px solid rgba(11, 11, 12, 0.1);
+	border-radius: var(--radius-pill, 60px);
+	background: #FFFFFF;
+	font-family: var(--font-body, 'Poppins', sans-serif);
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 1.2;
+	color: #0B0B0C;
+	cursor: pointer;
+	transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gallery-filter-wrap .dk-filter-pill:hover,
+.gallery-filter-wrap .dk-filter-pill:focus-visible {
+	background: rgba(11, 11, 12, 0.05);
+	border-color: rgba(11, 11, 12, 0.2);
+	color: #0B0B0C;
+}
+
+.gallery-filter-wrap .dk-filter-pill.is-active {
+	border-color: #0B0B0C;
+	background: #0B0B0C;
+	color: #FFFFFF;
+	font-weight: 500;
+	box-shadow: 0 4px 16px rgba(11, 11, 12, 0.15);
+}
+
+.gallery-filter-wrap .dk-filter-pill[data-dk-filter="all"]::before {
+	content: '✦ ';
+	color: var(--gold, #E9C97C);
+	font-size: 16px;
+	margin-inline-end: 4px;
+	display: inline-block;
+}
+
+/* ---------------------------------------------------------------
+   2. Masonry Grid & Gallery Cards
+   --------------------------------------------------------------- */
+.gallery-grid {
+	column-count: 3;
+	column-gap: 22px;
+	width: 100%;
+	position: relative;
+}
+
+.gallery-card {
+	break-inside: avoid;
+	margin-bottom: 22px;
+	border-radius: 20px;
+	overflow: hidden;
+	background: linear-gradient(150deg, #E9E6DF 0%, #F6F4EF 100%);
+	border: 1px solid rgba(11, 11, 12, 0.1);
+	box-shadow: 0px 18px 50px 0px rgba(11, 11, 12, 0.08);
+	display: block;
+	position: relative;
+	transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.gallery-card.is-hidden {
+	display: none !important;
+}
+
+.gallery-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0px 24px 60px 0px rgba(11, 11, 12, 0.14);
+	border-color: rgba(233, 201, 124, 0.4);
+}
+
+.gallery-card__link {
+	display: block;
+	position: relative;
+	width: 100%;
+	text-decoration: none;
+	color: inherit;
+	overflow: hidden;
+	border-radius: inherit;
+}
+
+.gallery-card__media {
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	border-radius: inherit;
+}
+
+.gallery-card__img {
+	width: 100%;
+	height: auto;
+	display: block;
+	object-fit: cover;
+	transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gallery-card:hover .gallery-card__img {
+	transform: scale(1.04);
+}
+
+.gallery-card__overlay {
+	position: absolute;
+	inset-inline: 0;
+	bottom: 0;
+	padding: 40px 22px 20px;
+	background: linear-gradient(0deg, rgba(11, 11, 12, 0.88) 0%, rgba(11, 11, 12, 0.55) 60%, rgba(11, 11, 12, 0) 100%);
+	opacity: 0;
+	transform: translateY(8px);
+	transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	pointer-events: none;
+	z-index: 2;
+}
+
+.gallery-card:hover .gallery-card__overlay,
+.gallery-card:focus-within .gallery-card__overlay {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.gallery-card__eyebrow {
+	display: block;
+	font-family: var(--font-body, 'Poppins', sans-serif);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--gold, #E9C97C);
+	margin-bottom: 2px;
+}
+
+.gallery-card__title {
+	font-family: var(--font-heading, 'Bebas Neue', sans-serif);
+	font-size: 26px;
+	font-weight: 400;
+	line-height: 1.05;
+	letter-spacing: 0.02em;
+	color: #FFFFFF;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.gallery-card__caption {
+	font-family: var(--font-body, 'Poppins', sans-serif);
+	font-size: 14px;
+	font-weight: 300;
+	line-height: 1.5;
+	color: rgba(255, 255, 255, 0.75);
+	margin: 6px 0 0;
+}
+
+/* ---------------------------------------------------------------
+   Empty State (pure CSS :has() toggle)
+   --------------------------------------------------------------- */
+.gallery-empty {
+	display: none;
+	column-span: all;
+	width: 100%;
+	text-align: center;
+	padding: 80px 20px;
+}
+
+.gallery-grid:not(:has(.gallery-card:not(.is-hidden))) .gallery-empty {
+	display: block;
+}
+
+.gallery-empty__text {
+	font-family: var(--font-body, 'Poppins', sans-serif);
+	font-size: 18px;
+	color: rgba(11, 11, 12, 0.6);
+	margin: 0;
+}
+
+/* ---------------------------------------------------------------
+   3. CTA Section Wrapper
+   --------------------------------------------------------------- */
+.gallery-cta-section {
+	background: #F6F4EF;
+	padding-bottom: 110px;
+}
+
+/* ---------------------------------------------------------------
+   Responsive Breakpoints
+   --------------------------------------------------------------- */
+@media (max-width: 1200px) {
+	.gallery-section {
+		padding-block: 90px 160px;
+	}
+}
+
+@media (max-width: 991px) {
+	.gallery-section {
+		padding-block: 70px 120px;
+	}
+
+	.gallery-filter-wrap {
+		margin-bottom: 40px;
+	}
+
+	.gallery-filter-wrap .dk-filter-bar__inner {
+		justify-content: flex-start;
+		overflow-x: auto;
+		flex-wrap: nowrap;
+		padding-bottom: 10px;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.gallery-filter-wrap .dk-filter-pill {
+		font-size: 16px;
+		padding: 10px 20px;
+	}
+
+	.gallery-grid {
+		column-count: 2;
+		column-gap: 18px;
+	}
+
+	.gallery-card {
+		margin-bottom: 18px;
+	}
+
+	.gallery-cta-section {
+		padding-bottom: 90px;
+	}
+}
+
+@media (max-width: 575px) {
+	.gallery-section {
+		padding-block: 50px 90px;
+	}
+
+	.gallery-grid {
+		column-count: 1;
+		column-gap: 0;
+	}
+
+	.gallery-card {
+		margin-bottom: 16px;
+		border-radius: 16px;
+	}
+
+	/* On mobile touch devices, keep overlay legible */
+	.gallery-card__overlay {
+		opacity: 1;
+		transform: translateY(0);
+		padding: 30px 18px 16px;
+	}
+
+	.gallery-card__title {
+		font-size: 22px;
+	}
+
+	.gallery-cta-section {
+		padding-bottom: 60px;
+	}
+}
