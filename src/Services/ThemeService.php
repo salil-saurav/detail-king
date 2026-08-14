@@ -19,6 +19,15 @@ class ThemeService extends Singleton implements ServiceInterface
       add_action('after_setup_theme', [$this, 'addThemeSupport']);
       add_action('after_setup_theme', [$this, 'registerMenus']);
       add_action('after_setup_theme', [$this, 'setContentWidth'], 0);
+
+      // Every Woo template here is a full custom override (see
+      // woocommerce/archive-product.php's doc comment) — none of them use
+      // Woo's own wrapper markup, so its default stylesheets have nothing
+      // correct to style and only fight the theme's own CSS (observed: the
+      // header logo losing its size constraint on any shop/category/product
+      // page once woocommerce.css's generic resets were in the cascade).
+      // dk-shop.css (AssetsService) replaces it entirely.
+      add_filter('woocommerce_enqueue_styles', '__return_empty_array');
    }
 
    /**

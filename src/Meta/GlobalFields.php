@@ -162,6 +162,30 @@ class GlobalFields extends Singleton implements ServiceInterface
             'default_value' => 3,
             'min'           => 0,
          ]),
+
+         /* ===== SHOP ===== */
+         // Shop-wide copy (shipping/guarantee blurbs), per woocommerce.md's
+         // content-model rule: this repeats on every product, not just one —
+         // a global option, not per-product meta.
+         $this->tab('tab_shop_trust', __('Shop Trust Row', 'detailking')),
+         $this->repeater('shop_trust_items', __('Trust Row Items', 'detailking'), [
+            $this->field('trust_icon_glyph', __('Icon', 'detailking'), 'select', [
+               'choices'       => [
+                  'truck'   => 'Truck',
+                  'shield'  => 'Shield',
+                  'clock'   => 'Clock',
+                  'headset' => 'Headset',
+                  'crown'   => 'Crown',
+                  'sparkle' => 'Sparkle',
+                  'gear'    => 'Gear',
+               ],
+               'default_value' => 'shield',
+            ]),
+            $this->field('trust_text', __('Text', 'detailking')),
+         ], [
+            'button_label' => __('Add Item', 'detailking'),
+            'max'          => 4,
+         ]),
       ];
 
       acf_add_local_field_group([

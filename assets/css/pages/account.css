@@ -1,0 +1,351 @@
+/* =====================================================================
+   My Account — woocommerce/myaccount/*.php (BUILD-PLAN §7 Phase 1 step 11).
+   Renders inside page.php's own .container-dk / .entry-content (light
+   section), same as Cart/Checkout — light cards, dark text, matching
+   .dk-cart-summary/.dk-checkout-card's own convention rather than the
+   dark-theme surfaces used elsewhere in the shop templates.
+   ===================================================================== */
+
+.dk-account-layout {
+	display: grid;
+	grid-template-columns: 240px minmax(0, 1fr);
+	gap: 40px;
+	align-items: start;
+}
+
+.dk-account-nav .woocommerce-MyAccount-navigation ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.dk-account-nav .woocommerce-MyAccount-navigation a {
+	display: block;
+	padding: 10px 16px;
+	border-radius: var(--radius-md);
+	color: var(--text-muted-dark);
+	font-weight: 500;
+}
+
+.dk-account-nav .woocommerce-MyAccount-navigation li.is-active a,
+.dk-account-nav .woocommerce-MyAccount-navigation a:hover {
+	background: rgba(11, 11, 12, .06);
+	color: var(--text-dark);
+}
+
+.dk-account-content {
+	min-width: 0;
+}
+
+.dk-account-card {
+	padding: 28px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+	margin-block-end: 24px;
+}
+
+.dk-account-card__title {
+	margin: 0 0 20px;
+	font: 400 26px/1 var(--font-display);
+	letter-spacing: .02em;
+	color: var(--text-dark);
+}
+
+.dk-account-card__subtitle {
+	margin-block: 20px 10px;
+	font-weight: 600;
+	color: var(--text-dark);
+}
+
+.dk-account-dashboard__greeting {
+	color: var(--text-muted-dark);
+	margin-block-end: 24px;
+}
+
+.dk-account-dashboard__links {
+	display: grid;
+	gap: 12px;
+	margin-block-end: 24px;
+}
+
+.dk-account-quick-link {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 18px 22px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+	color: var(--text-dark);
+	font-weight: 500;
+}
+
+.dk-account-quick-link:hover {
+	border-color: var(--gold-primary);
+}
+
+.dk-account-dashboard__logout a {
+	color: var(--text-muted-dark);
+	text-decoration: underline;
+}
+
+/* ---- Membership panel (account-mode plan-card, see membership-card.php) ---- */
+.plan-card--account {
+	background: #fff;
+	color: var(--text-dark);
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	padding: 24px;
+}
+
+.plan-card--account .plan-card__title {
+	color: var(--text-dark);
+}
+
+.plan-card__meta {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 16px;
+	margin: 16px 0;
+}
+
+.plan-card__meta dt {
+	font-size: .8rem;
+	color: var(--text-muted-dark);
+	margin-block-end: 4px;
+}
+
+.plan-card__meta dd {
+	margin: 0;
+	font-weight: 600;
+	color: var(--text-dark);
+}
+
+.plan-card__manage {
+	display: none;
+	margin-block-start: 16px;
+	padding-block-start: 16px;
+	border-top: 1px solid rgba(11, 11, 12, .08);
+}
+
+.plan-card__manage.is-open {
+	display: block;
+}
+
+.plan-card__manage p {
+	color: var(--text-muted-dark);
+	margin-block-end: 12px;
+}
+
+/* ---- Orders table — restyled as stacked cards below 767.98px, the same
+   "repeating list collapses on narrow viewports if not explicitly
+   redesigned" lesson this build has already paid for elsewhere. Woo's own
+   markup already emits data-title on every <td>, exactly for this. ---- */
+.dk-account-orders-table th,
+.dk-account-orders-table td {
+	padding: 12px 0;
+	border-block-end: 1px solid rgba(11, 11, 12, .08);
+	text-align: left;
+	color: var(--text-muted-dark);
+}
+
+.dk-account-orders-action {
+	display: inline-block;
+	margin-inline-end: 8px;
+	padding: 6px 14px;
+	border-radius: 999px;
+	border: 1px solid rgba(11, 11, 12, .15);
+	color: var(--text-dark);
+	font-size: .85rem;
+}
+
+.dk-account-pagination {
+	display: flex;
+	gap: 12px;
+	margin-block-start: 20px;
+}
+
+@media (max-width: 767.98px) {
+	.dk-account-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.dk-account-orders-table thead {
+		display: none;
+	}
+
+	.dk-account-orders-table,
+	.dk-account-orders-table tbody,
+	.dk-account-orders-table tr,
+	.dk-account-orders-table th,
+	.dk-account-orders-table td {
+		display: block;
+		width: 100%;
+	}
+
+	.dk-account-orders-table tr {
+		margin-block-end: 16px;
+		padding-block-end: 12px;
+		border-block-end: 1px solid rgba(11, 11, 12, .1);
+	}
+
+	.dk-account-orders-table td {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		border-block-end: 0;
+		padding: 6px 0;
+	}
+
+	.dk-account-orders-table td[data-title]::before {
+		content: attr(data-title);
+		font-weight: 600;
+		color: var(--text-dark);
+	}
+}
+
+/* ---- Order notes (view-order.php) ---- */
+.dk-account-order-notes {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.dk-account-order-notes li {
+	padding-block: 12px;
+	border-block-end: 1px solid rgba(11, 11, 12, .08);
+}
+
+.dk-account-order-notes .woocommerce-OrderUpdate-meta {
+	font-size: .8rem;
+	color: var(--text-muted-dark);
+	margin: 0 0 4px;
+}
+
+/* ---- Woo's own real order-details table (do_action('woocommerce_view_order'))
+   — restyle via the same .shop_table convention cart.php already uses,
+   never rewritten. ---- */
+.dk-account-view-order .shop_table th,
+.dk-account-view-order .shop_table td {
+	padding: 12px 0;
+	border-block-end: 1px solid rgba(11, 11, 12, .08);
+	text-align: left;
+	color: var(--text-muted-dark);
+}
+
+/* ---- Edit account / edit address / lost password forms — Woo's own real
+   form-field markup and hooks (form-edit-account.php, form-edit-address.php,
+   form-lost-password.php etc. are NOT overridden — CSS-only restyle of Woo's
+   stable default classes, same "don't fork form logic" rule as checkout). ---- */
+.woocommerce-EditAccountForm,
+form.edit-address,
+.woocommerce-ResetPassword,
+.woocommerce-form-row {
+	color: var(--text-dark);
+}
+
+.woocommerce-form-row label {
+	display: block;
+	margin-block-end: 6px;
+	font-weight: 500;
+	color: var(--text-dark);
+}
+
+.input-text,
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+	width: 100%;
+	padding: 12px 16px;
+	border: 1px solid rgba(11, 11, 12, .15);
+	border-radius: var(--radius-md);
+	background: #fff;
+	color: var(--text-dark);
+}
+
+.input-text:focus {
+	outline: none;
+	border-color: var(--gold-primary);
+}
+
+fieldset {
+	border: 0;
+	padding: 0;
+	margin: 24px 0 0;
+}
+
+fieldset legend {
+	font-weight: 600;
+	margin-block-end: 12px;
+	color: var(--text-dark);
+}
+
+button[type="submit"],
+.woocommerce-Button {
+	display: inline-flex;
+	align-items: center;
+	padding: 14px 28px;
+	border-radius: 999px;
+	background: var(--gold-primary);
+	color: var(--text-dark);
+	font-weight: 600;
+	border: 0;
+	margin-block-start: 16px;
+}
+
+/* Woo's own my-address.php ships no markup beyond these legacy
+   .u-columns/.u-column1/.u-column2 grid classes — its base layout normally
+   comes from woocommerce.css, which this theme deliberately dequeues
+   sitewide (ThemeService, `woocommerce_enqueue_styles` filtered empty:
+   every real Woo template here is a full custom override). This one file
+   was left un-overridden (CSS-only restyle), so the structural grid has to
+   be supplied here too, not just colour/spacing — without it the two
+   address columns collapse into one unreadably narrow column. */
+.u-columns.col2-set {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px;
+}
+
+/* Woo's own markup here also carries `col-1`/`col-2` as semantic layout
+   hints — but this theme bundles Bootstrap 5 sitewide, whose *own*
+   `.col-1`/`.col-2` utility classes mean "an 8.33%/16.67%-wide grid column"
+   and collide directly, shrinking each address box to a sliver. Reset with
+   higher specificity (two classes beats Bootstrap's bare one) rather than
+   renaming Woo's own classes. */
+.col-1,
+.col-2 {
+	flex: none;
+	width: auto;
+	max-width: none;
+}
+
+.woocommerce-Address {
+	padding: 20px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	margin-block-end: 16px;
+}
+
+@media (max-width: 575.98px) {
+	.u-columns.col2-set {
+		grid-template-columns: 1fr;
+	}
+}
+
+.woocommerce-Address-title {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-block-end: 10px;
+}
+
+.woocommerce-Address-title h2 {
+	font-size: 1.1rem;
+	margin: 0;
+	color: var(--text-dark);
+}

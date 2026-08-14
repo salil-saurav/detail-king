@@ -39,9 +39,13 @@ class ThemeHelper extends Singleton implements ServiceInterface
             ? $this->link(get_permalink(), get_the_title())
             : $this->current(get_the_title());
       } elseif (is_single()) {
-         $categories = get_the_category();
-         if (!empty($categories)) {
-            $items[] = $this->link(get_category_link($categories[0]->term_id), $categories[0]->name);
+         if (get_post_type() === 'product' && function_exists('wc_get_page_permalink')) {
+            $items[] = $this->link((string) wc_get_page_permalink('shop'), __('Shop', 'detailking'));
+         } else {
+            $categories = get_the_category();
+            if (!empty($categories)) {
+               $items[] = $this->link(get_category_link($categories[0]->term_id), $categories[0]->name);
+            }
          }
          $items[] = $has_suffix
             ? $this->link(get_permalink(), get_the_title())

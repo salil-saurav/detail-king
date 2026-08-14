@@ -1,0 +1,1 @@
+{"nodes": [{"id": "$graphify-root$_woocommerce_cart_cart_empty_php", "label": "cart-empty.php", "file_type": "code", "source_file": "woocommerce/cart/cart-empty.php", "source_location": "L1"}], "edges": [], "raw_calls": []}

@@ -265,9 +265,7 @@ class DebloaterService extends Singleton implements ServiceInterface
     */
    public function dequeueWooCommerceAssetsOnNonShopPages(): void
    {
-      $isShopPage = is_woocommerce() || is_cart() || is_checkout() || is_account_page();
-
-      if ($isShopPage) {
+      if ($this->isShopContext()) {
          return;
       }
 
@@ -285,10 +283,17 @@ class DebloaterService extends Singleton implements ServiceInterface
     * (no jQuery), so core jQuery is dropped for visitors. The admin and the
     * customizer (where core relies on jQuery) are left untouched; this runs on
     * wp_enqueue_scripts, which does not fire on the login screen.
+    *
+    * Shop contexts are also left untouched — WooCommerce's own frontend
+    * scripts (catalog ordering, cart fragments, variation forms) hard-depend
+    * on it. AssetsService re-enqueues jquery for those contexts at priority
+    * 10; without this guard, this method ran at priority 100 and deregistered
+    * it again right after, silently breaking every jQuery-dependent Woo
+    * script (found via the catalog sort dropdown doing nothing on click).
     */
    public function removeJquery(): void
    {
-      if (is_admin() || is_customize_preview()) {
+      if (is_admin() || is_customize_preview() || $this->isShopContext()) {
          return;
       }
 
@@ -296,6 +301,12 @@ class DebloaterService extends Singleton implements ServiceInterface
          wp_dequeue_script($handle);
          wp_deregister_script($handle);
       }
+   }
+
+   /** True in any WooCommerce front-end context that needs its own assets. */
+   private function isShopContext(): bool
+   {
+      return is_woocommerce() || is_cart() || is_checkout() || is_account_page() || is_wc_endpoint_url();
    }
 
    public function removeContextualHelp(): void

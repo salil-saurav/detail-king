@@ -895,6 +895,230 @@ img {
 	margin-block-start: 32px;
 }
 
+/* Product card (components/product-card.php) — moved from home.css: no
+   longer homepage-rail-only, the same card now builds the Shop category grid
+   and Product Detail's "Related Products" rail (--dark variant, bg
+   --bg-dark-card). One card everywhere means the badge, save button and
+   Add-to-Cart treatment can never drift between pages. */
+.prod-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-width: 0;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: 20px;
+	overflow: hidden;
+	background: #fff;
+	transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s ease;
+}
+
+.prod-card--dark {
+	background: var(--bg-dark-card);
+	border-color: var(--line-white-12);
+}
+
+/* §15 asks for an image-only zoom, but the recording scales the WHOLE card:
+   at t 44.25 the hovered card measures ~7% wider than its neighbours and its
+   type is proportionally larger, and its shadow falls over the card beside it.
+   So the card scales (which zooms its photo with it) and lifts above the row.
+   The scale is kept at 1.05 — 1.08 starts to reflow the eye at four across. */
+.prod-card:hover,
+.prod-card:focus-within {
+	z-index: 2;
+	transform: scale(1.05);
+	box-shadow: var(--shadow-section);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.prod-card {
+		transition: none;
+	}
+
+	.prod-card:hover,
+	.prod-card:focus-within {
+		transform: none;
+	}
+}
+
+.prod-card__media {
+	position: relative;
+	display: block;
+	aspect-ratio: 265.5 / 230;
+	overflow: hidden;
+	background: linear-gradient(150deg, #15151A 0%, #0B0B0D 100%);
+}
+
+.prod-card__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.prod-card__badge {
+	position: absolute;
+	inset-block-start: 14px;
+	inset-inline-start: 14px;
+	padding: 5px 14px;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	color: var(--text-dark);
+	font-size: 15px;
+	font-weight: 600;
+}
+
+/* Sale/New share the Best Seller pill treatment. Only Best Seller's fill was
+   readable in the export (the other two badges' backgrounds rendered as
+   generic "Background" nodes with no colour data) — deliberate default until
+   a residual pass against the live comp confirms a different colour per
+   badge type. */
+
+.prod-card__save {
+	position: absolute;
+	inset-block-start: 14px;
+	inset-inline-end: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, .9);
+	color: var(--text-dark);
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.prod-card--dark .prod-card__save {
+	background: rgba(255, 255, 255, .12);
+	color: var(--text-white);
+}
+
+.prod-card__save[aria-pressed="true"] {
+	color: var(--gold-dark);
+}
+
+.prod-card--dark .prod-card__save[aria-pressed="true"] {
+	color: var(--gold-primary);
+}
+
+.prod-card__body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	flex: 1 1 auto;
+	gap: 6px;
+	padding: 22px;
+}
+
+.prod-card__eyebrow {
+	font: 400 18px/1.65 var(--font-body);
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	color: var(--gold-dark);
+}
+
+.prod-card--dark .prod-card__eyebrow {
+	color: var(--gold-primary);
+}
+
+.prod-card__title {
+	margin: 0;
+	font: 600 22px/1.2 var(--font-body);
+	letter-spacing: .03em;
+}
+
+.prod-card__title a {
+	color: var(--text-dark);
+}
+
+.prod-card--dark .prod-card__title a {
+	color: var(--text-white);
+}
+
+.prod-card__title a:hover {
+	color: var(--gold-dark);
+}
+
+.prod-card--dark .prod-card__title a:hover {
+	color: var(--gold-primary);
+}
+
+.prod-card__foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	margin-block-start: auto;
+	padding-block-start: 8px;
+}
+
+.prod-card__price {
+	font: 400 34px/1 var(--font-display);
+	color: var(--text-dark);
+}
+
+.prod-card--dark .prod-card__price {
+	color: var(--gold-primary);
+}
+
+.prod-card__price del {
+	font-family: var(--font-body);
+	font-size: 15px;
+	font-weight: 400;
+	color: var(--text-muted);
+}
+
+.prod-card__price .woocommerce-Price-currencySymbol {
+	font-size: .7em;
+	vertical-align: top;
+}
+
+.prod-card__price ins {
+	text-decoration: none;
+}
+
+.prod-card__add:disabled {
+	opacity: .4;
+	pointer-events: none;
+}
+
+.prod-card__add {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 44px;
+	height: 44px;
+	border: 1px solid var(--text-dark);
+	border-radius: 50%;
+	color: var(--text-dark);
+	font-size: 22px;
+	line-height: 1;
+}
+
+.prod-card__add:hover {
+	background: var(--text-dark);
+	color: var(--text-white);
+}
+
+.prod-card--dark .prod-card__add {
+	border-color: rgba(255, 255, 255, .35);
+	color: var(--text-white);
+}
+
+.prod-card--dark .prod-card__add:hover {
+	background: var(--text-white);
+	color: var(--text-dark);
+}
+
+.prod-card__add[aria-disabled="true"] {
+	opacity: .4;
+	pointer-events: none;
+}
+
 /* Stat rows — base + the --craft variant (moved from home.css: it's now used
    on the About page's stats section too, not just the homepage's video
    section). The --hero variant stays homepage-only, in home.css. */
@@ -1069,6 +1293,15 @@ img {
 	gap: 20px 24px;
 }
 
+/* Pre-existing gap, not new here: this grid never had a mobile column
+   override, so every 2-up field (already true for the homepage's short
+   booking form) squeezed to ~half of an already-narrow viewport. Adding the
+   booking widget's three contact fields made it materially worse — fixing
+   it here since it's shared CSS, not page-specific. */
+@media (max-width: 575.98px) {
+	.dk-form__grid { grid-template-columns: 1fr; }
+}
+
 .dk-field {
 	display: flex;
 	flex-direction: column;
@@ -1130,6 +1363,11 @@ select.dk-field__input {
 .dk-form__status:empty {
 	display: none;
 }
+
+.dk-form__status[data-state="error"] { color: #E2574C; }
+.dk-form__status[data-state="success"] { color: #6FCF97; }
+
+.dk-field__input[aria-invalid="true"] { border-color: #E2574C; }
 
 /* Honeypot — off-screen rather than display:none, which some bots detect. */
 .dk-form__trap {
@@ -1228,6 +1466,100 @@ select.dk-field__input {
 
 body.search-open {
 	overflow: hidden;
+}
+
+/* ---------------------------------------------------------------
+   8b. Recommendation popup / cross-sell modal (rendered by CrossSellService)
+   --------------------------------------------------------------- */
+.cross-sell-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 1090;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	background: rgba(11, 11, 12, .82);
+	backdrop-filter: blur(4px);
+	opacity: 0;
+	transition: opacity .25s ease;
+}
+
+.cross-sell-overlay.is-open {
+	opacity: 1;
+}
+
+.cross-sell-overlay[hidden] {
+	display: none;
+}
+
+.cross-sell-panel {
+	position: relative;
+	width: 100%;
+	max-width: 720px;
+	max-height: min(680px, 90dvh);
+	overflow-y: auto;
+	padding: 40px;
+	background: var(--bg-dark-card);
+}
+
+.cross-sell-panel__close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--line-white-08);
+	border-radius: 50%;
+	color: var(--text-white-82);
+	font-size: 20px;
+	line-height: 1;
+	background: transparent;
+}
+
+.cross-sell-panel__close:hover {
+	color: var(--text-white);
+	border-color: var(--gold-primary);
+}
+
+.cross-sell-panel__head {
+	margin-block-end: 24px;
+}
+
+.cross-sell-panel__title {
+	font: 400 clamp(28px, 3vw, 36px)/1.1 var(--font-display);
+	color: var(--text-white);
+	margin-block-start: 8px;
+}
+
+.cross-sell-panel__text {
+	color: var(--text-white-45);
+	margin-block-start: 8px;
+}
+
+.cross-sell-panel__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 20px;
+	margin-block-end: 24px;
+}
+
+.cross-sell-panel__cart-link {
+	display: block;
+	text-align: center;
+}
+
+@media (max-width: 575.98px) {
+	.cross-sell-panel {
+		padding: 28px 20px;
+	}
+
+	.cross-sell-panel__grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 /* ---------------------------------------------------------------

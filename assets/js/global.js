@@ -258,6 +258,53 @@
 	};
 
 	/* ----------------------------------------------------------
+		Product card save/wishlist ([data-dk-wishlist]).
+		Visual-only, localStorage-backed — there is no account-linked wishlist
+		feature in the brief (see figma-data/shop-spec.md, "open items"). Lives
+		here rather than in a Woo-conditional script because the same card
+		(and button) also renders on the homepage shop rail, which loads no
+		shop-specific JS.
+		---------------------------------------------------------- */
+	const WISHLIST_KEY = 'dk_wishlist';
+
+	const readWishlist = () => {
+		try {
+			const raw = window.localStorage.getItem(WISHLIST_KEY);
+			return raw ? JSON.parse(raw) : [];
+		} catch (e) {
+			return [];
+		}
+	};
+
+	const initWishlist = () => {
+		const buttons = document.querySelectorAll('[data-dk-wishlist]');
+		if (!buttons.length) return;
+
+		let saved = readWishlist();
+
+		const paint = (btn) => {
+			const id = btn.dataset.productId;
+			btn.setAttribute('aria-pressed', saved.includes(id) ? 'true' : 'false');
+		};
+
+		buttons.forEach(paint);
+
+		document.addEventListener('click', (e) => {
+			const btn = e.target.closest('[data-dk-wishlist]');
+			if (!btn) return;
+
+			const id = btn.dataset.productId;
+			saved = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
+
+			try {
+				window.localStorage.setItem(WISHLIST_KEY, JSON.stringify(saved));
+			} catch (e) { /* storage unavailable — state just won't persist */ }
+
+			document.querySelectorAll(`[data-dk-wishlist][data-product-id="${id}"]`).forEach(paint);
+		});
+	};
+
+	/* ----------------------------------------------------------
 		Header live search overlay.
 		Queries the `detailking_live_search` AJAX endpoint (debounced)
 		and renders results live. Config is localized as window.detailkingSearch.
@@ -403,5 +450,6 @@
 		initStickyNav();
 		initFilterTabs();
 		initHeaderSearch();
+		initWishlist();
 	});
 })();

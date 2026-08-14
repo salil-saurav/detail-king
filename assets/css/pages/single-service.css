@@ -58,6 +58,11 @@
 	color: var(--text-dark);
 }
 .service-booking__step.is-active .service-booking__steplabel { color: var(--text-white); }
+/* Step 3 ("Recommended Add-Ons") has no content until step 8 (dk_addon + the
+   popup) — kept visible so the widget still reads as a 3-step process, but
+   dimmed and non-interactive rather than pretending it currently does
+   anything. */
+.service-booking__step.is-inert { opacity: .45; }
 
 /* Package cards — survives 1..N (auto-fit, not a fixed 2/3-col grid). */
 .service-packages {
@@ -69,10 +74,20 @@
 .service-package {
 	display: flex;
 	flex-direction: column;
+	width: 100%;
+	padding: 0;
 	border: 1px solid var(--line-white-08);
 	border-radius: var(--radius-lg);
 	background: var(--bg-dark-card);
 	overflow: hidden;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+.service-package:focus-visible {
+	outline: 2px solid var(--gold-mid);
+	outline-offset: 3px;
 }
 .service-package.is-selected {
 	border-color: var(--gold-mid);
@@ -114,9 +129,9 @@
 	border-color: transparent;
 	color: var(--text-dark);
 }
-.service-package__body { padding: 28px 30px; }
-.service-package__title { margin-block-end: 8px; color: var(--text-white); font: 400 34px/1 var(--font-display); letter-spacing: .03em; }
-.service-package__desc { color: var(--text-white-65); }
+.service-package__body { display: block; padding: 28px 30px; }
+.service-package__title { display: block; margin-block-end: 8px; color: var(--text-white); font: 400 34px/1 var(--font-display); letter-spacing: .03em; }
+.service-package__desc { display: block; color: var(--text-white-65); }
 .service-package__price { margin-block-start: 8px; display: flex; align-items: baseline; gap: 8px; }
 .service-package__pricelabel { color: var(--text-white-55); }
 .service-package__price .text-gold-gradient { font: 400 48px/1 var(--font-display); }

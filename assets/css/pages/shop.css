@@ -1,0 +1,1157 @@
+/* =====================================================================
+   Shop — WooCommerce templates (woocommerce/archive-product.php,
+   woocommerce/content-single-product.php, cart, checkout).
+   Section boundaries: projects/detail-king/figma-data/shop-spec.md.
+   ===================================================================== */
+
+.shop-notices:empty {
+	display: none;
+}
+
+.shop-notices .woocommerce-message,
+.shop-notices .woocommerce-error,
+.shop-notices .woocommerce-info {
+	margin-block: 24px 0;
+	padding: 16px 22px;
+	border-radius: var(--radius-md);
+	list-style: none;
+	background: #fff;
+	border: 1px solid rgba(11, 11, 12, .1);
+}
+
+/* ---------------------------------------------------------------
+   Shop landing — category grid (node 183:7236, "Product Categories")
+   --------------------------------------------------------------- */
+.shop-cats {
+	padding-block: 70px 120px;
+}
+
+.shop-cats__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 28px;
+}
+
+.cat-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	background: #fff;
+}
+
+.cat-card__media {
+	position: relative;
+	display: block;
+	aspect-ratio: 344.5 / 200;
+	overflow: hidden;
+	background: linear-gradient(150deg, #15151A 0%, #0B0B0D 100%);
+}
+
+.cat-card__media::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(11, 11, 12, .55) 0%, rgba(11, 11, 12, 0) 55%);
+}
+
+.cat-card__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.cat-card__count {
+	position: absolute;
+	inset-block-start: 18px;
+	inset-inline-end: 18px;
+	z-index: 1;
+	padding: 6px 15px;
+	border: 1px solid var(--line-gold-22);
+	border-radius: var(--radius-pill);
+	backdrop-filter: blur(4px);
+	background: rgba(11, 11, 12, .7);
+	color: var(--gold-primary);
+	font: 400 15px/1.65 var(--font-body);
+	white-space: nowrap;
+}
+
+.cat-card__body {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	gap: 8px;
+	padding: 44px 30px 30px;
+}
+
+.cat-card__eyebrow {
+	font: 400 15px/1.65 var(--font-body);
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	color: var(--gold-dark);
+}
+
+.cat-card__title {
+	margin: 0;
+	font: 400 26px/1.05 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-dark);
+}
+
+.cat-card__text {
+	flex: 1 1 auto;
+	margin: 0;
+	color: var(--text-muted-dark);
+}
+
+.cat-card__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-block-start: auto;
+	padding-block-start: 6px;
+	font: 600 16px/1.65 var(--font-body);
+	color: var(--text-dark);
+}
+
+.cat-card__link:hover {
+	color: var(--gold-dark);
+}
+
+@media (hover: hover) {
+	.cat-card__link span[aria-hidden="true"] {
+		display: inline-block;
+		transition: transform .4s cubic-bezier(.22, .61, .36, 1);
+	}
+
+	.cat-card__link:hover span[aria-hidden="true"] {
+		transform: translateX(2px);
+	}
+}
+
+/* ---------------------------------------------------------------
+   Shop landing — "Why Shop" band
+   --------------------------------------------------------------- */
+.shop-why {
+	/* background/text colour come from .section--dark on the same element. */
+	position: relative;
+	overflow: hidden;
+	padding-block: 110px;
+}
+
+.shop-why__watermark {
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 220px;
+	white-space: nowrap;
+}
+
+.shop-why .section-heading {
+	position: relative;
+	z-index: 1;
+}
+
+.shop-why__grid {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 24px;
+	margin: 46px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.shop-why__item {
+	padding: 35px 31px;
+	border: 1px solid var(--line-white-08);
+	border-radius: var(--radius-lg);
+}
+
+.shop-why__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 58px;
+	height: 58px;
+	margin-block-end: 24px;
+	border-radius: 50%;
+	background: var(--gold-gradient-btn);
+	color: var(--bg-dark);
+}
+
+.shop-why__title {
+	margin: 0 0 8px;
+	font: 400 20px/1.2 var(--font-display);
+	letter-spacing: .02em;
+	color: var(--text-white);
+}
+
+.shop-why__text {
+	margin: 0;
+	color: var(--text-white-65);
+}
+
+@media (max-width: 1279.98px) {
+	.shop-cats__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.shop-why__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767.98px) {
+	.shop-cats__grid,
+	.shop-why__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.shop-why__watermark {
+		font-size: 120px;
+	}
+}
+
+/* ---------------------------------------------------------------
+   Category archive — sidebar + grid (node 183:7622, "All Products")
+   --------------------------------------------------------------- */
+.shop-listing {
+	padding-block: 80px 120px;
+}
+
+.shop-listing__layout {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	gap: 42px;
+	align-items: start;
+}
+
+.shop-sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+}
+
+.shop-sidebar__card {
+	padding: 25px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+}
+
+.shop-sidebar__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.shop-sidebar__title {
+	margin: 0;
+	font: 400 22px/1 var(--font-display);
+	letter-spacing: .04em;
+	color: var(--text-dark);
+}
+
+.shop-sidebar__clear {
+	font: 400 16px/1.5 var(--font-body);
+	color: var(--gold-dark);
+}
+
+.shop-sidebar__list {
+	margin: 20px 0 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.shop-sidebar__check {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-block: 8px;
+	color: var(--text-muted-dark);
+}
+
+.shop-sidebar__check:hover {
+	color: var(--text-dark);
+}
+
+.shop-sidebar__box {
+	flex-shrink: 0;
+	width: 24px;
+	height: 24px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: 7px;
+	position: relative;
+}
+
+.shop-sidebar__check.is-active .shop-sidebar__box {
+	background: var(--gold-gradient-btn);
+	border-color: transparent;
+}
+
+.shop-sidebar__check.is-active .shop-sidebar__box::after {
+	content: '\2713';
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	color: var(--text-dark);
+}
+
+.shop-sidebar__price input[type="range"] {
+	width: 100%;
+	margin-block-start: 5px;
+	accent-color: var(--gold-dark);
+}
+
+.shop-sidebar__price-labels {
+	display: flex;
+	justify-content: space-between;
+	margin-block-start: 16px;
+	color: var(--text-muted-dark);
+}
+
+.shop-sidebar__advice {
+	padding: 24px;
+	border-radius: var(--radius-lg);
+	background: var(--bg-dark);
+	color: var(--text-white-70);
+}
+
+.shop-sidebar__advice .shop-sidebar__title {
+	color: var(--text-white);
+}
+
+.shop-sidebar__advice p {
+	margin: 16px 0 0;
+}
+
+.shop-sidebar__ask {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	margin-block-start: 16px;
+	width: 100%;
+}
+
+.shop-listing__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-block-end: 32px;
+}
+
+.shop-listing__count {
+	font: 600 18px/1.65 var(--font-body);
+	color: var(--text-dark);
+}
+
+.shop-listing__sort {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.shop-listing__sort-label {
+	color: var(--text-muted-dark);
+}
+
+.woocommerce-ordering select.orderby {
+	padding: 13px 35px 13px 23px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-md);
+	background-color: #fff;
+	color: var(--text-dark);
+}
+
+.shop-listing__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 26px;
+}
+
+.shop-listing__more {
+	display: flex;
+	justify-content: center;
+	margin-block-start: 60px;
+}
+
+.shop-listing__empty {
+	color: var(--text-muted-dark);
+}
+
+@media (max-width: 1279.98px) {
+	.shop-listing__layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.shop-listing__grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 991.98px) {
+	.shop-listing__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 575.98px) {
+	.shop-listing__bar {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.shop-listing__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* ---------------------------------------------------------------
+   Product Detail (node 185:8134)
+   --------------------------------------------------------------- */
+.product-hero {
+	padding-block: 160px 110px;
+}
+
+.product-hero .breadcrumb {
+	margin-block-end: 34px;
+}
+
+.product-hero__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 56px;
+	align-items: start;
+}
+
+/* Woo's own gallery markup (woocommerce_show_product_images()) — CSS only,
+   no template override. With wc-product-gallery-slider theme support this
+   becomes a flexslider once wc-single-product.js runs; .flex-control-thumbs
+   covers the enhanced state, the plain image list is the pre-JS fallback. */
+.woocommerce-product-gallery {
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+}
+
+.woocommerce-product-gallery img {
+	width: 100%;
+	height: auto;
+	display: block;
+	aspect-ratio: 706 / 527;
+	object-fit: cover;
+}
+
+.woocommerce-product-gallery__wrapper {
+	margin: 0;
+}
+
+.woocommerce-product-gallery .flex-control-thumbs {
+	display: flex;
+	gap: 14px;
+	margin: 14px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.woocommerce-product-gallery .flex-control-thumbs li {
+	flex: 1 1 0;
+}
+
+.woocommerce-product-gallery .flex-control-thumbs img {
+	aspect-ratio: 1 / 1;
+	border-radius: 16px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	cursor: pointer;
+}
+
+.woocommerce-product-gallery .flex-control-thumbs img.flex-active {
+	border-color: var(--gold-dark);
+}
+
+.product-hero__eyebrow {
+	display: block;
+	margin-block-end: 12px;
+	font: 400 18px/1.65 var(--font-body);
+	letter-spacing: .16em;
+	text-transform: uppercase;
+	color: var(--gold-dark);
+}
+
+.product-hero__title {
+	margin: 0;
+	font: 400 62px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-dark);
+}
+
+.product-hero__price {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 14px;
+	margin-block-start: 20px;
+	font: 400 64px/1 var(--font-display);
+	color: var(--text-dark);
+}
+
+.product-hero__price del {
+	font-family: var(--font-body);
+	font-size: 22px;
+	font-weight: 300;
+	color: var(--text-muted);
+}
+
+.product-hero__price ins {
+	text-decoration: none;
+}
+
+.product-hero__desc {
+	margin-block-start: 20px;
+	color: var(--text-muted-dark);
+}
+
+.product-hero__desc p {
+	margin: 0;
+}
+
+.product-hero__tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 18px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.product-hero__tag {
+	padding: 9px 19px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-pill);
+	background: #fff;
+	color: var(--text-muted-dark);
+}
+
+.product-hero__tag span {
+	color: var(--gold-dark);
+}
+
+/* Woo's real add-to-cart form (woocommerce_template_single_add_to_cart()) —
+   restyled, not rebuilt. */
+.product-hero__cart {
+	margin-block-start: 24px;
+}
+
+.product-hero__cart .cart {
+	display: flex;
+	gap: 16px;
+	align-items: stretch;
+}
+
+.dk-qty {
+	display: flex;
+	align-items: center;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: 14px;
+	overflow: hidden;
+	background: #fff;
+}
+
+.dk-qty__btn {
+	width: 52px;
+	min-height: 58px;
+	border: 0;
+	background: transparent;
+	font-size: 24px;
+	color: var(--text-dark);
+	cursor: pointer;
+}
+
+.dk-qty .qty {
+	width: 54px;
+	border: 0;
+	text-align: center;
+	font: 600 20px/1 var(--font-body);
+	color: var(--text-dark);
+	-moz-appearance: textfield;
+}
+
+.dk-qty .qty::-webkit-outer-spin-button,
+.dk-qty .qty::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.single_add_to_cart_button {
+	flex: 1 1 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	min-width: 200px;
+	padding: 18px 42px;
+	border: 0;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	box-shadow: 0 10px 16px rgba(201, 161, 74, .35);
+	color: var(--text-dark);
+	font: 600 20px/1 var(--font-body);
+	letter-spacing: .04em;
+}
+
+.single_add_to_cart_button::after {
+	content: '\2192';
+	margin-inline-start: 8px;
+}
+
+.product-hero__trust {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: 29px 0 0;
+	padding: 24px 0 0;
+	border-block-start: 1px solid rgba(11, 11, 12, .1);
+	list-style: none;
+	color: var(--text-muted-dark);
+}
+
+.product-hero__trust li {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.product-hero__trust-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
+	background: #EDEAE2;
+	color: var(--gold-dark);
+}
+
+/* ---------------------------------------------------------------
+   Product Detail — Related Products rail
+   --------------------------------------------------------------- */
+.product-related {
+	padding-block: 110px;
+}
+
+.product-related__head {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	margin-block-end: 46px;
+}
+
+.product-related__title {
+	margin: 0;
+	font: 400 52px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-white);
+}
+
+.product-related__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 26px;
+}
+
+@media (max-width: 1279.98px) {
+	.product-hero__layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.product-hero__title {
+		font-size: 48px;
+	}
+
+	.product-related__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767.98px) {
+	.product-hero {
+		padding-block: 130px 70px;
+	}
+
+	.product-hero__price {
+		font-size: 44px;
+	}
+
+	.product-hero__cart .cart {
+		flex-wrap: wrap;
+	}
+
+	.product-related__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* ---------------------------------------------------------------
+   Woo form fields — shared by Cart (coupon), Checkout (billing/shipping)
+   and any Woo form this theme doesn't hand-roll. No comp; matches the
+   site's existing input treatment (see booking widget, dk-field).
+   --------------------------------------------------------------- */
+.dk-cart-page .form-row,
+.dk-checkout-page .form-row {
+	margin-block-end: 18px;
+}
+
+.dk-cart-page label,
+.dk-checkout-page label {
+	display: block;
+	margin-block-end: 8px;
+	color: var(--text-muted-dark);
+}
+
+.dk-cart-page .input-text,
+.dk-cart-page select,
+.dk-cart-page textarea,
+.dk-checkout-page .input-text,
+.dk-checkout-page select,
+.dk-checkout-page textarea {
+	width: 100%;
+	padding: 14px 18px;
+	border: 1px solid rgba(11, 11, 12, .12);
+	border-radius: var(--radius-md);
+	background: #fff;
+	color: var(--text-dark);
+	font: 400 16px/1.5 var(--font-body);
+}
+
+.dk-cart-page .input-text:focus,
+.dk-checkout-page .input-text:focus {
+	outline: 2px solid var(--gold-dark);
+	outline-offset: 1px;
+}
+
+.dk-cart-page .required,
+.dk-checkout-page .required {
+	color: var(--gold-dark);
+	text-decoration: none;
+}
+
+/* ---------------------------------------------------------------
+   Cart (no comp — derived, see woocommerce/cart/cart.php's doc comment)
+   --------------------------------------------------------------- */
+/* page.php already renders the page title + breadcrumb above this — see
+   cart.php's doc comment — so no top hero padding is needed here. */
+.dk-cart-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 22px;
+	padding: 60px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+	color: var(--text-muted-dark);
+}
+
+.dk-cart-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 380px;
+	gap: 42px;
+	align-items: start;
+}
+
+.dk-cart-lines {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.dk-cart-line {
+	display: grid;
+	grid-template-columns: 88px minmax(0, 1fr) auto auto auto;
+	align-items: center;
+	gap: 20px;
+	padding: 20px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+}
+
+.dk-cart-line__media {
+	display: block;
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.dk-cart-line__media img {
+	width: 88px;
+	height: 88px;
+	object-fit: cover;
+	display: block;
+}
+
+.dk-cart-line__body {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.dk-cart-line__title {
+	color: var(--text-dark);
+	font: 600 18px/1.3 var(--font-body);
+}
+
+.dk-cart-line__title:hover {
+	color: var(--gold-dark);
+}
+
+.dk-cart-line__price,
+.dk-cart-line__subtotal {
+	color: var(--text-muted-dark);
+}
+
+/* Booking-widget item data (dl.variation, WC's own markup from
+   wc_get_formatted_cart_item_data) — date/time/location/notes on a booked
+   service line, so the customer can confirm what they picked before checkout. */
+.dk-cart-line__meta.variation,
+.dk-cart-line__meta dl.variation {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0;
+	font-size: 14px;
+}
+.dk-cart-line__meta dt,
+.dk-cart-line__meta dd {
+	display: inline;
+	margin: 0;
+	color: var(--text-muted-dark);
+}
+.dk-cart-line__meta dt { font-weight: 600; }
+.dk-cart-line__meta dd p { display: inline; margin: 0; }
+.dk-cart-line__meta dd::after { content: ""; display: block; }
+
+.dk-cart-line__subtotal {
+	font-weight: 600;
+	color: var(--text-dark);
+}
+
+.dk-cart-line .quantity .qty {
+	width: 100px;
+}
+
+.dk-cart-line .dk-qty__btn {
+	width: 40px;
+	min-height: 46px;
+}
+
+.dk-cart-line .dk-qty .qty {
+	width: 44px;
+	font-size: 16px;
+}
+
+.dk-cart-line__remove {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	color: var(--text-muted);
+	font-size: 20px;
+	line-height: 1;
+}
+
+.dk-cart-line__remove:hover {
+	background: rgba(11, 11, 12, .06);
+	color: var(--text-dark);
+}
+
+.dk-cart-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+	padding: 20px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+}
+
+.dk-cart-coupon {
+	display: flex;
+	gap: 10px;
+	flex: 1 1 320px;
+}
+
+.dk-cart-coupon .input-text {
+	flex: 1 1 auto;
+}
+
+.dk-cart-summary,
+.dk-checkout-card {
+	padding: 28px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+}
+
+.dk-cart-summary {
+	position: sticky;
+	top: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.dk-cart-summary__title,
+.dk-checkout-card h2,
+.dk-checkout-card h3 {
+	margin: 0;
+	font: 400 26px/1 var(--font-display);
+	letter-spacing: .02em;
+	color: var(--text-dark);
+}
+
+/* Woo's own cart-totals.php prints its own <h2> and its own "Proceed to
+   checkout" link (woocommerce_proceed_to_checkout) — the card already has
+   both (see cart.php), styled, so hide the plain duplicates rather than
+   overriding the template. */
+.cart_totals > h2,
+.cart_totals .checkout-button {
+	display: none;
+}
+
+.shop_table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.shop_table th,
+.shop_table td {
+	padding: 12px 0;
+	border-block-end: 1px solid rgba(11, 11, 12, .08);
+	text-align: left;
+	color: var(--text-muted-dark);
+}
+
+.shop_table tr:last-child th,
+.shop_table tr:last-child td {
+	border-block-end: 0;
+}
+
+.shop_table .order-total th,
+.shop_table .order-total td {
+	padding-block-start: 16px;
+	font: 600 20px/1.3 var(--font-body);
+	color: var(--text-dark);
+}
+
+.dk-cart-summary__checkout {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+}
+
+/* ---------------------------------------------------------------
+   Checkout (no comp — derived, see woocommerce/checkout/form-checkout.php)
+   --------------------------------------------------------------- */
+/* page.php already renders the page title + breadcrumb above this — see
+   form-checkout.php's doc comment — so no top hero padding is needed here. */
+
+.dk-checkout-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 420px;
+	gap: 42px;
+	align-items: start;
+}
+
+.dk-checkout-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.dk-checkout-fields .dk-checkout-card:last-child:empty {
+	display: none;
+}
+
+.dk-checkout-summary .dk-checkout-card {
+	position: sticky;
+	top: 24px;
+}
+
+.woocommerce-checkout-review-order-table .product-name {
+	color: var(--text-dark);
+}
+
+.wc_payment_methods {
+	margin: 20px 0 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.wc_payment_methods .wc_payment_method {
+	padding: 16px 18px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-md);
+}
+
+.payment_box {
+	margin-block-start: 12px;
+	padding: 14px;
+	border-radius: var(--radius-md);
+	background: #F6F4EF;
+	color: var(--text-muted-dark);
+}
+
+#place_order {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	margin-block-start: 20px;
+	padding: 18px 42px;
+	border: 0;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	box-shadow: 0 10px 16px rgba(201, 161, 74, .35);
+	color: var(--text-dark);
+	font: 600 20px/1 var(--font-body);
+	letter-spacing: .04em;
+	cursor: pointer;
+}
+
+@media (max-width: 991.98px) {
+	.dk-cart-layout,
+	.dk-checkout-layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.dk-cart-summary,
+	.dk-checkout-summary .dk-checkout-card {
+		position: static;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.dk-cart-line {
+		grid-template-columns: 64px minmax(0, 1fr);
+		grid-template-areas:
+			"media body"
+			"media qty"
+			"media subtotal"
+			"remove remove";
+		row-gap: 10px;
+	}
+
+	.dk-cart-line__media { grid-area: media; }
+	.dk-cart-line__body { grid-area: body; }
+	.dk-cart-line .quantity { grid-area: qty; }
+	.dk-cart-line__subtotal { grid-area: subtotal; }
+	.dk-cart-line__remove { grid-area: remove; justify-self: end; }
+}
+
+/* ---------------------------------------------------------------
+   Cart-page cross-sell rail (CrossSellService::renderCartRail(),
+   template-parts/sections/shop/cross-sell-rail.php). The cards themselves
+   are .prod-card — this file only owns the section layout.
+   --------------------------------------------------------------- */
+.cross-sell-rail {
+	margin-block-start: 48px;
+	padding-block-start: 32px;
+	border-top: 1px solid var(--line-white-08);
+}
+
+.cross-sell-rail__head {
+	margin-block-end: 20px;
+}
+
+.cross-sell-rail__title {
+	font: 400 clamp(24px, 2.4vw, 32px)/1.1 var(--font-display);
+	color: var(--text-white);
+	margin-block-start: 6px;
+}
+
+.cross-sell-rail__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 20px;
+}
+
+@media (max-width: 575.98px) {
+	.cross-sell-rail__grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ---------------------------------------------------------------
+   Order received / thank-you (woocommerce/checkout/thankyou.php,
+   BUILD-PLAN §7 Phase 1). Reuses .dk-checkout-card's own light-card
+   surface — is_account_page() is false here, so account.css never loads.
+   --------------------------------------------------------------- */
+.dk-thankyou {
+	max-width: 720px;
+	margin-inline: auto;
+}
+
+.dk-thankyou__title {
+	margin: 8px 0 16px;
+	font: 400 clamp(28px, 3vw, 40px)/1.1 var(--font-display);
+	color: var(--text-dark);
+}
+
+.dk-thankyou__lead {
+	color: var(--text-muted-dark);
+	margin-block-end: 24px;
+}
+
+.dk-thankyou-overview {
+	list-style: none;
+	margin: 0 0 28px;
+	padding: 20px 0;
+	border-block: 1px solid rgba(11, 11, 12, .08);
+	display: grid;
+	gap: 10px;
+}
+
+.dk-thankyou-overview li {
+	color: var(--text-muted-dark);
+}
+
+.dk-thankyou__subtitle {
+	margin: 0 0 12px;
+	font: 400 22px/1 var(--font-display);
+	color: var(--text-dark);
+}
+
+.dk-thankyou__next .body-base {
+	color: var(--text-muted-dark);
+	margin-block-end: 12px;
+}
+
+.dk-thankyou__next .dk-thankyou__address {
+	color: var(--text-dark);
+}
+
+.dk-thankyou__next .btn-gold {
+	margin-block-start: 8px;
+}

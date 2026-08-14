@@ -72,6 +72,13 @@ final class GlobalDefaults implements DefaultsProvider
             ['size_label' => 'Large (SUV / ute / van)',  'size_multiplier' => 1.35],
             ['size_label' => 'Supercar / Exotic',        'size_multiplier' => 1.6],
          ],
+
+         /* ── Shop trust row — Product Detail, node 185:8200 ──────── */
+         'shop_trust_items' => [
+            ['trust_icon_glyph' => 'truck',   'trust_text' => 'Free NZ shipping on orders over $99'],
+            ['trust_icon_glyph' => 'clock',   'trust_text' => '30-day satisfaction guarantee'],
+            ['trust_icon_glyph' => 'shield',  'trust_text' => 'The same product our detailers use in studio'],
+         ],
       ];
    }
 }
