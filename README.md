@@ -113,7 +113,7 @@ That's it — it is auto-registered on the next request.
 ## Child themes
 
 StackPress is **child-theme safe**: the framework locates its own services and
-assets via the *template* (parent) directory, so it boots and enqueues normally
+assets via the _template_ (parent) directory, so it boots and enqueues normally
 even when a child theme is active.
 
 ## Renaming the namespace for a new project

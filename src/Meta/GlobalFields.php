@@ -114,6 +114,9 @@ class GlobalFields extends Singleton implements ServiceInterface
          ]),
          $this->field('reviews_average', __('Review Average', 'detailking')),
          $this->field('reviews_count', __('Review Count', 'detailking')),
+         $this->field('reviews_shortcode', __('Reviews Widget Shortcode', 'detailking'), 'text', [
+            'instructions' => __('Trustindex shortcode rendering the live Google reviews. Leave blank to fall back to the hand-seeded Testimonials CPT rail (the average/count above are only used by that fallback).', 'detailking'),
+         ]),
          $this->field('instagram_handle', __('Instagram Handle', 'detailking')),
 
          /* ===== BOOKING WIDGET =====

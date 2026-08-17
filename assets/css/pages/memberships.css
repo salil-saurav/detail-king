@@ -1,0 +1,177 @@
+/* ═══════════════════ MEMBERSHIPS PAGE STYLES ═══════════════════ */
+
+/* ---- Section 3: Loyalty Rewards ---- */
+.mship-loyalty {
+	position: relative;
+	padding-block: 130px;
+	background: var(--bg-dark);
+}
+
+.mship-loyalty__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 30px;
+	margin-block-start: 54px;
+}
+
+.mship-loyalty__card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 42px 34px;
+	border-radius: var(--radius-lg);
+}
+
+.mship-loyalty__icon-box {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	margin-block-end: 24px;
+	border-radius: 12px;
+	background: var(--gold-gradient-btn);
+	color: var(--bg-dark);
+	box-shadow: var(--shadow-gold-sm);
+}
+
+.mship-loyalty__card-title {
+	margin-block-end: 12px;
+	color: var(--text-white);
+}
+
+.mship-loyalty__card-text {
+	color: var(--text-white-75);
+}
+
+/* ---- Section 4: Rewards That Add Up (Value / Checklist) ---- */
+.mship-value {
+	position: relative;
+	overflow: hidden;
+	padding-block: 130px;
+}
+
+.mship-value__watermark {
+	inset-block-start: 20px;
+	inset-inline-start: -40px;
+	font-size: 220px;
+}
+
+.mship-value__grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 60px;
+	align-items: center;
+}
+
+.mship-value__checklist {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 20px 24px;
+}
+
+.mship-value__item {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 20px 24px;
+	border-radius: var(--radius-md);
+	background: #fff;
+	box-shadow: var(--shadow-card);
+	transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.mship-value__item:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-section);
+}
+
+.mship-value__tick {
+	position: relative;
+	flex: 0 0 24px;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--gold-gradient-btn);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.mship-value__tick::before {
+	content: "";
+	width: 8px;
+	height: 4px;
+	border-inline-start: 1.5px solid var(--bg-dark);
+	border-block-end: 1.5px solid var(--bg-dark);
+	transform: rotate(-45deg);
+	margin-block-start: -1px;
+}
+
+.mship-value__text {
+	color: var(--bg-dark);
+	font-weight: 500;
+}
+
+/* ---- Section 5: CTA ---- */
+.mship-cta {
+	padding-block: 100px 130px;
+	background: var(--bg-dark);
+}
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media (max-width: 1199.98px) {
+	.mship-loyalty,
+	.mship-value {
+		padding-block: 100px;
+	}
+
+	.mship-cta {
+		padding-block: 80px 100px;
+	}
+
+	.mship-value__grid {
+		gap: 40px;
+	}
+}
+
+@media (max-width: 991.98px) {
+	.mship-loyalty__grid {
+		grid-template-columns: minmax(0, 1fr);
+		max-width: 480px;
+		margin-inline: auto;
+	}
+
+	.mship-value__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.mship-value__checklist {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767.98px) {
+	.mship-loyalty,
+	.mship-value {
+		padding-block: 70px;
+	}
+
+	.mship-cta {
+		padding-block: 60px 80px;
+	}
+
+	.mship-value__checklist {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 575.98px) {
+	.mship-loyalty__card {
+		padding: 32px 24px;
+	}
+
+	.mship-value__item {
+		padding: 16px 18px;
+	}
+}

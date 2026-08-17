@@ -39,6 +39,7 @@ get_template_part('template-parts/global/page-banner', null, [
    'text'    => $bannerText,
    'bg'      => $bannerBgUrl,
    'break'   => false,
+   'breadcrumb_suffix' => ['Blog' => ''],
 ]);
 
 // Categories for filter tabs

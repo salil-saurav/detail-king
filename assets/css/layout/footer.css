@@ -15,10 +15,18 @@
 	overflow: hidden;
 	/* Every page frame wraps the footer in a container with 89px of top padding
 	   (homepage node 228:2154, Ceramic Pro node 232:3185 — both declare
-	   `padding: 89px 0px 0px`). That gap belongs to the page, not the footer, so
-	   it is a margin and shows the section colour above rather than the dark
-	   footer fill. Without it every page's footer band measures ~89px short. */
-	margin-block-start: 89px;
+	   `padding: 89px 0px 0px`). That gap belongs to the page, not the footer.
+	   It used to be a margin here, which was wrong in a way only a page ending
+	   on a non-cream section shows: a margin is transparent, so the strip took
+	   the *body* colour (#F6F4EF), painting a bright cream bar between a dark
+	   final section and the dark footer — live on /memberships/ and every
+	   service page, and visible the moment Build Your Package's help band went
+	   beige. The gap is now given to the last section itself (global.css,
+	   `.layout--site > :last-child::after`), where it takes that section's own
+	   background — which is what the comp draws: Build Your Package's #EDEAE2
+	   band runs straight into the footer, Membership Plans' cream one does the
+	   same in cream. Page height is unchanged; the 89px just moved one box up. */
+	margin-block-start: 0;
 	background: var(--bg-dark);
 	/* The comp shows a faint warm glow bleeding up from the bottom-left. */
 	background-image: radial-gradient(circle at 12% 108%, rgba(40, 34, 15, .9) 0%, rgba(40, 34, 15, 0) 55%);

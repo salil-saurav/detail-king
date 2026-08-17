@@ -79,24 +79,26 @@ class AssetsService extends Singleton implements ServiceInterface
       $this->addScript('sp-main', '/js/global.js', ['bootstrap'], '1.0', true);
 
       /* Motion layer — implements animation-implementation-spec.md.
-         GSAP 3.13 is free including ScrollTrigger (GreenSock standard licence,
-         no Club membership needed). Vendored locally rather than CDN-loaded so
-         the theme has no third-party runtime dependency. ~42KB gzipped for both
-         (GSAP 25, ScrollTrigger 17). motion.js self-disables under
+
+         In-house and dependency-free since 17 Aug 2026. GSAP 3.13 +
+         ScrollTrigger were vendored here (116KB raw / ~42KB gzipped, two extra
+         deferred requests, ~35ms of parse+init before a single pixel moved) and
+         are gone: the reveal system is CSS transitions declared in global.css §7
+         with motion.js toggling `.is-visible` off an IntersectionObserver, and
+         the only per-frame work left (§30 parallax, §17 pinned h-scroll) is one
+         shared rAF-throttled scroll reader that is idle while nothing
+         scroll-linked is on screen. motion.js is ~4KB unminified, has no
+         dependencies to declare, and still self-disables under
          prefers-reduced-motion.
 
-         Lenis (inertial smooth-scroll, spec's Critical #1) was here and is
-         deliberately gone: measured on this page under a synthetic wheel-scroll
-         burst, it roughly halved rendered frame throughput (58 vs 106-117
-         frames per 3s at 4x CPU throttle) and nearly doubled the worst single
-         stall (183ms vs ~110ms) versus native scroll, because it turns one
-         wheel tick into many more animation-frames of work (its own decaying
-         easing on top of ScrollTrigger's per-frame update). Native scroll plus
-         ScrollTrigger showed no measurable idle cost on its own — this was
-         Lenis specifically, not the reveal/parallax animations. */
-      $this->addScript('gsap', '/lib/motion/gsap.min.js', [], '3.13.0', true);
-      $this->addScript('gsap-scrolltrigger', '/lib/motion/ScrollTrigger.min.js', ['gsap'], '3.13.0', true);
-      $this->addScript('dk-motion', '/js/motion.js', ['gsap', 'gsap-scrolltrigger'], '1.0', true);
+         Lenis (inertial smooth-scroll, spec's Critical #1) was removed before
+         that: measured on this page under a synthetic wheel-scroll burst, it
+         roughly halved rendered frame throughput (58 vs 106-117 frames per 3s at
+         4x CPU throttle) and nearly doubled the worst single stall (183ms vs
+         ~110ms) versus native scroll, because it turned one wheel tick into many
+         more animation-frames of work. Scrolling is native; motion.js reads it
+         directly and needs no scroll proxy. */
+      $this->addScript('dk-motion', '/js/motion.js', [], '2.0', true);
 
       // Layout chrome — on every page, so unconditional.
       $this->addStyle('dk-header', '/css/layout/header.css', ['sp-global']);
@@ -134,7 +136,8 @@ class AssetsService extends Singleton implements ServiceInterface
 
       $this->addStyle('dk-about', '/css/pages/about.css', ['sp-global'], '1.0', 'all', $isAbout);
 
-      $isServices = static fn(): bool => is_page_template('pages/template-services.php');
+      $isServices = static fn(): bool => is_page_template('pages/template-services.php')
+         || is_post_type_archive('dk_service');
 
       $this->addStyle('dk-services', '/css/pages/services.css', ['sp-global'], '1.0', 'all', $isServices);
 

@@ -218,6 +218,18 @@ img {
 	color: var(--gold-dark);
 }
 
+/* The 89px the comp puts between the last section and the footer (see
+   footer.css for where it comes from and why it is no longer the footer's
+   margin). Added as a block inside the last section so it is painted with
+   that section's own background — a margin here would show the body colour
+   and put a cream bar between two dark bands. Scoped to a direct child of
+   the page's own <main>, so a nested last element never picks it up. */
+.layout--site > :last-child::after {
+	content: "";
+	display: block;
+	block-size: 89px;
+}
+
 /* ---------------------------------------------------------------
    3. Type scale
    --------------------------------------------------------------- */
@@ -646,6 +658,7 @@ img {
 .btn-outline-light-dk:focus-visible {
 	background: var(--glass-white-12);
 	color: var(--text-white);
+	transform: translateY(-2px);
 }
 
 .section--light .btn-outline-light-dk {
@@ -744,15 +757,26 @@ img {
 	z-index: 1;
 }
 
+/* !important: ThemeHelper::get_breadcrumbs() hard-codes Bootstrap's `mb-0` on
+   the <ul> (needed by its other, non-banner call sites), whose own
+   `!important` otherwise wins over this rule's higher specificity and zeroes
+   the gap before the eyebrow badge. */
 .page-banner__breadcrumb .breadcrumb {
 	display: flex;
 	align-items: center;
 	list-style: none;
-	margin: 0 0 22px;
+	margin: 0 0 22px !important;
 	padding: 0;
 	font: 500 18px/1.65 var(--font-body);
 	letter-spacing: .18em;
 	text-transform: uppercase;
+}
+
+/* Figma's banner container is a column auto-layout with one 22px gap between
+   every child (breadcrumb, eyebrow, title, text) — the other three get it via
+   margin already; the eyebrow badge is inline-flex with no margin of its own. */
+.page-banner__inner .eyebrow--badge {
+	margin-bottom: 22px;
 }
 
 .page-banner__breadcrumb .breadcrumb__link {
@@ -865,6 +889,27 @@ img {
 
 /* Shared dark CTA card (global/cta-banner.php). Recurs on About, Services,
    Gallery and Blog with different copy each time. */
+
+/* The card carries data-animate="zoom", so it sits at scale(1.08) — 8% wider
+   than its own box — for as long as it is below the fold and unrevealed. At
+   1920 that growth (59px a side) fits inside the container's own gutter; on a
+   narrower viewport the gutter shrinks past it and the page picks up a
+   horizontal scrollbar that disappears the moment the section reveals — a
+   transient overflow, which is exactly the kind an automated check catches and
+   a human never does. Clipped on the container rather than the card (the card
+   is the thing being scaled) and on the x axis only, so nothing vertical —
+   shadows, the reveal's own lift — is cut. `:has()` keeps this attached to the
+   component instead of to a list of page-specific section classes that a new
+   page would forget to join; the whole rule is inert on any container without
+   a CTA card in it.
+
+   `visible clip` is deliberate: `hidden` on one axis forces the other to
+   `auto`, which would make this a scroll container and break the sticky
+   header's scroll-padding maths. `clip` does not. */
+.container-dk:has(> .dk-cta) {
+	overflow: visible clip;
+}
+
 .dk-cta {
 	position: relative;
 	overflow: hidden;
@@ -1394,22 +1439,190 @@ select.dk-field__input {
 /* ---------------------------------------------------------------
    7. Scroll-reveal ([data-animate]) — house convention, put it on
    every section. Respects reduced-motion.
-   --------------------------------------------------------------- */
-/* GSAP owns these elements now — see assets/js/motion.js, which implements
-   animation-implementation-spec.md. All this stylesheet still does is hide them
-   before the first frame so there is no flash of un-animated content.
 
-   No transform, no transition, no per-variant rules here: motion.js sets the
-   initial transform per variant and tweens it, and a CSS transform on the same
-   element would fight the tween. The variants themselves are documented there.
+   THIS is the reveal animation, all of it. GSAP + ScrollTrigger (116KB of
+   vendor JS) were removed 17 Aug 2026 and replaced by these transitions plus
+   `assets/js/motion.js`, which is now ~4KB and does nothing per frame for a
+   reveal: it toggles `.is-visible` from an IntersectionObserver and the
+   compositor runs the interpolation. The per-variant from-states below are the
+   contract — motion.js writes no transforms at all any more, so a CSS transform
+   on one of these elements no longer "fights the tween", it *is* the tween.
 
    `aos-ready` is added by motion.js and *only* once it has confirmed it can
-   actually animate — not under prefers-reduced-motion, and not if GSAP failed
-   to load. So this rule is inert on exactly the paths where hiding content
-   would otherwise strand it at opacity 0 forever, which is the failure mode
-   this build has already been bitten by (see BUILD-PLAN §9). */
+   actually animate — not under prefers-reduced-motion, and not if the script
+   failed to parse or run. So the hiding rule is inert on exactly the paths
+   where hiding content would otherwise strand it at opacity 0 forever, which is
+   the failure mode this build has already been bitten by (HISTORY.md §9).
+
+   Distances/durations follow animation-implementation-spec.md §3/§12/§28/§29:
+   images are slower than UI (1.0-1.1s vs 0.7s), travel shrinks on small
+   viewports (§23), easing is power3.out expressed as its bezier.
+   --------------------------------------------------------------- */
+:root {
+	--dk-rv-y: 40px;      /* §28 default reveal travel */
+	--dk-rv-x: 30px;      /* §12 directional reveal travel */
+	--dk-rv-dur: .7s;     /* §3 small UI / headings */
+	--dk-rv-ease: cubic-bezier(.215, .61, .355, 1);   /* = GSAP power3.out */
+}
+
+/* §23: 40px of travel on a 375px-wide screen reads as jitter, not elegance. */
+@media (max-width: 767.98px) {
+	:root {
+		--dk-rv-y: 20px;
+		--dk-rv-x: 15px;
+	}
+}
+
 .aos-ready [data-animate] {
 	opacity: 0;
+	transform: translate3d(0, var(--dk-rv-y), 0);
+	transition:
+		opacity var(--dk-rv-dur) var(--dk-rv-ease),
+		transform var(--dk-rv-dur) var(--dk-rv-ease);
+	/* Stagger. motion.js sets this inline, in ms, per element in a batch (§8,
+	   §14, §15: 100ms between siblings) and clears it once the reveal lands. */
+	transition-delay: var(--dk-rv-delay, 0ms);
+}
+
+.aos-ready [data-animate="fade"] {
+	transform: none;                                  /* opacity only */
+}
+
+.aos-ready [data-animate="fade-left"] {
+	transform: translate3d(calc(-1 * var(--dk-rv-x)), 0, 0);
+}
+
+.aos-ready [data-animate="fade-right"] {
+	transform: translate3d(var(--dk-rv-x), 0, 0);
+}
+
+/* §29 image reveal. 1.08 is load-bearing beyond the animation: two sections
+   clip horizontally *because* of it (see the cta-banner container rule above
+   and `.home-seam` in pages/home.css). Change it and re-check both. */
+.aos-ready [data-animate="zoom"] {
+	--dk-rv-dur: 1.1s;
+	transform: scale(1.08);
+}
+
+.aos-ready [data-animate="zoom-in"] {
+	--dk-rv-dur: 1s;
+	transform: scale(.8);
+}
+
+.aos-ready [data-animate].is-visible {
+	opacity: 1;
+	transform: none;
+}
+
+/* ---------------------------------------------------------------
+   7b. Hero sequence (§6) — the one place the spec asks for a real
+   sequence rather than a single reveal. Selectors are the home
+   hero's, but this lives with the rest of the motion layer rather
+   than in pages/home.css, because motion.js's `[data-hero]` hook is
+   what turns it on and the two have to be read together.
+   `[data-hero]` deliberately is not `[data-animate]`, so the generic
+   batch above leaves these nodes alone and cannot double-animate them.
+   --------------------------------------------------------------- */
+/* Backdrop settles from 1.05 — long enough to read as a settle, not a zoom. */
+.aos-ready [data-hero] [data-hero-bg] {
+	transform: scale(1.05);
+	transition: transform 1.6s cubic-bezier(.25, .46, .45, .94);
+}
+
+.aos-ready [data-hero].is-hero-in [data-hero-bg] {
+	transform: none;
+}
+
+.aos-ready [data-hero] .home-hero__badge,
+.aos-ready [data-hero] .home-hero__title,
+.aos-ready [data-hero] .home-hero__text,
+.aos-ready [data-hero] .home-hero__actions > * {
+	opacity: 0;
+	transform: translate3d(0, 30px, 0);
+	transition:
+		opacity .8s var(--dk-rv-ease),
+		transform .8s var(--dk-rv-ease);
+	transition-delay: var(--dk-hero-at, 0s);
+}
+
+.aos-ready [data-hero] .home-hero__badge  { --dk-hero-at: .15s; }
+.aos-ready [data-hero] .home-hero__title  { --dk-hero-at: .25s; }
+.aos-ready [data-hero] .home-hero__text   { --dk-hero-at: .4s; }
+
+/* §6 CTAs land after the heading, with a small stagger between buttons. */
+.aos-ready [data-hero] .home-hero__actions > * {
+	--dk-hero-at: .55s;
+	transform: translate3d(0, 20px, 0);
+	transition-duration: .6s;
+}
+
+.aos-ready [data-hero] .home-hero__actions > :nth-child(2) { --dk-hero-at: .65s; }
+.aos-ready [data-hero] .home-hero__actions > :nth-child(3) { --dk-hero-at: .75s; }
+
+.aos-ready [data-hero].is-hero-in .home-hero__badge,
+.aos-ready [data-hero].is-hero-in .home-hero__title,
+.aos-ready [data-hero].is-hero-in .home-hero__text,
+.aos-ready [data-hero].is-hero-in .home-hero__actions > * {
+	opacity: 1;
+	transform: none;
+}
+
+/* Once settled, the CTAs revert to a normal button transition rather than
+   the entrance choreography's .6-.8s duration + up-to-.75s stagger delay —
+   without this, a hover after reveal would still animate on the reveal's
+   timing (visibly sluggish) because nothing else ever resets it. */
+.aos-ready [data-hero].is-hero-in .home-hero__actions > * {
+	transition-duration: .25s;
+	transition-delay: 0s;
+}
+
+/* The settle rule above also pins transform: none on every child of
+   .home-hero__actions with more specificity than a plain :hover — chaining
+   the full ancestry here is what lets the hero's own CTAs still lift on
+   hover/focus (§31) instead of being stuck flat forever after reveal. */
+.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-gold:hover,
+.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-gold:focus-visible,
+.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-outline-light-dk:hover,
+.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-outline-light-dk:focus-visible {
+	transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------------
+   7c. Scroll-linked motion (§30 parallax, §17 pinned h-scroll).
+   motion.js writes the transform on these per frame; everything
+   here is only the setup that makes that cheap and safe.
+   --------------------------------------------------------------- */
+[data-parallax] {
+	will-change: transform;
+}
+
+/* Pin scaffold for [data-hscroll]. The two wrappers are created by motion.js
+   only when the track actually overflows, so on any layout where it fits (the
+   Instagram row is a 1fr grid today, so: always) neither element exists and
+   these rules match nothing. */
+.dk-pin {
+	position: sticky;
+	inset-block-start: 0;
+	overflow: hidden;
+}
+
+/* An ancestor with `overflow: hidden` silently defeats that sticky — `hidden`
+   makes the ancestor the nearest scroll container, and since it never itself
+   scrolls, the pin never engages. Measured with the row forced to overflow:
+   `.home-instagram { overflow: hidden }` left the pin travelling with the page
+   (top -447 where it should have been 0) while the track still translated,
+   i.e. the gallery slid sideways and off screen instead of holding still.
+   `clip` clips identically without creating a scroll container — the same
+   distinction the cta-banner container rule in §5 above depends on. The type
+   selector is there only to out-specify `.home-instagram`, which sets `hidden`
+   in pages/home.css, a stylesheet that loads after this one. */
+section:has(> .dk-pin-scope),
+div:has(> .dk-pin-scope) {
+	overflow: clip;
+}
+
+.dk-pin [data-hscroll] {
+	will-change: transform;
 }
 
 /* ---------------------------------------------------------------
@@ -1659,3 +1872,204 @@ body.search-open {
 		transform: none;
 	}
 }
+
+/* ═══════════════════ MEMBERSHIP CARDS & GRID ═══════════════════ */
+.home-membership {
+	position: relative;
+	overflow: hidden;
+	padding-block: 130px 79px;
+}
+
+.home-membership__watermark {
+	inset-block-start: 10px;
+	inset-inline-start: -40px;
+	font-size: 200px;
+}
+
+.home-membership__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	align-items: center;
+	gap: 30px;
+	margin-block-start: 54px;
+}
+
+.plan-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-height: 660px;
+	min-width: 0;
+	padding: 42px 38px 38px;
+	border-radius: var(--radius-lg);
+	background: #fff;
+	box-shadow: var(--shadow-card);
+	overflow-wrap: anywhere;
+	transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s ease;
+}
+
+.plan-card:hover {
+	transform: translateY(-8px);
+	box-shadow: var(--shadow-section);
+}
+
+.plan-card--featured:hover {
+	box-shadow: var(--shadow-dark-xl);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.plan-card {
+		transition: none;
+	}
+
+	.plan-card:hover {
+		transform: none;
+	}
+}
+
+.plan-card--featured {
+	min-height: 700px;
+	padding-block: 56px 46px;
+	background: var(--bg-dark);
+	color: var(--text-white-75);
+	box-shadow: var(--shadow-dark);
+}
+
+.plan-card--featured .plan-card__title {
+	color: var(--text-white);
+}
+
+.plan-card__badge {
+	position: absolute;
+	inset-block-start: -20px;
+	inset-inline-start: 50%;
+	transform: translateX(-50%);
+	padding: 10px 26px;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	color: var(--bg-dark);
+	white-space: nowrap;
+	box-shadow: var(--shadow-gold-sm);
+}
+
+.plan-card__head {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.plan-card__tagline {
+	color: var(--text-muted);
+}
+
+.plan-card--featured .plan-card__tagline {
+	color: var(--text-white-55);
+}
+
+.plan-card__price {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-block: 30px 30px;
+}
+
+.plan-card__currency {
+	font: 400 22px/1 var(--font-body);
+	color: var(--gold-dark);
+}
+
+.plan-card--featured .plan-card__currency {
+	color: var(--gold-primary);
+}
+
+.plan-card__period {
+	color: var(--text-muted);
+}
+
+.plan-card--featured .plan-card__period {
+	color: var(--text-white-55);
+}
+
+.plan-card__features {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin: 0 0 34px;
+	padding: 0;
+	list-style: none;
+}
+
+.plan-card__features li {
+	display: flex;
+	align-items: flex-start;
+	gap: 13px;
+	min-width: 0;
+}
+
+.plan-card__tick {
+	position: relative;
+	flex: 0 0 22px;
+	width: 22px;
+	height: 22px;
+	margin-block-start: 4px;
+	border: 1px solid var(--gold-45);
+	border-radius: 50%;
+}
+
+.plan-card__tick::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 6px;
+	inset-inline-start: 6px;
+	width: 8px;
+	height: 4px;
+	border-inline-start: 1.5px solid var(--gold-dark);
+	border-block-end: 1.5px solid var(--gold-dark);
+	transform: rotate(-45deg);
+}
+
+.plan-card--featured .plan-card__tick::before {
+	border-color: var(--gold-primary);
+}
+
+.plan-card__cta {
+	margin-block-start: auto;
+	width: 100%;
+}
+
+.home-membership__footnote {
+	margin-block-start: 34px;
+	text-align: center;
+	color: var(--text-muted);
+}
+
+@media (max-width: 1399.98px) {
+	.home-membership {
+		padding-block: 100px 80px;
+	}
+}
+
+@media (max-width: 991.98px) {
+	.home-membership__grid {
+		grid-template-columns: minmax(0, 1fr);
+		max-width: 480px;
+		margin-inline: auto;
+	}
+
+	.plan-card--featured {
+		padding-block: 46px 40px;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.home-membership {
+		padding-block: 70px;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.plan-card {
+		padding: 32px 24px 30px;
+	}
+}
+

@@ -184,6 +184,17 @@
 	color: #FFFFFF;
 	margin: 0;
 	text-transform: uppercase;
+	overflow-wrap: anywhere;
+	/* Resilience: gallery_caption/title are admin-entered, unbounded length.
+	   .gallery-card__overlay is bottom-anchored inside a card with
+	   overflow:hidden (measured: a 3x-longer title+caption pushed the
+	   overlay ~7px past the card's own bottom edge, clipping the caption's
+	   last line against the card's overflow:hidden). Line-clamping keeps the
+	   overlay's own height bounded instead, so it never re-clips itself. */
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 
 .gallery-card__caption {
@@ -193,6 +204,11 @@
 	line-height: 1.5;
 	color: rgba(255, 255, 255, 0.75);
 	margin: 6px 0 0;
+	overflow-wrap: anywhere;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 
 /* ---------------------------------------------------------------

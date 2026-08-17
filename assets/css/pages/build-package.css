@@ -1,0 +1,750 @@
+/* =====================================================================
+   Detail King — build-package.css
+   Styles for the Build Your Own Package page.
+   ===================================================================== */
+
+/* The builder band is LIGHT, not dark.
+   The comp (Build Your Package.png) draws this page as a dark hero, then a
+   #F6F4EF body holding white cards, then a #EDEAE2 help band, then the dark
+   footer — sampled straight off the export, and the only page in the build
+   whose *form* sits on light. It shipped dark first (matching this site's
+   general inner-page convention rather than this page's own comp); this is
+   that residual closed. The Package Summary sidebar stays dark — the comp
+   draws it dark too, and it is the one element that should read as a
+   receipt rather than as part of the form. */
+.byop-builder-section {
+	padding-block: 100px;
+	background: var(--bg-light);
+	color: var(--text-dark);
+}
+
+/* Split Columns Layout */
+.byop-layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 40px;
+	align-items: start;
+}
+
+@media (min-width: 992px) {
+	.byop-layout {
+		grid-template-columns: 2.15fr 1.1fr;
+		gap: 50px;
+	}
+}
+
+.byop-layout__main {
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+}
+
+/* Sticky Sidebar */
+.byop-layout__sidebar {
+	position: sticky;
+	top: calc(var(--dk-nav-height, 86px) + 24px);
+	z-index: 10;
+}
+
+/* Cards (Steps) */
+.byop-card {
+	padding: 40px;
+	/* No stroke: the comp's cards are pure white on #F6F4EF and read by their
+	   shadow alone (sampled — the card edge is #FFF against the band, with no
+	   hairline between). */
+	background: #fff;
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-card);
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+.byop-card__head {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+}
+
+.byop-card__num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 50px;
+	height: 50px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: var(--gold-gradient-btn);
+	color: var(--text-dark);
+	font: 400 24px/1 var(--font-display);
+}
+
+.byop-card__title {
+	margin: 0 0 6px;
+	color: var(--text-dark);
+	font: 400 36px/1 var(--font-display);
+	letter-spacing: .03em;
+}
+
+.byop-card__subtitle {
+	margin: 0;
+	color: var(--text-muted);
+	font-size: 16px;
+}
+
+/* Tile Grid (Vehicle & Service pickers) */
+.byop-tiles {
+	display: grid;
+	gap: 16px;
+}
+
+.byop-tiles--4 {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 576px) {
+	.byop-tiles--4 {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
+
+.byop-tiles--6 {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+	.byop-tiles--6 {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.byop-tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px 16px;
+	background: #fff;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	color: var(--text-muted);
+	cursor: pointer;
+	text-align: center;
+	position: relative;
+	transition: all 0.25s ease;
+	outline: none;
+}
+
+.byop-tile:hover {
+	border-color: rgba(11, 11, 12, .28);
+	color: var(--text-dark);
+	background: #fff;
+}
+
+.byop-tile.is-selected {
+	/* #FFFDF8 fill + a 2px #C9A14A stroke, both sampled off the comp. */
+	background: #FFFDF8;
+	border-color: var(--gold-mid);
+	color: var(--text-dark);
+	box-shadow: 0 10px 30px rgba(201, 161, 74, 0.15);
+}
+
+.byop-tile__check {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	border: 1px solid rgba(11, 11, 12, .18);
+	color: transparent;
+	background: transparent;
+	transition: all 0.2s ease;
+}
+
+.byop-tile.is-selected .byop-tile__check {
+	background: var(--gold-gradient-btn);
+	border-color: transparent;
+	color: var(--text-dark);
+}
+
+.byop-tile__icon {
+	margin-bottom: 12px;
+	color: var(--text-muted);
+	transition: color 0.25s ease;
+}
+
+.byop-tile.is-selected .byop-tile__icon {
+	color: var(--gold-dark);
+}
+
+.byop-tile__label {
+	font: 400 18px/1 var(--font-display);
+	letter-spacing: 0.05em;
+}
+
+/* Service conditional block reveal */
+.byop-service-block {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding-top: 30px;
+	border-top: 1px solid rgba(11, 11, 12, .1);
+}
+
+.byop-service-block__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	align-self: flex-start;
+	padding: 8px 16px;
+	background: var(--gold-08);
+	border: 1px solid var(--gold-30);
+	border-radius: var(--radius-pill);
+	color: var(--gold-dark);
+	font-weight: 500;
+	font-size: 14px;
+}
+
+.byop-service-block__badge-icon svg {
+	width: 18px;
+	height: 18px;
+}
+
+.byop-service-block__grid {
+	display: grid;
+	gap: 30px;
+	width: 100%;
+}
+
+.byop-service-block__grid--split {
+	grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+	.byop-service-block__grid--split {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.byop-service-block__col {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.byop-service-block__heading {
+	margin: 0;
+	font: 400 24px/1 var(--font-display);
+	color: var(--text-dark);
+	letter-spacing: 0.03em;
+}
+
+.byop-service-block__subheading {
+	margin: 0;
+	color: var(--text-muted);
+	font-size: 14px;
+}
+
+.byop-service-block__optional {
+	color: var(--text-muted);
+	font-size: 14px;
+}
+
+/* Options lists (radio/checkbox rows) */
+.byop-options {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.byop-option {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	padding: 16px 20px;
+	background: #fff;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-md);
+	cursor: pointer;
+	position: relative;
+	transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.byop-option:hover {
+	background: #fff;
+	border-color: rgba(11, 11, 12, .28);
+}
+
+.byop-option:has(.byop-option__input:checked) {
+	border-color: var(--gold-mid);
+	background: #FFFDF8;
+}
+
+.byop-option__input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+}
+
+.byop-option__radio-mark,
+.byop-option__box {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	margin-top: 2px;
+	flex-shrink: 0;
+	border: 1px solid rgba(11, 11, 12, .22);
+	transition: all 0.2s ease;
+}
+
+.byop-option__radio-mark {
+	border-radius: 50%;
+}
+
+.byop-option__box {
+	border-radius: 4px;
+	color: transparent;
+}
+
+.byop-option__radio-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: transparent;
+	transform: scale(0);
+	transition: transform 0.2s ease;
+}
+
+.byop-option__input:checked + .byop-option__radio-mark {
+	border-color: var(--gold-mid);
+}
+
+.byop-option__input:checked + .byop-option__radio-mark .byop-option__radio-dot {
+	background: var(--gold-gradient-btn);
+	transform: scale(1);
+}
+
+.byop-option__input:checked + .byop-option__box {
+	background: var(--gold-gradient-btn);
+	border-color: transparent;
+	color: var(--text-dark);
+}
+
+.byop-option__content {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.byop-option__title {
+	font-weight: 500;
+	font-size: 16px;
+	color: var(--text-dark);
+}
+
+.byop-option__desc {
+	font-size: 13px;
+	color: var(--text-muted);
+	line-height: 1.4;
+}
+
+.byop-option__price {
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--gold-dark);
+	flex-shrink: 0;
+	align-self: center;
+}
+
+.byop-option__amount {
+	font-family: var(--font-display);
+	font-size: 24px;
+	letter-spacing: 0.02em;
+}
+
+.byop-option__quote-badge {
+	font-size: 12px;
+	padding: 4px 10px;
+	border-radius: 10px;
+	background: var(--bg-light-alt);
+	color: var(--text-muted);
+}
+
+.byop-option__indicator {
+	display: none;
+}
+
+/* Vinyl upload zone */
+.byop-upload__dropzone {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 30px;
+	border: 1px dashed rgba(11, 11, 12, .16);
+	border-radius: var(--radius-lg);
+	/* The comp fills this zone with the page's own #F6F4EF, a shade off the
+	   white card it sits on — that contrast is the whole affordance. */
+	background: var(--bg-light);
+	cursor: pointer;
+	text-align: center;
+	transition: all 0.2s ease;
+}
+
+.byop-upload__dropzone:hover {
+	border-color: var(--gold-mid);
+	background: #FFFDF8;
+}
+
+.byop-upload__icon {
+	color: var(--gold-dark);
+	margin-bottom: 12px;
+}
+
+.byop-upload__text {
+	font-size: 14px;
+	color: var(--text-muted);
+}
+
+.byop-upload__filelist {
+	display: block;
+	margin-top: 8px;
+	font-size: 12px;
+	color: var(--gold-dark);
+	word-break: break-all;
+}
+
+/* Vinyl notes block */
+.byop-notes-block {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.byop-notes-block__title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--text-dark);
+}
+
+.byop-notes-block__subtitle {
+	margin: 0;
+	font-size: 13px;
+	color: var(--text-muted);
+}
+
+.byop-notes-block__textarea {
+	width: 100%;
+	padding: 14px;
+	background: #fff;
+	border: 1px solid rgba(11, 11, 12, .16);
+	border-radius: var(--radius-md);
+	color: var(--text-dark);
+	font: inherit;
+	resize: vertical;
+	outline: none;
+	transition: border-color 0.2s ease;
+}
+
+.byop-notes-block__textarea:focus {
+	border-color: var(--gold-mid);
+}
+
+/* Step 3: Details form customizations */
+.byop-field--full {
+	grid-column: 1 / -1;
+}
+
+/* `.dk-field` is the shared form control (booking widget, contact form) and is
+   styled for a dark surface in global.css. Step 3 puts it on a white card, so
+   it is re-skinned HERE, scoped to this page's section — global.css is not
+   touched, because every other consumer of this component is still dark. */
+.byop-builder-section .dk-field__label {
+	color: var(--text-muted-dark);
+}
+
+.byop-builder-section .dk-field__input {
+	border-color: rgba(11, 11, 12, .16);
+	background: #fff;
+	color: var(--text-dark);
+}
+
+.byop-builder-section .dk-field__input::placeholder {
+	color: var(--text-muted);
+}
+
+.byop-builder-section .dk-field__input:focus {
+	border-color: var(--gold-mid);
+	background: #FFFDF8;
+}
+
+/* Without this the native date picker keeps rendering its own dark UI (the
+   dark-surface rule it inherits sets color-scheme: dark) on a white field. */
+.byop-builder-section .dk-field__input[type="date"],
+.byop-builder-section .dk-field__input[type="time"] {
+	color-scheme: light;
+}
+
+/* The select caret is painted as two gold gradients in global.css; on white it
+   needs the darker gold to stay visible. */
+.byop-builder-section select.dk-field__input {
+	background-image: linear-gradient(45deg, transparent 50%, var(--gold-dark) 50%), linear-gradient(135deg, var(--gold-dark) 50%, transparent 50%);
+}
+
+/* Summary Sidebar */
+.byop-summary-card {
+	background: var(--bg-dark-card);
+	border: 1px solid var(--gold-22);
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+	box-shadow: var(--shadow-dark);
+}
+
+.byop-summary-card__media {
+	height: 200px;
+	background: linear-gradient(150deg, #1C1C20 0%, #0C0C0E 100%);
+	position: relative;
+	overflow: hidden;
+}
+
+.byop-summary-card__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.byop-summary-card__body {
+	padding: 30px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.byop-summary-card__title {
+	margin: 0;
+	font: 400 30px/1 var(--font-display);
+	letter-spacing: 0.03em;
+	color: var(--text-white);
+}
+
+.byop-summary-card__selections {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.byop-summary-card__selection {
+	display: flex;
+	justify-content: space-between;
+	font-size: 15px;
+	border-bottom: 1px solid var(--line-white-08);
+	padding-bottom: 8px;
+}
+
+.byop-summary-card__selection-label {
+	color: var(--text-white-55);
+}
+
+.byop-summary-card__selection-val {
+	color: var(--text-white);
+	font-weight: 500;
+	text-align: right;
+}
+
+.byop-summary-card__section-title {
+	margin: 0 0 10px;
+	font-size: 14px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--gold-primary);
+}
+
+.byop-summary-card__addons-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.byop-summary-card__addons-list li {
+	font-size: 14px;
+	color: var(--text-white-75);
+	position: relative;
+	padding-left: 14px;
+}
+
+.byop-summary-card__addons-list li::before {
+	content: "•";
+	color: var(--gold-mid);
+	position: absolute;
+	left: 2px;
+	top: -1px;
+}
+
+.byop-summary-card__price-section {
+	border-top: 1px solid var(--gold-30);
+	padding-top: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.byop-summary-card__price-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+}
+
+.byop-summary-card__price-label {
+	color: var(--text-white-55);
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.byop-summary-card__price-val {
+	font: 400 42px/1 var(--font-display);
+}
+
+.byop-summary-card__price-val.byop-price-quote {
+	font-size: 26px;
+	font-weight: 500;
+}
+
+.byop-summary-card__disclaimer {
+	margin: 0;
+	font-size: 12px;
+	color: var(--text-white-45);
+	text-align: center;
+	line-height: 1.4;
+}
+
+/* Trust Bullets */
+.byop-summary-card__trust {
+	list-style: none;
+	padding: 16px 0 0;
+	margin: 0;
+	border-top: 1px solid var(--line-white-08);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.byop-summary-card__trust-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 13px;
+	color: var(--text-white-55);
+}
+
+.byop-summary-card__trust-icon {
+	color: var(--gold-primary);
+	flex-shrink: 0;
+}
+
+/* Help Section Band — one white card, copy left / photo right, per comp. */
+.byop-help {
+	padding-block: 100px;
+}
+
+.byop-help__card {
+	display: grid;
+	grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+	align-items: stretch;
+	overflow: hidden;
+}
+
+.byop-help__copy {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 64px;
+	min-width: 0;
+}
+
+.byop-help__actions {
+	align-self: flex-start;
+}
+
+.byop-help__media {
+	min-height: 420px;
+}
+
+.byop-help__media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+@media (max-width: 991.98px) {
+	.byop-help__card {
+		grid-template-columns: 1fr;
+	}
+
+	.byop-help__media {
+		min-height: 280px;
+		order: -1;
+	}
+
+	.byop-help__copy {
+		padding: 40px;
+	}
+}
+
+@media (max-width: 480px) {
+	.byop-help__copy {
+		padding: 28px;
+	}
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 991.98px) {
+	.byop-builder-section {
+		padding-block: 60px;
+	}
+	.byop-layout__sidebar {
+		position: static;
+		width: 100%;
+		margin-top: 20px;
+	}
+	.byop-card {
+		padding: 30px 20px;
+	}
+	.byop-card__title {
+		font-size: 28px;
+	}
+}
+
+@media (max-width: 480px) {
+	.byop-tiles--4 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.byop-tiles--6 {
+		grid-template-columns: 1fr;
+	}
+	.byop-tile {
+		padding: 16px 12px;
+	}
+}

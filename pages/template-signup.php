@@ -128,8 +128,11 @@ get_header();
                         <div class="auth-input-wrap">
                            <span class="auth-input-icon" aria-hidden="true">
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                 <rect x="4" y="4" width="16" height="16" rx="3"/>
+                                 <circle cx="12" cy="9.5" r="2"/>
+                                 <path d="M12 11.5v5.5"/>
+                                 <path d="M12 14.5h1.75"/>
+                                 <path d="M12 16.5h1.25"/>
                               </svg>
                            </span>
                            <input
@@ -168,8 +171,11 @@ get_header();
                         <div class="auth-input-wrap">
                            <span class="auth-input-icon" aria-hidden="true">
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                 <rect x="4" y="4" width="16" height="16" rx="3"/>
+                                 <circle cx="12" cy="9.5" r="2"/>
+                                 <path d="M12 11.5v5.5"/>
+                                 <path d="M12 14.5h1.75"/>
+                                 <path d="M12 16.5h1.25"/>
                               </svg>
                            </span>
                            <input
@@ -205,16 +211,15 @@ get_header();
                      <!-- Options Row: Remember Me -->
                      <div class="auth-options-row">
                         <label class="auth-checkbox-label">
-                           <input type="checkbox" name="rememberme" id="dk-signup-remember" value="forever" class="auth-checkbox" checked>
+                           <input type="checkbox" name="rememberme" id="dk-signup-remember" value="forever" class="auth-checkbox">
                            <span class="auth-checkbox-custom" aria-hidden="true"></span>
                            <span class="auth-checkbox-text">Remember me</span>
                         </label>
                      </div>
 
                      <!-- Submit Button -->
-                     <button type="submit" class="btn-gold auth-submit-btn">
+                     <button type="submit" class="btn-gold btn-arrow auth-submit-btn">
                         <span>Create Account</span>
-                        <span class="btn-arrow" aria-hidden="true">→</span>
                      </button>
                   </form>
 

@@ -78,7 +78,7 @@ class ThemeHelper extends Singleton implements ServiceInterface
          echo '<li class="breadcrumb__item">';
          echo $item;
          if ($index < count($items) - 1) {
-            echo ' <span class="breadcrumb__separator mx-2">/</span>';
+            echo ' <span class="breadcrumb__separator mx-2">/</span> ';
          }
          echo '</li>';
       }

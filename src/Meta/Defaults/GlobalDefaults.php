@@ -58,6 +58,10 @@ final class GlobalDefaults implements DefaultsProvider
          /* ── Review summary — homepage and service pages ─────────── */
          'reviews_average' => '4.9',
          'reviews_count'   => '380+',
+         /* Live Google reviews via the Trustindex plugin (client-connected,
+            no Places API key). The widget draws its own rating header, so the
+            average/count above only feed the CPT fallback below it. */
+         'reviews_shortcode' => '[trustindex no-registration=google]',
 
          /* ── Social proof / Instagram ────────────────────────────── */
          'instagram_handle' => '@DETAILING.NZ',

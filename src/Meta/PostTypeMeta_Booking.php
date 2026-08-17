@@ -62,6 +62,12 @@ class PostTypeMeta_Booking extends AbstractPostTypeMeta
          $this->field('booking_time', __('Preferred Drop Time', 'detailking'), 'text', $ro),
          $this->field('booking_location', __('Location', 'detailking'), 'text', $ro),
          $this->field('booking_notes', __('Notes', 'detailking'), 'textarea', $ro + ['rows' => 3]),
+
+         /* ═══════════ PACKAGE BUILDER (BYOP) FIELDS ═══════════ */
+         $this->field('booking_byop_service', __('Selected Service (Package Builder)', 'detailking'), 'text', $ro),
+         $this->field('booking_byop_package', __('Selected Package / Requirement', 'detailking'), 'text', $ro),
+         $this->field('booking_byop_addons', __('Additional Add-ons / Wraps', 'detailking'), 'textarea', $ro + ['rows' => 3]),
+         $this->field('booking_byop_estimate', __('Estimated Cost', 'detailking'), 'text', $ro),
       ];
    }
 }

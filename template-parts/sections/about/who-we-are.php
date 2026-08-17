@@ -15,7 +15,12 @@ if (!defined('ABSPATH')) exit;
 $meta = MetaHelper::getInstance();
 $D    = 'about';
 
-$image = $meta->imageUrl($meta->field('who_image'), get_template_directory_uri() . '/assets/images/about/who-we-are-car.jpg');
+/* The fallback used to be `about/who-we-are-car.jpg`, which has never existed in
+   this theme — harmless today only because `who_image` is seeded, but it meant
+   clearing that field in wp-admin would produce a broken <img> rather than a
+   degraded one. (The same dead path did fire on Build Your Package, where the
+   field is empty by default.) Pointed at a file that is actually here. */
+$image = $meta->imageUrl($meta->field('who_image'), get_template_directory_uri() . '/assets/images/about/hero-bg.jpg');
 ?>
 <section class="about-who section--light" data-animate="fade">
    <div class="container-dk dk-split about-who__grid">

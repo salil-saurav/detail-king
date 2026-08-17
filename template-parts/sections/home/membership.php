@@ -20,17 +20,6 @@ if (!defined('ABSPATH')) exit;
 $meta = MetaHelper::getInstance();
 $D    = 'homepage';
 
-$plans = get_posts([
-   'post_type'        => 'dk_membership',
-   'posts_per_page'   => -1,
-   'orderby'          => ['menu_order' => 'ASC', 'title' => 'ASC'],
-   'suppress_filters' => false,
-]);
-
-if (!$plans) {
-   return;
-}
-
 $footnote  = (string) $meta->fieldOr('membership_footnote', $D);
 $watermark = (string) $meta->fieldOr('membership_watermark', $D);
 ?>
@@ -53,15 +42,7 @@ $watermark = (string) $meta->fieldOr('membership_watermark', $D);
       ]);
       ?>
 
-      <div class="home-membership__grid">
-         <?php foreach ($plans as $plan) : ?>
-            <?php
-            get_template_part('template-parts/components/membership-card', null, [
-               'plan' => $plan,
-            ]);
-            ?>
-         <?php endforeach; ?>
-      </div>
+      <?php get_template_part('template-parts/sections/shared/membership-cards'); ?>
 
       <?php if ($footnote !== '') : ?>
          <p class="home-membership__footnote body-sm"><?= esc_html($footnote); ?></p>
@@ -69,3 +50,4 @@ $watermark = (string) $meta->fieldOr('membership_watermark', $D);
 
    </div>
 </section>
+

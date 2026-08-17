@@ -1028,7 +1028,14 @@ a.home-video__play:focus-visible {
 
 .home-membership__grid {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	/* auto-fit, not repeat(3, ...): a fixed 3-column track set leaves an empty
+	   column (a visible hole) whenever the CPT holds fewer than 3 published
+	   plans, and again in the wrap row whenever it holds a count that isn't a
+	   multiple of 3. Confirmed live: 2 plans left a bare third column at 1920;
+	   5 plans wrapped a 2-card second row with the same gap. auto-fit collapses
+	   unused tracks instead, so N=3 still renders identically to the fixed
+	   version — this only changes what happens off that one count. */
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 	align-items: center;
 	gap: 30px;
 	margin-block-start: 54px;
@@ -1046,6 +1053,12 @@ a.home-video__play:focus-visible {
 	background: #fff;
 	box-shadow: var(--shadow-card);
 	transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s ease;
+	/* overflow-wrap inherits to title/tagline/feature text below. Confirmed
+	   live: a single 120-char unbroken token in plan_tagline had no break
+	   opportunity and no ancestor to clip it (.plan-card itself has no
+	   overflow rule), so it bled straight through the card's right edge and
+	   across the next card in the grid rather than wrapping. */
+	overflow-wrap: anywhere;
 }
 
 /* §14 hover lift. Measured off the recording at t 39.9 vs t 41.3: the hovered

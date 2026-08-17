@@ -178,10 +178,12 @@
 	gap: 14px;
 }
 
-/* Regular Grid Card (4 Columns on Desktop) */
+/* Regular Grid Card (4 Columns on Desktop). auto-fit rather than a fixed
+   repeat(4, …) — a post count that isn't a multiple of 4 (e.g. 3, 7) must
+   fill the row and not leave an empty track on the right (resilience.md). */
 .blog-grid {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 	gap: 30px;
 	margin-bottom: 60px;
 }
@@ -443,6 +445,25 @@
 	margin-bottom: 4px;
 }
 
+.single-hero__breadcrumb .breadcrumb {
+	display: flex;
+	align-items: center;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font: 400 18px/1.4 var(--font-body);
+}
+
+.single-hero__breadcrumb .breadcrumb__link {
+	color: var(--gold-primary);
+	text-decoration: none;
+}
+
+.single-hero__breadcrumb .breadcrumb__current,
+.single-hero__breadcrumb .breadcrumb__separator {
+	color: var(--text-white-55);
+}
+
 .single-hero__badge-wrap {
 	display: flex;
 	align-items: center;
@@ -474,7 +495,7 @@
 	flex-wrap: wrap;
 	gap: 22px;
 	font: 300 18px/1.6 var(--font-body);
-	color: var(--text-white-72);
+	color: var(--text-white-70);
 	padding-top: 6px;
 }
 
@@ -528,6 +549,7 @@
 
 .single-article-content {
 	color: #2F2F33;
+	overflow-wrap: anywhere;
 }
 
 .single-article-content .lead {
@@ -853,6 +875,11 @@
 
 .blog-card--related .blog-card__title {
 	font-size: 23px !important;
+}
+
+.blog-card.blog-card--related .blog-card__excerpt,
+.blog-card.blog-card--related .blog-card__cta {
+	display: none;
 }
 
 .single-cta {

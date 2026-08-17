@@ -14,13 +14,17 @@
 	/* ----------------------------------------------------------
 		Scroll-reveal ([data-animate]) lives in motion.js now.
 
-		It used to be an IntersectionObserver here. motion.js drives the same
-		attribute with GSAP + ScrollTrigger instead, per
-		animation-implementation-spec.md — that is what buys scrub-linked
-		parallax, a real hero timeline and batch stagger. Two engines writing
-		opacity/transform on the same nodes fight, so this one was removed
-		rather than left dormant. `aos-ready` is added by motion.js only once it
-		knows it can animate.
+		It used to be an IntersectionObserver here, then GSAP + ScrollTrigger,
+		and is now motion.js's own observer + CSS transitions (global.css §7).
+		Two engines writing opacity/transform on the same nodes fight, so this
+		one stays removed rather than being restored alongside it. `aos-ready` is
+		added by motion.js only once it knows it can animate.
+
+		If you are here because a reveal is stuck: the observer uses
+		`threshold: 0` deliberately. This file's old version wanted 12% of the
+		target's own height, which a section several viewports tall can never
+		reach — that bug is why the house rule puts `data-animate` on the
+		repeating item and not on the grid that wraps it.
 		---------------------------------------------------------- */
 
 	/* ----------------------------------------------------------

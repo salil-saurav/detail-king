@@ -82,6 +82,19 @@ class DebloaterService extends Singleton implements ServiceInterface
          'woocommerce_scripts' => [
             'sourcebuster-js',
             'wc-order-attribution',
+            /* With "AJAX add to cart on archives" enabled (it is), Woo enqueues
+               this jQuery-dependent set on *every* front-end request, not just
+               shop pages. Nothing outside a shop page has a Woo add-to-cart
+               button for them to bind to — the header cart count is rendered by
+               the theme and refreshed by its own vanilla-JS cross-sell script —
+               so dequeuing them here is what keeps jQuery droppable sitewide
+               (see removeJquery()'s queue check, which would otherwise have to
+               keep jQuery on every page to avoid stranding them). */
+            'woocommerce',
+            'wc-add-to-cart',
+            'wc-cart-fragments',
+            'jquery-blockui',
+            'js-cookie',
          ],
          'head_cleanup' => [
             'wp_generator',
@@ -290,6 +303,16 @@ class DebloaterService extends Singleton implements ServiceInterface
     * 10; without this guard, this method ran at priority 100 and deregistered
     * it again right after, silently breaking every jQuery-dependent Woo
     * script (found via the catalog sort dropdown doing nothing on click).
+    *
+    * The context guard alone is not enough, because it assumes *this theme*
+    * knows every page that can end up with a jQuery-dependent script on it.
+    * WooCommerce will enqueue cart fragments / AJAX add-to-cart site-wide the
+    * moment an admin turns those options on, and any future plugin can do the
+    * same on any URL — deregistering jQuery underneath them strands the script
+    * (it never prints, so the feature silently dies) and logs a
+    * "dependencies that are not registered: jquery" notice on every page load.
+    * So the queue itself is checked as well: if anything still queued at
+    * priority 100 depends on jQuery, jQuery stays, whatever the context.
     */
    public function removeJquery(): void
    {
@@ -297,10 +320,49 @@ class DebloaterService extends Singleton implements ServiceInterface
          return;
       }
 
+      if ($this->queueDependsOnJquery()) {
+         return;
+      }
+
       foreach (['jquery', 'jquery-core', 'jquery-migrate'] as $handle) {
          wp_dequeue_script($handle);
          wp_deregister_script($handle);
       }
+   }
+
+   /**
+    * True if any script left in the queue — or anything it depends on, at any
+    * depth — needs jQuery. Walks the dependency tree rather than only the
+    * queue's own top level, since Woo's `wc-cart-fragments` reaches jQuery
+    * through `woocommerce` → `jquery-blockui`, not directly.
+    */
+   private function queueDependsOnJquery(): bool
+   {
+      $scripts = wp_scripts();
+      $jquery  = ['jquery', 'jquery-core'];
+      $seen    = [];
+      $stack   = $scripts->queue;
+
+      while ($stack) {
+         $handle = array_pop($stack);
+
+         if (in_array($handle, $jquery, true)) {
+            return true;
+         }
+
+         /* A handle can be reached from several branches; a malformed
+            registration could even be circular. Visit each one once. */
+         if (isset($seen[$handle]) || !isset($scripts->registered[$handle])) {
+            continue;
+         }
+         $seen[$handle] = true;
+
+         foreach ($scripts->registered[$handle]->deps as $dep) {
+            $stack[] = $dep;
+         }
+      }
+
+      return false;
    }
 
    /** True in any WooCommerce front-end context that needs its own assets. */

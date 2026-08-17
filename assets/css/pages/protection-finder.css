@@ -1,0 +1,377 @@
+/* Protection Finder — mirrors build-package.css's .byop-layout sticky-sidebar
+   pattern (same grid ratio/breakpoint), house dark/gold language throughout. */
+
+.pf-layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 40px;
+	align-items: start;
+}
+
+@media (min-width: 992px) {
+	.pf-layout {
+		grid-template-columns: 1.75fr 1fr;
+		gap: 40px;
+	}
+}
+
+/* Question card */
+.pf-card {
+	background: #fff;
+	border-radius: 28px;
+	border: 1px solid rgba(11, 11, 12, 0.1);
+	box-shadow: 0 30px 80px rgba(11, 11, 12, 0.08);
+	padding: 52px;
+	position: relative;
+	overflow: hidden;
+}
+
+@media (max-width: 767.98px) {
+	.pf-card {
+		padding: 32px 24px;
+	}
+}
+
+.pf-progress {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 32px;
+}
+
+.pf-progress__seg {
+	flex: 1;
+	height: 4px;
+	border-radius: 4px;
+	background: rgba(11, 11, 12, 0.1);
+	transition: background 0.3s ease;
+}
+
+.pf-progress__seg.is-filled {
+	background: linear-gradient(90deg, #c9a14a, #e9c97c);
+}
+
+.pf-question {
+	display: none;
+}
+
+.pf-question.is-active {
+	display: block;
+	animation: pfFadeIn 0.35s ease both;
+}
+
+@keyframes pfFadeIn {
+	from { opacity: 0; transform: translateY(8px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.pf-question--nudge {
+	animation: pfNudge 0.4s ease;
+}
+
+@keyframes pfNudge {
+	0%, 100% { transform: translateX(0); }
+	25% { transform: translateX(-6px); }
+	75% { transform: translateX(6px); }
+}
+
+.pf-question__eyebrow {
+	margin-bottom: 8px;
+}
+
+.pf-question__title {
+	font-family: var(--font-display, 'Bebas Neue', sans-serif);
+	font-size: clamp(1.75rem, 3vw, 2.4rem);
+	letter-spacing: 0.02em;
+	margin-bottom: 10px;
+}
+
+.pf-question__text {
+	color: rgba(11, 11, 12, 0.6);
+	margin-bottom: 28px;
+}
+
+.pf-options {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin-bottom: 32px;
+}
+
+.pf-option {
+	display: block;
+	cursor: pointer;
+}
+
+.pf-option__body {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	padding: 18px 22px;
+	border: 1px solid rgba(11, 11, 12, 0.1);
+	border-radius: 16px;
+	transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.pf-option__input:checked + .pf-option__body {
+	border-color: #c9a14a;
+	background: rgba(233, 201, 124, 0.06);
+}
+
+.pf-option__icon {
+	flex: none;
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	background: rgba(233, 201, 124, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #c9a14a;
+}
+
+.pf-option__icon svg {
+	width: 22px;
+	height: 22px;
+}
+
+.pf-option__text {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.pf-option__text strong {
+	font-size: 1rem;
+}
+
+.pf-option__text span {
+	font-size: 0.85rem;
+	color: rgba(11, 11, 12, 0.55);
+}
+
+.pf-option__check {
+	flex: none;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	border: 1px solid rgba(11, 11, 12, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: transparent;
+	font-size: 0.8rem;
+	transition: all 0.2s ease;
+}
+
+.pf-option__input:checked + .pf-option__body .pf-option__check {
+	background: #c9a14a;
+	border-color: #c9a14a;
+	color: #0b0b0c;
+}
+
+.pf-question__actions {
+	display: flex;
+	justify-content: flex-end;
+}
+
+/* Rail */
+.pf-rail {
+	position: sticky;
+	top: calc(var(--dk-nav-height, 86px) + 24px);
+	background: #fff;
+	border-radius: 24px;
+	border: 1px solid rgba(11, 11, 12, 0.1);
+	box-shadow: 0 26px 70px rgba(11, 11, 12, 0.08);
+	overflow: hidden;
+}
+
+@media (max-width: 991.98px) {
+	.pf-rail {
+		position: static;
+	}
+}
+
+.pf-rail__head {
+	background: #0b0b0c;
+	padding: 26px 28px;
+}
+
+.pf-rail__eyebrow {
+	color: #c9a14a;
+	display: block;
+	margin-bottom: 6px;
+}
+
+.pf-rail__title {
+	color: #fff;
+	font-family: var(--font-display, 'Bebas Neue', sans-serif);
+	font-size: 1.15rem;
+	letter-spacing: 0.02em;
+	margin: 0;
+}
+
+.pf-rail__rows {
+	list-style: none;
+	margin: 0;
+	padding: 24px 28px;
+}
+
+.pf-rail__row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	padding: 10px 0;
+	border-bottom: 1px solid rgba(11, 11, 12, 0.08);
+	gap: 12px;
+}
+
+.pf-rail__row:last-of-type {
+	border-bottom: none;
+}
+
+.pf-rail__label {
+	color: rgba(11, 11, 12, 0.55);
+	font-size: 0.9rem;
+}
+
+.pf-rail__value {
+	font-weight: 700;
+	text-align: right;
+}
+
+.pf-rail__photo {
+	height: 90px;
+	margin: 0 28px 24px;
+	border-radius: 16px;
+	background: rgba(11, 11, 12, 0.06);
+}
+
+.pf-rail__footnote {
+	padding: 17px 28px 18px;
+	border-top: 1px solid rgba(11, 11, 12, 0.08);
+	background: #f6f4ef;
+	color: rgba(11, 11, 12, 0.55);
+	font-size: 0.85rem;
+	margin: 0;
+}
+
+/* Result state */
+.pf-result {
+	display: none;
+	text-align: center;
+}
+
+.pf-card.is-result .pf-result {
+	display: block;
+	animation: pfFadeIn 0.4s ease both;
+}
+
+.pf-result__icon {
+	width: 64px;
+	height: 64px;
+	margin: 0 auto 16px;
+	border-radius: 16px;
+	background: linear-gradient(135deg, #c9a14a, #e9c97c);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #0b0b0c;
+}
+
+.pf-result__icon svg {
+	width: 30px;
+	height: 30px;
+}
+
+.pf-result__match {
+	display: inline-block;
+	background: rgba(233, 201, 124, 0.15);
+	color: #a9791f;
+	font-weight: 700;
+	font-size: 0.85rem;
+	padding: 6px 16px;
+	border-radius: 999px;
+	margin-bottom: 16px;
+}
+
+.pf-result__title {
+	font-family: var(--font-display, 'Bebas Neue', sans-serif);
+	font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+	margin-bottom: 12px;
+}
+
+.pf-result__teaser {
+	color: rgba(11, 11, 12, 0.6);
+	max-width: 620px;
+	margin: 0 auto 28px;
+}
+
+.pf-result__features {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
+	margin-bottom: 28px;
+	text-align: left;
+}
+
+@media (max-width: 575.98px) {
+	.pf-result__features {
+		grid-template-columns: 1fr;
+	}
+}
+
+.pf-result__feature {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	background: #f6f4ef;
+	border-radius: 10px;
+	padding: 12px 16px;
+	font-size: 0.9rem;
+}
+
+.pf-result__feature-check {
+	color: #c9a14a;
+	flex: none;
+}
+
+.pf-result__price {
+	font-size: 1.1rem;
+	margin-bottom: 24px;
+	display: flex;
+	align-items: baseline;
+	justify-content: center;
+	gap: 8px;
+}
+
+.pf-result__price strong {
+	font-family: var(--font-display, 'Bebas Neue', sans-serif);
+	font-size: 2.2rem;
+}
+
+.pf-result__runner {
+	margin-top: 20px;
+	color: rgba(11, 11, 12, 0.55);
+	font-size: 0.9rem;
+}
+
+.pf-result__runner a {
+	color: #a9791f;
+	font-weight: 600;
+}
+
+.pf-start-over {
+	display: block;
+	margin: 24px auto 0;
+	background: none;
+	border: none;
+	color: rgba(11, 11, 12, 0.5);
+	cursor: pointer;
+	font-size: 0.9rem;
+}
+
+.pf-card.is-loading {
+	opacity: 0.6;
+	pointer-events: none;
+}

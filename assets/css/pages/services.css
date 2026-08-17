@@ -149,6 +149,7 @@
 .svc-article__text {
 	max-width: 560px;
 	color: var(--text-muted-dark);
+	overflow-wrap: anywhere;
 }
 
 .svc-article__features {

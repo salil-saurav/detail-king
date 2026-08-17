@@ -71,6 +71,15 @@
 	gap: 26px;
 	margin-block-end: 60px;
 }
+/* Resilience: the 1-package edge case (flagged unconfirmed in the QA brief).
+   With a single grid item, auto-fit's lone 1fr track — and the item's
+   default justify-items:stretch — filled the whole 1470px container:
+   a 200px-tall media strip stretched into a letterboxed banner instead of
+   a card. 2+ packages are unaffected (:only-child never matches). */
+.service-package:only-child {
+	max-width: 400px;
+	justify-self: center;
+}
 .service-package {
 	display: flex;
 	flex-direction: column;

@@ -40,6 +40,46 @@
 	min-width: 0;
 }
 
+/* ---- Native WooCommerce notices printed straight into account content —
+   e.g. WC 11's Customer Email Verification prompt ("Confirm email address…")
+   on Orders (`VerificationController::render_prompt()`, hooked to
+   `woocommerce_before_account_orders`, which orders.php calls unconditionally).
+   `woocommerce_enqueue_styles` is filtered off sitewide (ThemeService), so
+   .woocommerce-message/-error/-info ship with zero CSS here unless restyled,
+   same reasoning as .shop-notices on the archive/product templates —
+   otherwise a raw blue link + unstyled text renders on the white card. ---- */
+.dk-account-content .woocommerce-message,
+.dk-account-content .woocommerce-error,
+.dk-account-content .woocommerce-info {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px 20px;
+	margin: 0 0 24px;
+	padding: 18px 22px;
+	border: 1px solid rgba(11, 11, 12, .1);
+	border-radius: var(--radius-lg);
+	background: #fff;
+	color: var(--text-dark);
+	list-style: none;
+}
+
+.dk-account-content .woocommerce-error li {
+	margin: 0;
+}
+
+.dk-account-content .woocommerce-message .button,
+.dk-account-content .woocommerce-error .button,
+.dk-account-content .woocommerce-info .button {
+	flex: none;
+	padding: 10px 20px;
+	border-radius: 999px;
+	background: var(--gold-primary);
+	color: var(--text-dark);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
 .dk-account-card {
 	padding: 28px;
 	border: 1px solid rgba(11, 11, 12, .1);

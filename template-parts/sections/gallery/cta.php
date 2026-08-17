@@ -14,7 +14,10 @@ if (!defined('ABSPATH')) exit;
 $meta = MetaHelper::getInstance();
 $D    = 'gallery';
 ?>
-<section class="gallery-cta-section" data-animate="fade">
+<?php /* No data-animate here: the shared cta-banner card carries its own zoom
+        reveal, and stacking a section fade on top of it reveals the same thing
+        twice with two different curves. */ ?>
+<section class="gallery-cta-section">
    <div class="container-dk">
       <?php
       get_template_part('template-parts/global/cta-banner', null, [

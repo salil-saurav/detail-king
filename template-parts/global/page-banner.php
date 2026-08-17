@@ -45,7 +45,7 @@ $break   = $args['break']   ?? true;
    <div class="container-dk">
       <div class="page-banner__inner">
          <div class="page-banner__breadcrumb">
-            <?= ThemeHelper::getInstance()->get_breadcrumbs(); ?>
+            <?= ThemeHelper::getInstance()->get_breadcrumbs($args['breadcrumb_suffix'] ?? []); ?>
          </div>
          <?php if ($eyebrow) : ?>
             <span class="eyebrow eyebrow--badge"><?= esc_html($eyebrow); ?></span>

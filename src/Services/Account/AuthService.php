@@ -286,6 +286,12 @@ class AuthService extends Singleton implements ServiceInterface
          $baseLogin = 'member';
       }
 
+      // WordPress rejects usernames over 60 characters. A long email's local part
+      // (or a long full name) can exceed that on its own, and the dedup loop below
+      // appends a numeric suffix on top — truncate first so wp_insert_user() never
+      // fails with a raw "Username may not be longer than 60 characters" error.
+      $baseLogin = substr($baseLogin, 0, 50);
+
       $username = $baseLogin;
       $suffix = 1;
       while (username_exists($username)) {

@@ -74,12 +74,19 @@ if (!defined('ABSPATH')) exit;
                   <span class="dk-cart-line__qty-fixed">1</span>
                <?php else : ?>
                   <?php
+                  /* $productObj is passed explicitly: left null, Woo reads
+                     `$GLOBALS['product']` (wc-template-functions.php), which this
+                     custom template never sets — a PHP 8.4 "undefined array key"
+                     warning at best, and at worst the *wrong* product's quantity
+                     rules (step / min / max) applied to this line, since any
+                     earlier product loop on the page leaves its own last product
+                     in that global. */
                   woocommerce_quantity_input([
                      'input_name'  => "cart[{$cartItemKey}][qty]",
                      'input_value' => $cartItem['quantity'],
                      'max_value'   => $productObj->get_max_purchase_quantity(),
                      'min_value'   => '0',
-                  ]);
+                  ], $productObj);
                   ?>
                <?php endif; ?>
 

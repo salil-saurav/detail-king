@@ -33,7 +33,18 @@ $primaryUrl    = isset($args['primary_url'])    ? (string) $args['primary_url'] 
 $secondaryText = isset($args['secondary_text']) ? (string) $args['secondary_text'] : '';
 $secondaryUrl  = isset($args['secondary_url'])  ? (string) $args['secondary_url']  : home_url('/services/');
 ?>
-<div class="dk-cta glow-gold">
+<?php
+/* The zoom reveal lives on the CARD, not on the consuming section — same
+   correction the homepage's seam-image already carries, for the same reason.
+   motion.js holds a data-animate="zoom" element at scale(1.08) until it
+   reveals; on a full-bleed <section> that grew the band 8% past the viewport
+   and scrolled the document sideways by 76px at 1920 for as long as the
+   section sat unrevealed below the fold. Scaling the container-capped card
+   keeps the growth inside the gutters, and matches the spec's own reading
+   (§15: the card scales and lifts, the band does not). global.css clips the
+   residual on narrower viewports, where the gutter is thinner than the growth. */
+?>
+<div class="dk-cta glow-gold" data-animate="zoom">
    <h2 class="dk-cta__title">
       <?= esc_html($title); ?>
       <?php if ($gold !== '') : ?>

@@ -1,314 +1,361 @@
 /* =====================================================================
-   Detail King — motion.js
+	Detail King — motion.js
 
-   Implements ~/DWS/projects/detail-king/animation-implementation-spec.md.
-   Section numbers in comments refer to that document.
+	The in-house scroll-animation engine. No dependencies, ~4KB unminified.
+	Implements ~/DWS/clients/detail-king/build/animation-implementation-spec.md;
+	section numbers in comments refer to that document.
 
-   This file is the *single* reveal engine. global.js used to run its own
-   IntersectionObserver over [data-animate]; that was removed when this landed,
-   because two systems writing opacity/transform on the same elements fight.
-   The `[data-animate]` attribute contract in the templates is unchanged — this
-   just drives it with GSAP instead, which is what buys scrub-linked parallax
-   and a real timeline for the hero.
+	Replaces GSAP 3.13 + ScrollTrigger (17 Aug 2026), which were 116KB of
+	vendored JS (~42KB gzipped) and two extra deferred requests to do four
+	things this file now does in a page of code. The division of labour changed
+	with them:
 
-   Load order matters and is declared in AssetsService: gsap, ScrollTrigger,
-   then this file. Everything is deferred.
+	  - The *animation* is CSS now. Every reveal is a transition declared in
+		 global.css §7 (from-state per variant, duration per variant, one easing
+		 curve). This file only adds a class. That means a reveal costs zero
+		 main-thread work per frame — the compositor interpolates opacity and
+		 transform off-thread — where GSAP ticked every active tween on the main
+		 thread. It also means `.is-visible` is once again the single, inspectable
+		 switch for "revealed", which is what build/scripts/shoot.py has always
+		 assumed when it force-reveals a page before screenshotting (that had been
+		 quietly inert for as long as GSAP owned the transforms).
+	  - The *scroll-linked* bits (§30 parallax, §17 pinned h-scroll) are the only
+		 things that genuinely need per-frame work. They share one rAF-throttled
+		 scroll listener, and each element is gated by an IntersectionObserver, so
+		 an off-screen parallax image costs nothing at all rather than being
+		 recalculated for the life of the page.
 
-   Accessibility (§33): under prefers-reduced-motion this file does almost
-   nothing — no ScrollTrigger, no transforms. It never adds the `aos-ready`
-   class, so the CSS that hides [data-animate] never applies and all content
-   is visible and functional. That is also the no-JS / GSAP-failed-to-load
-   path, which is why the hiding rule is class-gated rather than plain.
+	Accessibility (§33): under prefers-reduced-motion this file returns before
+	touching anything. It never adds the `aos-ready` class, so the CSS that hides
+	[data-animate] never applies and all content is visible and functional. That
+	is also the no-JS and script-failed-to-parse path, which is why the hiding
+	rule is class-gated rather than plain.
 
-   §4's Lenis-driven inertial scroll was here and was removed: measured on this
-   page under a synthetic wheel-scroll burst, it roughly halved rendered frame
-   throughput and nearly doubled the worst single stall versus native scroll
-   (see the AssetsService motion-layer comment for the numbers). Scrolling is
-   native now; ScrollTrigger reads it directly and needs no scroll proxy.
-   ===================================================================== */
+	§4's Lenis-driven inertial scroll was here and was removed earlier for
+	measured frame-throughput reasons — see the AssetsService motion-layer
+	comment. Scrolling is native; everything below reads it directly.
+	===================================================================== */
 (() => {
 	'use strict';
 
-	const reduced = window.matchMedia
-		&& window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const mq = (query) => window.matchMedia && window.matchMedia(query).matches;
 
-	// Bail before touching anything if the libraries are missing or motion is
-	// unwanted. Content stays visible because `aos-ready` is never added.
-	if (reduced || !window.gsap || !window.ScrollTrigger) {
+	// Bail before touching anything if motion is unwanted, or if the browser is
+	// old enough to lack IntersectionObserver. Content stays visible because
+	// `aos-ready` is never added.
+	if (mq('(prefers-reduced-motion: reduce)') || !('IntersectionObserver' in window)) {
 		return;
 	}
 
-	const gsap = window.gsap;
-	const ScrollTrigger = window.ScrollTrigger;
-	gsap.registerPlugin(ScrollTrigger);
-
-	// Hide [data-animate] only now that we know we can animate it again.
 	document.documentElement.classList.add('aos-ready');
 
-	/* §23 Responsive motion. The spec asks for smaller travel on small screens
-	   (y 15-25px instead of 50) — large translations on a narrow viewport read as
-	   jitter, not elegance. Read once; ScrollTrigger.refresh() on resize handles
-	   layout, and re-reading distances mid-session would fight in-flight tweens. */
-	const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
-	const D = {
-		y: isMobile ? 20 : 40,        // §28 generic reveal distance
-		x: isMobile ? 15 : 30,        // §12 directional reveal distance
-		parallax: isMobile ? 4 : 8,   // §30 yPercent, "discovered rather than obvious"
-	};
+	const isMobile = mq('(max-width: 767.98px)');
 
 	/* ------------------------------------------------------------------
-	   §28/§29 The reveal system.
-	   One batch over [data-animate]. ScrollTrigger.batch groups the elements
-	   that cross the trigger line together and hands them over as one array —
-	   which is exactly the set that should stagger (§8, §14, §15: 100ms).
-	   Per-element initial state comes from the variant; the target is always the
-	   neutral state, so one tween can finish every variant at once using GSAP's
-	   function-based values for the properties that differ.
-	   ------------------------------------------------------------------ */
-	const variantOf = (el) => el.getAttribute('data-animate') || '';
+		§28/§29 The reveal system.
 
-	const initialFor = (el) => {
-		switch (variantOf(el)) {
-			case 'fade':        return { opacity: 0 };                       // opacity only
-			case 'fade-left':   return { opacity: 0, x: -D.x };              // §12 left column
-			case 'fade-right':  return { opacity: 0, x: D.x };               // §12 right column
-			case 'zoom':        return { opacity: 0, scale: 1.08 };          // §29 image reveal
-			case 'zoom-in':     return { opacity: 0, scale: 0.8 };           // §12 centre image
-			default:            return { opacity: 0, y: D.y };               // §28 default
-		}
-	};
+		One observer over every [data-animate]. Elements that cross the line
+		together arrive in the same callback, which is exactly the set that should
+		stagger (§8, §14, §15: 100ms) — so the batch is the callback's own entry
+		list and needs no grouping logic.
 
-	/* §3 durations: images are slower than UI (1.0-1.5s vs 0.6-0.8s).
-	   Signature is (index, target) because GSAP invokes function-based values as
-	   (i, target, targets) — taking the element as the first argument silently
-	   hands you the index instead, and every reveal then throws inside the tween. */
-	const durationFor = (i, el) => {
-		const v = variantOf(el);
-		if (v === 'zoom')    return 1.1;
-		if (v === 'zoom-in') return 1.0;
-		return 0.7;
-	};
+		Two traps this shape avoids, both of which this build has been bitten by:
 
-	const animated = gsap.utils.toArray('[data-animate]');
-	const START_RATIO = 0.88;               // matches `start: 'top 88%'` below
+		1. `threshold: 0` with a bottom rootMargin, never a fractional threshold.
+			The old pre-GSAP observer wanted 12% of the *target's own height*
+			visible, so a section several viewports tall (a 7-card CPT grid, the
+			booking widget) could never reach it and stayed invisible forever.
+			Height-independent by construction now.
+		2. Above-the-fold elements are not a special case. IntersectionObserver
+			reports already-intersecting targets in its first callback, so the first
+			screen reveals on load, staggered, with no separate code path — where
+			ScrollTrigger only fired on the *transition* into view and needed the
+			whole first screen split out by hand.
 
-	const revealTween = (targets) => gsap.to(targets, {
-		opacity: 1,
-		y: 0,
-		x: 0,
-		scale: 1,
-		duration: durationFor,          // function-based: per-element
-		ease: 'power3.out',             // §3 preferred easing
-		stagger: 0.1,                   // §28 group stagger
-		overwrite: 'auto',
-	});
+		`-12%` bottom margin = GSAP's `start: 'top 88%'`: reveal once the element's
+		top has passed 88% of the viewport height. rootMargin percentages resolve
+		against the root, i.e. the viewport, so this is the same line.
 
-	/* Split by whether the element is ALREADY past the trigger line at load.
+		The huge *top* margin is not cosmetic — without it, elements can be
+		stranded for good, which this build has been bitten by twice. An observer
+		only fires when the intersection ratio changes, and a fast scroll can move
+		an element from "below the line" (ratio 0) to "entirely above the viewport"
+		(still ratio 0) between two frames, in which case there is no crossing to
+		report and no callback ever runs. The window is narrower than it sounds:
+		viewport*0.88 + element height, so a 318px card at a 900px viewport has
+		1110px of it, and verify.sh's own 1200px wheel steps jumped clean over one
+		card on /gallery/. Extending the root upward means "above the viewport"
+		also counts as intersecting, so an element that was skipped reveals on the
+		next frame instead of never. It also covers landing mid-page from an anchor
+		or a restored scroll position. ScrollTrigger did not need this because it
+		compared scroll positions frame to frame rather than observing ratios.
+		------------------------------------------------------------------ */
+	const STAGGER_MS = 100;
 
-	   ScrollTrigger fires onEnter on the *transition* into the active state, not
-	   for triggers that are already active when they are created. Everything
-	   above the fold is already active at start (measured: the hero's trigger
-	   reported start -950, isActive true) — so a plain batch leaves the entire
-	   first screen stranded at opacity 0 forever. Ask me how I know.
+	const revealObserver = new IntersectionObserver((entries, obs) => {
+		let i = 0;
 
-	   Measured before the initial gsap.set, because setting `y: 40` would shift
-	   getBoundingClientRect() and skew the very comparison being made. */
-	const onscreen = [];
-	const offscreen = [];
-	const line = window.innerHeight * START_RATIO;
+		entries.forEach((entry) => {
+			if (!entry.isIntersecting) {
+				return;
+			}
 
-	animated.forEach((el) => {
-		(el.getBoundingClientRect().top < line ? onscreen : offscreen).push(el);
-	});
+			const el = entry.target;
+			obs.unobserve(el);                       // reveal is once, per spec
 
-	animated.forEach((el) => gsap.set(el, initialFor(el)));
+			if (i > 0) {
+				el.style.setProperty('--dk-rv-delay', `${i * STAGGER_MS}ms`);
+			}
+			i += 1;
 
-	// Above the fold: play immediately, still staggered.
-	if (onscreen.length) {
-		revealTween(onscreen);
-	}
+			/* Clear the stagger delay once it has been consumed. Left in place it
+				would also delay any *later* transition on the same element — the
+				card hover states share the transform property. */
+			el.addEventListener('transitionend', function drop(event) {
+				if (event.target === el) {
+					el.style.removeProperty('--dk-rv-delay');
+					el.removeEventListener('transitionend', drop);
+				}
+			});
 
-	// Everything else reveals as it scrolls in, batched so siblings stagger.
-	if (offscreen.length) {
-		ScrollTrigger.batch(offscreen, {
-			start: `top ${START_RATIO * 100}%`,
-			once: true,
-			onEnter: revealTween,
+			el.classList.add('is-visible');
 		});
-	}
+	}, { threshold: 0, rootMargin: '100000px 0px -12% 0px' });
+
+	document.querySelectorAll('[data-animate]').forEach((el) => revealObserver.observe(el));
 
 	/* ------------------------------------------------------------------
-	   §6 Hero. The one place the spec asks for a real sequence rather than a
-	   single reveal: backdrop settles from 1.05, then heading, supporting text,
-	   and the CTAs with a stagger between them. The section carries `data-hero`
-	   instead of `data-animate` precisely so the generic batch above leaves it
-	   alone and cannot double-animate these nodes.
+		§6 Hero. A real sequence rather than a single reveal: the backdrop settles
+		from 1.05 while the heading, supporting text and CTAs come up behind it on
+		staggered delays. All of that is declared in global.css §7b; the only thing
+		needed here is the switch, one frame after paint so the from-state is the
+		browser's starting point and the transition actually runs.
 
-	   Stats are not in this timeline — they are numbers, and global.js's
-	   count-up observer (§11: once, 1.6s) already owns them. Chaining them here
-	   would run the count before the section is on screen.
-	   ------------------------------------------------------------------ */
+		Stats are not part of this — they are numbers, and global.js's count-up
+		observer (§11: once, 1.6s) owns them. Sequencing them here would run the
+		count before the section is on screen.
+		------------------------------------------------------------------ */
 	const hero = document.querySelector('[data-hero]');
 
 	if (hero) {
-		const q = (sel) => hero.querySelector(sel);
-		const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-		const bg = q('[data-hero-bg]');
-		if (bg) {
-			// §6 scale 1.05 -> 1, slow. Long enough to read as a settle, not a zoom.
-			tl.fromTo(bg, { scale: 1.05 }, { scale: 1, duration: 1.6, ease: 'power2.out' }, 0);
-		}
-
-		const seq = [
-			['.home-hero__badge', 0.15],
-			['.home-hero__title', 0.25],
-			['.home-hero__text',  0.4],
-		];
-
-		seq.forEach(([sel, at]) => {
-			const el = q(sel);
-			if (el) {
-				tl.fromTo(el, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, at);
-			}
-		});
-
-		// §6 CTAs reveal after the heading, with a small stagger between buttons.
-		const actions = hero.querySelectorAll('.home-hero__actions > *');
-		if (actions.length) {
-			tl.fromTo(
-				actions,
-				{ opacity: 0, y: 20 },
-				{ opacity: 1, y: 0, duration: 0.6, stagger: 0.1 },
-				0.55
-			);
-		}
+		requestAnimationFrame(() => hero.classList.add('is-hero-in'));
 	}
 
 	/* ------------------------------------------------------------------
-	   §19 FAQ accordion. Built on native <details>, which cannot transition its
-	   own height — the browser snaps it open. The spec explicitly forbids that
-	   ("do not instantly toggle"), so the open/close is animated by hand and the
-	   `open` attribute is removed only after the closing tween finishes,
-	   otherwise the content vanishes before it can animate out.
+		§19 FAQ accordion. Built on native <details>, which cannot transition its
+		own height — the browser snaps it open. The spec explicitly forbids that
+		("do not instantly toggle"), so the open/close is animated with the Web
+		Animations API and the `open` attribute is removed only after the closing
+		animation finishes, otherwise the content vanishes before it can animate
+		out.
 
-	   <details> is kept rather than replaced with buttons because it already
-	   gives the keyboard and screen-reader behaviour §19's accessibility note
-	   asks for, for free.
-	   ------------------------------------------------------------------ */
+		<details> is kept rather than replaced with buttons because it already
+		gives the keyboard and screen-reader behaviour §19's accessibility note
+		asks for, for free.
+
+		`height: auto` is not animatable here (interpolate-size is not broadly
+		supported yet), so the target is the panel's measured scrollHeight and the
+		inline height is dropped on finish so the panel can reflow with its
+		content afterwards.
+		------------------------------------------------------------------ */
+	const EASE_OUT = 'cubic-bezier(.25, .46, .45, .94)';   // = GSAP power2.out
+	const EASE_IN_OUT = 'cubic-bezier(.455, .03, .515, .955)';
+
 	document.querySelectorAll('.dk-accordion__item').forEach((item) => {
 		const summary = item.querySelector('.dk-accordion__summary');
 		const panel = summary && summary.nextElementSibling;
-		if (!summary || !panel) {
-			return;
+
+		if (!summary || !panel || typeof panel.animate !== 'function') {
+			return;   // no WAAPI: leave <details> to its native snap-open
 		}
 
-		let animating = false;
+		let running = null;
+
+		const play = (frames, easing, onDone) => {
+			panel.style.overflow = 'hidden';
+			running = panel.animate(frames, { duration: 450, easing, fill: 'none' });
+			running.onfinish = () => {
+				running = null;
+				/* onDone before the style cleanup: on close it is what removes the
+					`open` attribute, and doing it second would show one frame of
+					full-height panel between the animation ending and the element
+					collapsing. */
+				onDone();
+				panel.style.removeProperty('overflow');
+				panel.style.removeProperty('height');
+			};
+		};
 
 		summary.addEventListener('click', (event) => {
 			event.preventDefault();
-			if (animating) {
+
+			if (running) {
 				return;
 			}
-			animating = true;
+
+			const height = `${panel.scrollHeight}px`;
 
 			if (item.hasAttribute('open')) {
-				gsap.to(panel, {
-					height: 0,
-					opacity: 0,
-					duration: 0.45,
-					ease: 'power2.inOut',
-					onComplete: () => {
-						item.removeAttribute('open');
-						gsap.set(panel, { height: 'auto', opacity: 1 });
-						animating = false;
-					},
-				});
+				play(
+					[{ height, opacity: 1 }, { height: '0px', opacity: 0 }],
+					EASE_IN_OUT,
+					() => item.removeAttribute('open')
+				);
 			} else {
 				item.setAttribute('open', '');
-				gsap.fromTo(
-					panel,
-					{ height: 0, opacity: 0 },
-					{
-						height: 'auto',
-						opacity: 1,
-						duration: 0.45,
-						ease: 'power2.out',
-						onComplete: () => {
-							ScrollTrigger.refresh();
-							animating = false;
-						},
-					}
+				play(
+					[{ height: '0px', opacity: 0 }, { height: `${panel.scrollHeight}px`, opacity: 1 }],
+					EASE_OUT,
+					() => { }
 				);
 			}
 		});
 	});
 
 	/* ------------------------------------------------------------------
-	   §17 "Follow the Finish" — horizontal gallery driven by vertical scroll.
-	   Only engages when the track actually overflows: on mobile the row wraps to
-	   a 2-column grid where there is nothing to translate, and pinning a section
-	   that fits on screen would just feel like the page had frozen.
-	   ------------------------------------------------------------------ */
-	const gallery = document.querySelector('[data-hscroll]');
+		The scroll loop. One passive listener, one rAF per frame at most, and a
+		set of "readers" that is empty whenever nothing scroll-linked is on
+		screen — so on the great majority of pages (no parallax, no h-scroll)
+		this costs a single listener that returns immediately.
 
-	if (gallery && !isMobile) {
-		const overflow = gallery.scrollWidth - gallery.clientWidth;
+		Each reader is registered with the element that decides whether it is
+		worth running; a shared observer adds it to `active` on entry and removes
+		it on exit.
+		------------------------------------------------------------------ */
+	const active = new Set();
+	let queued = false;
 
-		if (overflow > 40) {
-			gsap.to(gallery, {
-				x: -overflow,
-				ease: 'none',
-				scrollTrigger: {
-					trigger: gallery.closest('section') || gallery,
-					start: 'top top',
-					end: () => `+=${overflow}`,
-					pin: true,
-					scrub: 0.8,
-					invalidateOnRefresh: true,
-					anticipatePin: 1,
-				},
-			});
+	const frame = () => {
+		queued = false;
+		active.forEach((read) => read());
+	};
+
+	const schedule = () => {
+		if (!queued) {
+			queued = true;
+			requestAnimationFrame(frame);
 		}
-	}
+	};
+
+	const readers = new WeakMap();
+
+	const gate = new IntersectionObserver((entries) => {
+		entries.forEach((entry) => {
+			const read = readers.get(entry.target);
+			if (!read) {
+				return;
+			}
+			if (entry.isIntersecting) {
+				active.add(read);
+			} else {
+				active.delete(read);
+			}
+		});
+		schedule();
+	}, { threshold: 0 });
+
+	const track = (el, read) => {
+		readers.set(el, read);
+		gate.observe(el);
+	};
+
+	let listening = false;
+
+	const listen = () => {
+		if (listening) {
+			return;
+		}
+		listening = true;
+		window.addEventListener('scroll', schedule, { passive: true });
+		window.addEventListener('resize', schedule, { passive: true });
+	};
+
+	const clamp = (n) => (n < 0 ? 0 : (n > 1 ? 1 : n));
 
 	/* ------------------------------------------------------------------
-	   §30 Parallax. Deliberately small — the spec wants it "discovered rather
-	   than obvious", yPercent -8..+8. Opt-in per element via [data-parallax] so
-	   it lands on chosen imagery instead of everything.
+		§30 Parallax. Deliberately small — the spec wants it "discovered rather
+		than obvious", yPercent -8..+8, opt-in per element via [data-parallax] so
+		it lands on chosen imagery instead of everything.
 
-	   `scrub: true`, not a number: a numeric scrub adds a second interpolation
-	   tween on top of ScrollTrigger's own scroll read, recalculating every
-	   frame for the life of the gesture — the same shape of extra per-frame
-	   cost Lenis added, just scoped to this one property instead of the whole
-	   page. `true` sets the value directly off scroll position with no second
-	   tween. There are now three scrub-linked triggers on this page (this one,
-	   the hero bg, and the §17 pinned gallery below) with Lenis gone, so this
-	   one is worth keeping cheap. */
-	gsap.utils.toArray('[data-parallax]').forEach((el) => {
-		const amount = parseFloat(el.getAttribute('data-parallax')) || D.parallax;
+		Progress runs 0 at "scope top hits the viewport bottom" to 1 at "scope
+		bottom hits the viewport top", which is the window ScrollTrigger's
+		`start: 'top bottom'` / `end: 'bottom top'` described. The scope's rect is
+		read fresh each frame rather than cached: it is one getBoundingClientRect
+		on one element, cheap enough that it is not worth the cache-invalidation
+		bugs — and it is inherently correct across lazy-loaded images, resizes and
+		accordion opens, all of which used to need an explicit
+		`ScrollTrigger.refresh()`.
 
-		gsap.fromTo(
-			el,
-			{ yPercent: -amount },
-			{
-				yPercent: amount,
-				ease: 'none',
-				scrollTrigger: {
-					trigger: el.closest('[data-parallax-scope]') || el.parentElement,
-					start: 'top bottom',
-					end: 'bottom top',
-					scrub: true,
-				},
+		Note the CSS that pairs with this: `.home-hero__bg img` and
+		`.home-seam__figure img` are given ~110-116% height and a negative offset
+		so the travel never reveals an edge.
+		------------------------------------------------------------------ */
+	const DEFAULT_PARALLAX = isMobile ? 4 : 8;
+
+	document.querySelectorAll('[data-parallax]').forEach((el) => {
+		const amount = parseFloat(el.getAttribute('data-parallax')) || DEFAULT_PARALLAX;
+		const scope = el.closest('[data-parallax-scope]') || el.parentElement || el;
+
+		track(scope, () => {
+			const rect = scope.getBoundingClientRect();
+			const span = window.innerHeight + rect.height;
+
+			if (span <= 0) {
+				return;
 			}
-		);
+
+			const progress = clamp((window.innerHeight - rect.top) / span);
+			const y = -amount + (2 * amount * progress);
+
+			el.style.transform = `translate3d(0, ${y.toFixed(3)}%, 0)`;
+		});
+
+		listen();
 	});
 
 	/* ------------------------------------------------------------------
-	   Keep ScrollTrigger honest about late layout shifts — lazy-loaded imagery
-	   below the fold changes document height after the triggers were measured,
-	   which otherwise leaves every trigger past that point firing at the wrong
-	   scroll position. This build lazy-loads nearly every photo, so it matters.
-	   ------------------------------------------------------------------ */
-	window.addEventListener('load', () => ScrollTrigger.refresh());
+		§17 "Follow the Finish" — horizontal gallery driven by vertical scroll.
+
+		Only engages when the track actually overflows its own box. That is the
+		same guard the GSAP version carried, and it is worth knowing that it has
+		never once passed on this build: `.home-instagram__row` is a
+		`repeat(N, 1fr)` grid, so the row is exactly as wide as its container at
+		every breakpoint and there is nothing to translate. The path stays here
+		for the real Instagram feed integration (TASK-BRIEF §1.3), which is the
+		thing likely to produce a row wider than the viewport. Verified by forcing
+		fixed-width columns; see HISTORY.md.
+
+		The pin is `position: sticky` on a wrapper, plus a scope tall enough to
+		give the sticky something to travel inside — which is all ScrollTrigger's
+		`pin: true` amounts to when the pinned element is in normal flow. The two
+		wrappers are created here rather than in the template so that a layout
+		where the row fits carries no extra DOM at all.
+		------------------------------------------------------------------ */
+	const hscroll = document.querySelector('[data-hscroll]');
+
+	if (hscroll && !isMobile) {
+		const overflow = hscroll.scrollWidth - hscroll.clientWidth;
+
+		if (overflow > 40) {
+			const scope = document.createElement('div');
+			const pin = document.createElement('div');
+
+			pin.className = 'dk-pin';
+			scope.className = 'dk-pin-scope';
+			scope.style.height = `${hscroll.offsetHeight + overflow}px`;
+
+			hscroll.parentNode.insertBefore(scope, hscroll);
+			scope.appendChild(pin);
+			pin.appendChild(hscroll);
+
+			track(scope, () => {
+				const rect = scope.getBoundingClientRect();
+				const progress = clamp(-rect.top / overflow);
+
+				hscroll.style.transform = `translate3d(${(-progress * overflow).toFixed(2)}px, 0, 0)`;
+			});
+
+			listen();
+		}
+	}
 })();

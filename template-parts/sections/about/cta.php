@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) exit;
 $meta = MetaHelper::getInstance();
 $D    = 'about';
 ?>
-<section class="about-cta" data-animate="zoom">
+<section class="about-cta">
    <div class="container-dk">
       <?php
       get_template_part('template-parts/global/cta-banner', null, [
