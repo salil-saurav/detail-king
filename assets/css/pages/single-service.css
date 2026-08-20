@@ -25,14 +25,18 @@
    Booking widget.
    --------------------------------------------------------------- */
 .service-booking { padding-block: 120px; }
-.service-booking__head { margin-block-end: 54px; }
+.service-booking__head { margin-block-end: 46px; }
+
+/* Same shape as About's .dk-split, but this frame's own gap is 70px, not
+   About's 80px — override rather than touching the shared component. */
+.service-intro__grid { gap: 70px; }
 
 .service-booking__steps {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	gap: 18px;
-	margin: 0 0 60px;
+	margin: 0 0 46px;
 	padding: 0;
 	list-style: none;
 }
@@ -69,7 +73,7 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	gap: 26px;
-	margin-block-end: 60px;
+	margin-block-end: 46px;
 }
 /* Resilience: the 1-package edge case (flagged unconfirmed in the QA brief).
    With a single grid item, auto-fit's lone 1fr track — and the item's

@@ -40,7 +40,7 @@ if ($image === '') {
 <section class="home-seam">
    <div class="home-seam__inner">
       <figure class="home-seam__figure" data-animate="zoom" data-parallax-scope>
-         <img src="<?= esc_url($image); ?>" alt="" loading="lazy" decoding="async" data-parallax="6">
+         <img src="<?= esc_url($image); ?>" alt="" loading="lazy" decoding="async" data-parallax="10" data-parallax-invert>
       </figure>
    </div>
 </section>

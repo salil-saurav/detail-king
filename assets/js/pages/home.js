@@ -38,17 +38,29 @@
 			apply(range.value);
 
 			/* Comp note: "Auto-teases left-right once on view." Runs once, only
-			   when the widget is actually seen, and never under reduced-motion. */
+			   when the widget is actually seen, and never under reduced-motion.
+			   `.dk-compare--tease` (home.css) is what makes the steps glide instead
+			   of snapping — it scopes a transition to these four ticks only, so
+			   dragging the range the rest of the time stays lag-free. Step spacing
+			   matches that transition's 500ms duration so each glide finishes
+			   before the next one starts, rather than being cut off mid-flight. */
 			if (!reduceMotion && 'IntersectionObserver' in window) {
 				const tease = () => {
 					const from = parseFloat(range.value);
 					const seq = [from, from - 14, from + 10, from];
+
+					root.classList.add('dk-compare--tease');
+
 					seq.forEach((pos, i) => {
 						setTimeout(() => {
 							range.value = String(pos);
 							apply(pos);
-						}, i * 420);
+						}, i * 500);
 					});
+
+					setTimeout(() => {
+						root.classList.remove('dk-compare--tease');
+					}, seq.length * 500);
 				};
 
 				const obs = new IntersectionObserver((entries) => {

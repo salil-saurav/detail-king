@@ -97,6 +97,7 @@
 
 .dk-account-card__subtitle {
 	margin-block: 20px 10px;
+	font-family: var(--font-body);
 	font-weight: 600;
 	color: var(--text-dark);
 }
@@ -190,6 +191,7 @@
 	padding: 12px 0;
 	border-block-end: 1px solid rgba(11, 11, 12, .08);
 	text-align: left;
+	font-weight: 400;
 	color: var(--text-muted-dark);
 }
 
@@ -274,6 +276,7 @@
 	padding: 12px 0;
 	border-block-end: 1px solid rgba(11, 11, 12, .08);
 	text-align: left;
+	font-weight: 400;
 	color: var(--text-muted-dark);
 }
 

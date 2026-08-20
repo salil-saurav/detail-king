@@ -23,6 +23,8 @@
    var progressSegs = card.querySelectorAll('[data-pf-progress-seg]');
    var railValues = card.parentElement.querySelectorAll('[data-pf-rail-value]');
    var railProgress = card.parentElement.querySelector('[data-pf-rail-progress]');
+   var railProgressFill = card.parentElement.querySelector('[data-pf-rail-progress-fill]');
+   var railProgressBar = card.parentElement.querySelector('[data-pf-rail-progressbar]');
    var railTitle = card.parentElement.querySelector('[data-pf-rail-title]');
    var railFootnote = card.parentElement.querySelector('[data-pf-rail-footnote]');
    var resultEl = card.querySelector('[data-pf-result]');
@@ -35,8 +37,15 @@
       progressSegs.forEach(function (seg, i) {
          seg.classList.toggle('is-filled', i < answeredCount);
       });
+      var progressPct = Math.round((answeredCount / total) * 100);
       if (railProgress) {
-         railProgress.textContent = Math.round((answeredCount / total) * 100) + '%';
+         railProgress.textContent = progressPct + '%';
+      }
+      if (railProgressFill) {
+         railProgressFill.style.width = progressPct + '%';
+      }
+      if (railProgressBar) {
+         railProgressBar.setAttribute('aria-valuenow', String(progressPct));
       }
       if (railFootnote) {
          var remaining = total - answeredCount;

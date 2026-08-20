@@ -17,11 +17,16 @@ defined('ABSPATH') || exit;
 /**
  * Protection Finder — read-only scoring endpoint (REST detailking/v1/protection-finder).
  *
- * The weight matrix below is transcribed verbatim from
- * build/figma-data/protection-finder-scoring.md, authored 14 Aug 2026 as a
- * deliberate, internally-consistent placeholder — the client never supplied a
- * real scoring model (TASK-BRIEF.md §5). Do not re-weight it here; edit the
- * spec file and this constant together if it ever needs to change.
+ * The weight matrix below is transcribed verbatim from the client's "PPF
+ * calculator" doc (Google Doc, supplied 17 Aug 2026 — the calculation Shreya
+ * promised on 29 Jul, TASK-BRIEF §5), replacing the 14 Aug placeholder rubric.
+ * It supersedes the old 6-category model (grooming/detailing/ceramic-pro/ppf/
+ * window-tinting/vinyl-wraps) entirely — the doc only ever scores 4 PPF /
+ * Ceramic Pro outcomes, so this finder no longer recommends the other four
+ * services (still reachable via Our Services). Full rationale + the
+ * assumptions made where the doc was silent or ambiguous:
+ * build/figma-data/protection-finder-scoring.md. Do not re-weight the matrix
+ * here without updating that spec file too.
  *
  * Unlike BookingWidgetService/PackageBuilderService, this writes nothing — it
  * takes 5 answers and returns a computed match, nothing more.
@@ -30,56 +35,86 @@ class ProtectionFinderService extends Singleton implements ServiceInterface
 {
    public const REST_NAMESPACE = 'detailking/v1';
 
-   /** category slug (real dk_service slug) => question => option => weight (0-3) */
+   /** The one dk_service every outcome below results in — all 4 are PPF tiers/finishes. */
+   private const SERVICE_SLUG = 'ppf';
+
+   /**
+    * question => option => outcome slug => weight. Transcribed row-for-row
+    * from the doc's Points Table.
+    */
    private const WEIGHTS = [
-      'grooming' => [
-         'vehicle'   => ['daily-driver' => 3, 'luxury-sports' => 1, 'suv-ute' => 2, 'brand-new' => 1],
-         'priority'  => ['deep-gloss' => 2, 'chip-protection' => 0, 'easy-cleaning' => 3, 'comfort-privacy' => 1],
-         'usage'     => ['city-short-trips' => 3, 'lots-of-highway' => 1, 'weekend-pride' => 1, 'work-tough-use' => 2],
-         'longevity' => ['a-season' => 3, 'a-few-years' => 1, 'maximum-permanent' => 0],
-         'budget'    => ['smart-value' => 3, 'balanced' => 1, 'premium' => 0],
+      'vehicle' => [
+         'luxury-sports' => ['full-car-ppf' => 15, 'stealth-matte-ppf' => 15, 'full-front-ppf-ceramic' => 10, 'front-basic-ppf-ceramic' => 5],
+         'suv-ute'       => ['full-car-ppf' => 10, 'stealth-matte-ppf' => 10, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 10],
+         'sedan-hatch'   => ['full-car-ppf' => 10, 'stealth-matte-ppf' => 10, 'full-front-ppf-ceramic' => 10, 'front-basic-ppf-ceramic' => 10],
+         'new-car'       => ['full-car-ppf' => 15, 'stealth-matte-ppf' => 15, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 10],
       ],
-      'detailing' => [
-         'vehicle'   => ['daily-driver' => 2, 'luxury-sports' => 2, 'suv-ute' => 1, 'brand-new' => 3],
-         'priority'  => ['deep-gloss' => 3, 'chip-protection' => 0, 'easy-cleaning' => 1, 'comfort-privacy' => 1],
-         'usage'     => ['city-short-trips' => 1, 'lots-of-highway' => 1, 'weekend-pride' => 3, 'work-tough-use' => 0],
-         'longevity' => ['a-season' => 3, 'a-few-years' => 1, 'maximum-permanent' => 0],
-         'budget'    => ['smart-value' => 1, 'balanced' => 3, 'premium' => 2],
+      'priority' => [
+         'stone-chips'        => ['full-car-ppf' => 20, 'stealth-matte-ppf' => 20, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 10],
+         'scratches'          => ['full-car-ppf' => 15, 'stealth-matte-ppf' => 15, 'full-front-ppf-ceramic' => 10, 'front-basic-ppf-ceramic' => 5],
+         'sun-uv'             => ['full-car-ppf' => 5,  'stealth-matte-ppf' => 5,  'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 15],
+         'general-protection' => ['full-car-ppf' => 10, 'stealth-matte-ppf' => 10, 'full-front-ppf-ceramic' => 10, 'front-basic-ppf-ceramic' => 10],
+         // 5th option, not in the doc's Q2 bullet list but scored in its table — see wizard.php's doc comment.
+         'matte-stealth-look' => ['full-car-ppf' => 10, 'stealth-matte-ppf' => 20, 'full-front-ppf-ceramic' => 5,  'front-basic-ppf-ceramic' => 0],
       ],
-      'ceramic-pro' => [
-         'vehicle'   => ['daily-driver' => 1, 'luxury-sports' => 3, 'suv-ute' => 1, 'brand-new' => 3],
-         'priority'  => ['deep-gloss' => 3, 'chip-protection' => 1, 'easy-cleaning' => 3, 'comfort-privacy' => 1],
-         'usage'     => ['city-short-trips' => 1, 'lots-of-highway' => 2, 'weekend-pride' => 2, 'work-tough-use' => 1],
-         'longevity' => ['a-season' => 0, 'a-few-years' => 3, 'maximum-permanent' => 2],
-         'budget'    => ['smart-value' => 0, 'balanced' => 2, 'premium' => 3],
+      'usage' => [
+         'city-driving'       => ['full-car-ppf' => 5,  'stealth-matte-ppf' => 5,  'full-front-ppf-ceramic' => 10, 'front-basic-ppf-ceramic' => 15],
+         'highway-driving'    => ['full-car-ppf' => 20, 'stealth-matte-ppf' => 20, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 10],
+         'weekend-occasional' => ['full-car-ppf' => 5,  'stealth-matte-ppf' => 5,  'full-front-ppf-ceramic' => 10, 'front-basic-ppf-ceramic' => 10],
+         'work-offroad'       => ['full-car-ppf' => 20, 'stealth-matte-ppf' => 20, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 10],
       ],
-      'ppf' => [
-         'vehicle'   => ['daily-driver' => 1, 'luxury-sports' => 3, 'suv-ute' => 1, 'brand-new' => 2],
-         'priority'  => ['deep-gloss' => 1, 'chip-protection' => 3, 'easy-cleaning' => 0, 'comfort-privacy' => 0],
-         'usage'     => ['city-short-trips' => 2, 'lots-of-highway' => 3, 'weekend-pride' => 1, 'work-tough-use' => 2],
-         'longevity' => ['a-season' => 2, 'a-few-years' => 2, 'maximum-permanent' => 3],
-         'budget'    => ['smart-value' => 0, 'balanced' => 1, 'premium' => 3],
+      'level' => [
+         'basic-protection'    => ['full-car-ppf' => 0,  'stealth-matte-ppf' => 0,  'full-front-ppf-ceramic' => 5,  'front-basic-ppf-ceramic' => 20],
+         'front-protection'    => ['full-car-ppf' => 10, 'stealth-matte-ppf' => 10, 'full-front-ppf-ceramic' => 20, 'front-basic-ppf-ceramic' => 20],
+         'full-car-protection' => ['full-car-ppf' => 20, 'stealth-matte-ppf' => 20, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 5],
+         'maximum-protection'  => ['full-car-ppf' => 20, 'stealth-matte-ppf' => 20, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 5],
       ],
-      'window-tinting' => [
-         'vehicle'   => ['daily-driver' => 3, 'luxury-sports' => 1, 'suv-ute' => 2, 'brand-new' => 1],
-         'priority'  => ['deep-gloss' => 0, 'chip-protection' => 0, 'easy-cleaning' => 1, 'comfort-privacy' => 3],
-         'usage'     => ['city-short-trips' => 3, 'lots-of-highway' => 1, 'weekend-pride' => 0, 'work-tough-use' => 1],
-         'longevity' => ['a-season' => 0, 'a-few-years' => 3, 'maximum-permanent' => 1],
-         'budget'    => ['smart-value' => 3, 'balanced' => 2, 'premium' => 0],
-      ],
-      'vinyl-wraps' => [
-         'vehicle'   => ['daily-driver' => 0, 'luxury-sports' => 2, 'suv-ute' => 1, 'brand-new' => 3],
-         'priority'  => ['deep-gloss' => 1, 'chip-protection' => 0, 'easy-cleaning' => 0, 'comfort-privacy' => 0],
-         'usage'     => ['city-short-trips' => 0, 'lots-of-highway' => 0, 'weekend-pride' => 3, 'work-tough-use' => 1],
-         'longevity' => ['a-season' => 1, 'a-few-years' => 2, 'maximum-permanent' => 1],
-         'budget'    => ['smart-value' => 0, 'balanced' => 1, 'premium' => 3],
+      'budget' => [
+         'best-value' => ['full-car-ppf' => 5,  'stealth-matte-ppf' => 0,  'full-front-ppf-ceramic' => 10, 'front-basic-ppf-ceramic' => 20],
+         'mid-range'  => ['full-car-ppf' => 10, 'stealth-matte-ppf' => 5,  'full-front-ppf-ceramic' => 20, 'front-basic-ppf-ceramic' => 20],
+         'premium'    => ['full-car-ppf' => 20, 'stealth-matte-ppf' => 20, 'full-front-ppf-ceramic' => 15, 'front-basic-ppf-ceramic' => 10],
       ],
    ];
 
-   /** Tie-break order (first in this list wins an exact score tie). */
-   private const TIE_BREAK = ['ppf', 'ceramic-pro', 'detailing', 'vinyl-wraps', 'window-tinting', 'grooming'];
+   /**
+    * outcome slug => display title + the real dk_package tier (under `ppf`)
+    * it resolves to. `full-car-ppf` and `stealth-matte-ppf` deliberately
+    * share `ppf-full-cover` — there is no separate Stealth/Matte package yet,
+    * so both outcomes point at the same tier/page and differ only in label.
+    */
+   private const OUTCOMES = [
+      'full-car-ppf' => [
+         'title'       => 'Full Car PPF',
+         'packageSlug' => 'ppf-full-cover',
+      ],
+      'stealth-matte-ppf' => [
+         'title'       => 'Full Car Stealth / Matte PPF',
+         'packageSlug' => 'ppf-full-cover',
+      ],
+      'full-front-ppf-ceramic' => [
+         'title'       => 'Full Front PPF + Ceramic Pro',
+         'packageSlug' => 'ppf-full-front',
+         'ceramicNote' => 'Paired with a Ceramic Pro coating across the rest of the vehicle for complete, all-over protection.',
+      ],
+      'front-basic-ppf-ceramic' => [
+         'title'       => 'Front Basic PPF + Ceramic Pro',
+         'packageSlug' => 'ppf-basic',
+         'ceramicNote' => 'Paired with a Ceramic Pro coating across the rest of the vehicle for complete, all-over protection.',
+      ],
+   ];
 
-   private const QUESTIONS = ['vehicle', 'priority', 'usage', 'longevity', 'budget'];
+   /**
+    * Tie-break order when two outcomes score exactly equal. `stealth-matte-ppf`
+    * sits last by default — Full Car PPF is the "home" outcome for that score
+    * band — but moves to the front when the visitor's own priority answer was
+    * "Matte / Stealth Look", per the doc's explicit override ("if the customer
+    * selects Matte / Stealth Look, and the Stealth score is highest, recommend
+    * Full Car Stealth / Matte PPF rather than Full Car PPF").
+    */
+   private const TIE_BREAK_DEFAULT  = ['full-car-ppf', 'full-front-ppf-ceramic', 'front-basic-ppf-ceramic', 'stealth-matte-ppf'];
+   private const TIE_BREAK_STEALTH  = ['stealth-matte-ppf', 'full-car-ppf', 'full-front-ppf-ceramic', 'front-basic-ppf-ceramic'];
+
+   private const QUESTIONS = ['vehicle', 'priority', 'usage', 'level', 'budget'];
 
    public function register(): void
    {
@@ -159,7 +194,7 @@ class ProtectionFinderService extends Singleton implements ServiceInterface
       foreach (self::QUESTIONS as $q) {
          $val = sanitize_key((string) $request->get_param($q));
 
-         if ($val === '' || !isset(self::WEIGHTS['grooming'][$q][$val])) {
+         if ($val === '' || !isset(self::WEIGHTS[$q][$val])) {
             return new WP_REST_Response([
                'success' => false,
                'message' => __('Please answer all 5 questions.', 'detailking'),
@@ -169,20 +204,21 @@ class ProtectionFinderService extends Singleton implements ServiceInterface
          $answers[$q] = $val;
       }
 
-      $scores = $this->score($answers);
+      $scores   = $this->score($answers);
+      $tieBreak = ($answers['priority'] ?? null) === 'matte-stealth-look'
+         ? self::TIE_BREAK_STEALTH
+         : self::TIE_BREAK_DEFAULT;
 
       arsort($scores);
       $ranked = array_keys($scores);
 
       // Tie-break exact-score ties by the declared priority order rather than
-      // trusting arsort's insertion-order stability (correct today, but the
-      // rubric doc's own tie-break list is the source of truth, not PHP's
-      // sort implementation detail).
+      // trusting arsort's insertion-order stability.
       $topScore = $scores[$ranked[0]];
       $tiedAtTop = array_filter($ranked, static fn($slug) => $scores[$slug] === $topScore);
 
       if (count($tiedAtTop) > 1) {
-         foreach (self::TIE_BREAK as $slug) {
+         foreach ($tieBreak as $slug) {
             if (in_array($slug, $tiedAtTop, true)) {
                $ranked = array_values(array_unique(array_merge([$slug], $ranked)));
                break;
@@ -190,14 +226,35 @@ class ProtectionFinderService extends Singleton implements ServiceInterface
          }
       }
 
-      $topSlug = $ranked[0];
+      $topSlug    = $ranked[0];
+      $topOutcome = self::OUTCOMES[$topSlug];
+      $topPackage = $this->findPackage($topOutcome['packageSlug']);
+      $service    = $this->findService();
+
+      if (!$topPackage || !$service) {
+         return new WP_REST_Response([
+            'success' => false,
+            'message' => __('Could not compute a match right now. Please try again.', 'detailking'),
+         ], 500);
+      }
 
       $remaining = array_values(array_filter($ranked, static fn($s) => $s !== $topSlug));
-      $secondScore = $scores[$remaining[0]] ?? null;
+
+      // Drop runner-up candidates that resolve to the exact same package tier
+      // as the top pick — e.g. Full Car PPF / Stealth-Matte PPF share
+      // ppf-full-cover, and "also worth considering" the identical tier under
+      // a different label is a redundant link to the same page, not a
+      // genuinely different second option.
+      $remaining = array_values(array_filter(
+         $remaining,
+         static fn($s) => self::OUTCOMES[$s]['packageSlug'] !== $topOutcome['packageSlug']
+      ));
+
+      $secondScore  = isset($remaining[0]) ? $scores[$remaining[0]] : null;
       $tiedAtSecond = $secondScore === null ? [] : array_filter($remaining, static fn($slug) => $scores[$slug] === $secondScore);
 
       if (count($tiedAtSecond) > 1) {
-         foreach (self::TIE_BREAK as $slug) {
+         foreach ($tieBreak as $slug) {
             if ($slug !== $topSlug && in_array($slug, $tiedAtSecond, true)) {
                $remaining = array_values(array_unique(array_merge([$slug], $remaining)));
                break;
@@ -205,29 +262,20 @@ class ProtectionFinderService extends Singleton implements ServiceInterface
          }
       }
 
-      $runnerSlug = $remaining[0] ?? null;
+      $runnerSlug    = $remaining[0] ?? null;
+      $runnerOutcome = $runnerSlug ? self::OUTCOMES[$runnerSlug] : null;
 
-      $topService    = $this->findService($topSlug);
-      $runnerService = $runnerSlug ? $this->findService($runnerSlug) : null;
-
-      if (!$topService) {
-         return new WP_REST_Response([
-            'success' => false,
-            'message' => __('Could not compute a match right now. Please try again.', 'detailking'),
-         ], 500);
-      }
-
-      $maxScore = $this->categoryMax($topSlug);
+      $maxScore = $this->outcomeMax($topSlug);
       $matchPct = $maxScore > 0 ? (int) round(($scores[$topSlug] / $maxScore) * 100) : 0;
 
       return new WP_REST_Response([
          'success'  => true,
          'matchPct' => $matchPct,
-         'service'  => $this->serviceOutput($topService),
-         'runnerUp' => $runnerService ? [
-            'slug'      => $runnerService->post_name,
-            'title'     => wp_specialchars_decode(get_the_title($runnerService), ENT_QUOTES),
-            'permalink' => get_permalink($runnerService),
+         'service'  => $this->resultOutput($topOutcome, $service, $topPackage),
+         'runnerUp' => $runnerOutcome ? [
+            'slug'      => $runnerSlug,
+            'title'     => $runnerOutcome['title'],
+            'permalink' => get_permalink($service),
          ] : null,
       ], 200);
    }
@@ -235,46 +283,61 @@ class ProtectionFinderService extends Singleton implements ServiceInterface
    /** @param array<string,string> $answers @return array<string,int> */
    private function score(array $answers): array
    {
-      $scores = [];
+      $scores = array_fill_keys(array_keys(self::OUTCOMES), 0);
 
-      foreach (self::WEIGHTS as $slug => $questions) {
-         $total = 0;
-         foreach ($answers as $q => $optionKey) {
-            $total += $questions[$q][$optionKey] ?? 0;
+      foreach ($answers as $question => $optionKey) {
+         foreach (self::WEIGHTS[$question][$optionKey] ?? [] as $outcomeSlug => $weight) {
+            $scores[$outcomeSlug] += $weight;
          }
-         $scores[$slug] = $total;
       }
 
       return $scores;
    }
 
-   private function categoryMax(string $slug): int
+   /** Sum of each question's own best weight for this outcome — not a flat constant, in case a future edit changes it. */
+   private function outcomeMax(string $outcomeSlug): int
    {
-      $questions = self::WEIGHTS[$slug] ?? [];
       $max = 0;
 
-      foreach ($questions as $options) {
-         $max += !empty($options) ? max($options) : 0;
+      foreach (self::WEIGHTS as $options) {
+         $best = 0;
+         foreach ($options as $weights) {
+            $best = max($best, $weights[$outcomeSlug] ?? 0);
+         }
+         $max += $best;
       }
 
       return $max;
    }
 
-   private function findService(string $slug): ?WP_Post
+   private function findService(): ?WP_Post
    {
       $posts = get_posts([
          'post_type'        => 'dk_service',
-         'name'              => $slug,
-         'numberposts'       => 1,
-         'post_status'       => 'publish',
-         'suppress_filters'  => false,
+         'name'             => self::SERVICE_SLUG,
+         'numberposts'      => 1,
+         'post_status'      => 'publish',
+         'suppress_filters' => false,
+      ]);
+
+      return $posts[0] ?? null;
+   }
+
+   private function findPackage(string $slug): ?WP_Post
+   {
+      $posts = get_posts([
+         'post_type'        => 'dk_package',
+         'name'             => $slug,
+         'numberposts'      => 1,
+         'post_status'      => 'publish',
+         'suppress_filters' => false,
       ]);
 
       return $posts[0] ?? null;
    }
 
    /** @return array<string,mixed> */
-   private function serviceOutput(WP_Post $service): array
+   private function resultOutput(array $outcome, WP_Post $service, WP_Post $package): array
    {
       $features = get_field('service_features', $service->ID) ?: [];
       $features = is_array($features) ? array_slice($features, 0, 4) : [];
@@ -287,54 +350,20 @@ class ProtectionFinderService extends Singleton implements ServiceInterface
          }
       }
 
-      return [
-         'slug'      => $service->post_name,
-         'title'     => wp_specialchars_decode(get_the_title($service), ENT_QUOTES),
-         'permalink' => get_permalink($service),
-         'teaser'    => (string) (get_field('service_teaser', $service->ID) ?: ''),
-         'features'  => $featureLabels,
-         'fromPrice' => $this->minPackagePrice($service->ID),
-      ];
-   }
-
-   /**
-    * A la carte add-on dk_package rows that are linked to a real dk_service
-    * post (so they show up in a plain package_service query) but are not one
-    * of that service's own priced tiers — same exclusion lists
-    * build-package/service.php already hardcodes for the identical reason
-    * (BYOP's radio/checkbox split). Keep both lists in sync if either changes.
-    */
-   private const NON_TIER_PACKAGE_SLUGS = [
-      'ppf-trunk-edge-kit', 'ppf-door-handle-protection', 'ppf-door-edge-protection',
-      'ppf-rocker-panel-protection', 'ppf-splash-kit',
-      'ceramic-pro-wheels-caliper', 'ceramic-pro-car-interior-coating',
-   ];
-
-   /** MIN(package_price) across real, published dk_package rows for this service — computed live, not hardcoded, so a real price edit flows straight through. */
-   private function minPackagePrice(int $serviceId): ?int
-   {
-      $packages = get_posts([
-         'post_type'        => 'dk_package',
-         'numberposts'       => -1,
-         'post_status'       => 'publish',
-         'suppress_filters'  => false,
-         'meta_query'        => [[
-            'key'   => 'package_service',
-            'value' => $serviceId,
-         ]],
-      ]);
-
-      $prices = [];
-      foreach ($packages as $package) {
-         if (in_array($package->post_name, self::NON_TIER_PACKAGE_SLUGS, true)) {
-            continue;
-         }
-         $price = get_field('package_price', $package->ID);
-         if ($price !== '' && $price !== null) {
-            $prices[] = (int) $price;
-         }
+      $teaser = (string) (get_field('service_teaser', $service->ID) ?: '');
+      if (!empty($outcome['ceramicNote'])) {
+         $teaser = trim($teaser . ' ' . $outcome['ceramicNote']);
       }
 
-      return $prices ? min($prices) : null;
+      $price = get_field('package_price', $package->ID);
+
+      return [
+         'slug'      => $package->post_name,
+         'title'     => $outcome['title'],
+         'permalink' => get_permalink($service),
+         'teaser'    => $teaser,
+         'features'  => $featureLabels,
+         'fromPrice' => ($price !== '' && $price !== null) ? (int) $price : null,
+      ];
    }
 }

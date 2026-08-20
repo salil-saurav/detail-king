@@ -278,6 +278,7 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 	overflow: hidden;
 	background: var(--bg-dark);
 	box-shadow: var(--shadow-card);
+	transition: transform 0.2s ease-in-out;
 }
 
 .svc-card__link {
@@ -302,13 +303,15 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 	transition: transform .7s cubic-bezier(.2, .7, .3, 1);
 }
 
-/* Comp note: "image zooms on hover, hidden description slides up". */
+.svc-card:hover {
+	transform: translateY(-10px) !important;
+}
+
 .svc-card__link:hover .svc-card__media img,
 .svc-card__link:focus-visible .svc-card__media img {
 	transform: scale(1.06);
 }
 
-/* Bottom scrim so the title stays legible whatever the photo. */
 .svc-card__media::after {
 	content: "";
 	position: absolute;
@@ -346,6 +349,7 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 	border-radius: 28px;
 	border: 1px solid rgba(255, 255, 255, 0.45);
 	backdrop-filter: blur(4px);
+	transition: transform 0.2s ease-in;
 }
 
 .svc-card__arrow::before {
@@ -507,13 +511,15 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 .home-seam__figure img {
 	position: absolute;
 	inset-inline: 0;
-	/* Oversized so motion.js's data-parallax="6" (yPercent -6…+6, scrubbed to
-	   scroll) never exposes an edge at either extreme: for +/-N% travel the
-	   image must be at least H/(1-2N) tall — same maths as .home-hero__bg img,
-	   with the same margin of buffer over the minimum. */
+	/* Oversized so motion.js's data-parallax="10" data-parallax-invert (yPercent
+	   +3 settling to -17 as the section scrolls through, biased toward the rise)
+	   never exposes an edge at either extreme. Asymmetric travel needs an
+	   asymmetric check, not the old +/-N -> H/(1-2N) shortcut: worst case at the
+	   +3 end is offset + 3%*height <= 0, worst case at the -17 end is
+	   offset + height*(1-17%) >= 100. -8/136 clears both with ~4% to spare. */
 	inset-block-start: -8%;
 	width: 100%;
-	height: 116%;
+	height: 136%;
 	object-fit: cover;
 }
 
@@ -640,7 +646,7 @@ a.home-video__play:focus-visible {
 	inset: 0;
 	border-radius: 50%;
 	border: 1px solid var(--gold-40);
-	animation: dk-pulse 1.3s linear infinite;
+	animation: dk-ripple 1.3s linear infinite;
 }
 
 @keyframes dk-pulse {
@@ -957,6 +963,17 @@ a.home-video__play:focus-visible {
 	margin-inline-start: -1px;
 	background: var(--gold-gradient);
 	pointer-events: none;
+}
+
+/* The auto-tease (home.js) steps --dk-compare-pos through four positions on a
+   timer. Scoped to .dk-compare--tease rather than a bare transition on these
+   selectors, so dragging the range input still tracks the pointer 1:1 with no
+   catch-up lag. */
+.dk-compare--tease .dk-compare__before,
+.dk-compare--tease .dk-compare__divider,
+.dk-compare--tease .dk-compare__handle {
+	transition: clip-path .5s cubic-bezier(.25, .46, .45, .94),
+		inset-inline-start .5s cubic-bezier(.25, .46, .45, .94);
 }
 
 .dk-compare__handle {

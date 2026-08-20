@@ -139,6 +139,15 @@
 
 	if (hero) {
 		requestAnimationFrame(() => hero.classList.add('is-hero-in'));
+
+		/* The CTA "settle" rule in global.css §7b keys off `.is-hero-settled`
+			rather than `.is-hero-in` — `.is-hero-in` is added on the very first
+			frame and never removed, so a rule scoped to it alone is already
+			active *during* the entrance transition and clobbers the CTAs'
+			.6s/staggered-delay timing from frame one instead of only after
+			reveal. 1.4s clears the latest entrance leg (§6: .75s delay + .6s
+			duration on the third CTA) with a small buffer. */
+		setTimeout(() => hero.classList.add('is-hero-settled'), 1400);
 	}
 
 	/* ------------------------------------------------------------------
@@ -294,6 +303,7 @@
 
 	document.querySelectorAll('[data-parallax]').forEach((el) => {
 		const amount = parseFloat(el.getAttribute('data-parallax')) || DEFAULT_PARALLAX;
+		const invert = el.hasAttribute('data-parallax-invert');
 		const scope = el.closest('[data-parallax-scope]') || el.parentElement || el;
 
 		track(scope, () => {
@@ -305,7 +315,20 @@
 			}
 
 			const progress = clamp((window.innerHeight - rect.top) / span);
-			const y = -amount + (2 * amount * progress);
+			let y;
+
+			if (invert) {
+				/* Biased toward the rise: a small settle-down on entry, most of the
+				   travel spent climbing, so scrolling down reads as the image moving
+				   up (and scrolling back up reverses it). Opt-in via
+				   data-parallax-invert — leaves every other [data-parallax] element
+				   (the hero bg's tight ±4 buffer) on the original symmetric curve. */
+				const down = amount * 0.3;
+				const up = amount * 1.7;
+				y = down - ((down + up) * progress);
+			} else {
+				y = -amount + (2 * amount * progress);
+			}
 
 			el.style.transform = `translate3d(0, ${y.toFixed(3)}%, 0)`;
 		});

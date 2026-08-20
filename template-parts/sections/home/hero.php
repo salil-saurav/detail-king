@@ -62,7 +62,7 @@ $bg = $meta->imageUrl(
       </h1>
 
       <?php if ($text !== '') : ?>
-         <p class="home-hero__text body-base"><?= wp_kses_post($text); ?></p>
+         <p class=" home-hero__text body-base"><?= wp_kses_post($text); ?></p>
       <?php endif; ?>
 
       <div class="home-hero__actions">

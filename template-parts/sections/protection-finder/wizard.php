@@ -5,11 +5,18 @@
  *
  * Static markup for all 5 question cards (assets/js/pages/protection-finder.js
  * shows/hides via .is-active — no page reload between questions), the rail,
- * and the result template. Question copy/options are transcribed by direct
- * pixel-read of build/pngs/protection-finder {1..5}.png (no Figma MCP access
- * this pass) — see build/figma-data/protection-finder-scoring.md for the
- * locked option keys this markup's data-value attributes must match exactly
+ * and the result template. Questions/options transcribed verbatim from the
+ * client's "PPF calculator" doc (Google Doc, supplied 17 Aug 2026 — the
+ * calculation Shreya promised on 29 Jul, TASK-BRIEF §5) — see
+ * build/figma-data/protection-finder-scoring.md for the locked option keys
+ * this markup's data-value attributes must match exactly
  * (ProtectionFinderService::WEIGHTS keys on those same strings).
+ *
+ * Question 2 carries a 5th option, "Matte / Stealth Look", that the doc's
+ * points table scores but its own bullet list omits — treated as a real 5th
+ * radio choice here (not a separate toggle question), since that is what
+ * makes the doc's own "if the customer selects Matte / Stealth Look…"
+ * tie-break rule meaningful. Flagged for client sign-off, not blocking.
  *
  * @package DetailKing Theme
  */
@@ -22,21 +29,22 @@ $questions = [
       'title' => 'WHAT ARE YOU <span class="text-gold-gradient">DRIVING?</span>',
       'text'  => "This tells us the surface and finish we're working with.",
       'options' => [
-         ['value' => 'daily-driver',   'label' => 'Daily Driver',    'desc' => 'Everyday car or commuter'],
-         ['value' => 'luxury-sports',  'label' => 'Luxury / Sports', 'desc' => 'Prestige or performance vehicle'],
-         ['value' => 'suv-ute',        'label' => 'SUV / Ute',       'desc' => 'Larger family or work vehicle'],
-         ['value' => 'brand-new',      'label' => 'Brand New',       'desc' => 'Fresh off the lot, factory perfect'],
+         ['value' => 'luxury-sports', 'label' => 'Luxury / Sports Car', 'desc' => 'Prestige or performance vehicle'],
+         ['value' => 'suv-ute',       'label' => 'SUV / Ute',           'desc' => 'Larger family or work vehicle'],
+         ['value' => 'sedan-hatch',   'label' => 'Sedan / Hatchback',   'desc' => 'Everyday car or commuter'],
+         ['value' => 'new-car',       'label' => 'New Car',             'desc' => 'Fresh off the lot, factory perfect'],
       ],
    ],
    [
       'key'   => 'priority',
-      'title' => 'WHAT MATTERS <span class="text-gold-gradient">MOST?</span>',
+      'title' => 'WHAT DO YOU WANT <span class="text-gold-gradient">PROTECTION FROM?</span>',
       'text'  => 'Pick the single outcome you care about the most.',
       'options' => [
-         ['value' => 'deep-gloss',       'label' => 'Deep Gloss',        'desc' => 'A showroom shine that turns heads'],
-         ['value' => 'chip-protection',  'label' => 'Chip Protection',   'desc' => 'Defend against stones & road rash'],
-         ['value' => 'easy-cleaning',    'label' => 'Easy Cleaning',     'desc' => 'Less washing, water beads off'],
-         ['value' => 'comfort-privacy',  'label' => 'Comfort & Privacy', 'desc' => 'Cooler cabin, less glare, privacy'],
+         ['value' => 'stone-chips',         'label' => 'Stone Chips',         'desc' => 'Defend against stones & road rash'],
+         ['value' => 'scratches',           'label' => 'Scratches',          'desc' => 'Guard against swirls, scuffs & scratches'],
+         ['value' => 'sun-uv',              'label' => 'Sun / UV',            'desc' => 'Cooler cabin, less fade, less glare'],
+         ['value' => 'general-protection',  'label' => 'General Protection',  'desc' => 'All-round, everyday protection'],
+         ['value' => 'matte-stealth-look',  'label' => 'Matte / Stealth Look','desc' => 'A flat, low-sheen finish with the protection'],
       ],
    ],
    [
@@ -44,20 +52,21 @@ $questions = [
       'title' => 'HOW DO YOU <span class="text-gold-gradient">USE IT?</span>',
       'text'  => 'Your driving style changes how much protection you need.',
       'options' => [
-         ['value' => 'city-short-trips', 'label' => 'City & Short Trips', 'desc' => 'Mostly urban, parking & errands'],
-         ['value' => 'lots-of-highway',  'label' => 'Lots Of Highway',    'desc' => 'High kms, open-road driving'],
-         ['value' => 'weekend-pride',    'label' => 'Weekend Pride',      'desc' => 'Garaged, driven for enjoyment'],
-         ['value' => 'work-tough-use',   'label' => 'Work & Tough Use',   'desc' => 'Hard-working, all conditions'],
+         ['value' => 'city-driving',       'label' => 'City Driving',              'desc' => 'Mostly urban, parking & errands'],
+         ['value' => 'highway-driving',    'label' => 'Highway Driving',           'desc' => 'High kms, open-road driving'],
+         ['value' => 'weekend-occasional', 'label' => 'Weekend / Occasional Use',  'desc' => 'Garaged, driven for enjoyment'],
+         ['value' => 'work-offroad',       'label' => 'Work / Off-road Use',       'desc' => 'Hard-working, all conditions'],
       ],
    ],
    [
-      'key'   => 'longevity',
-      'title' => 'HOW LONG SHOULD IT <span class="text-gold-gradient">LAST?</span>',
-      'text'  => 'This points us toward the right level of protection.',
+      'key'   => 'level',
+      'title' => 'WHAT LEVEL OF <span class="text-gold-gradient">PROTECTION?</span>',
+      'text'  => 'This points us toward the right coverage for your car.',
       'options' => [
-         ['value' => 'a-season',           'label' => 'A Season',             'desc' => 'Fresh for an event or summer'],
-         ['value' => 'a-few-years',        'label' => 'A Few Years',          'desc' => 'Lasting, low-maintenance protection'],
-         ['value' => 'maximum-permanent',  'label' => 'Maximum / Permanent',  'desc' => 'The longest, hardest protection'],
+         ['value' => 'basic-protection',    'label' => 'Basic Protection',    'desc' => 'Coverage for the most exposed panels'],
+         ['value' => 'front-protection',    'label' => 'Front Protection',    'desc' => 'Complete front-end coverage'],
+         ['value' => 'full-car-protection', 'label' => 'Full Car Protection', 'desc' => 'Total coverage, every panel'],
+         ['value' => 'maximum-protection',  'label' => 'Maximum Protection',  'desc' => 'The longest, hardest protection available'],
       ],
    ],
    [
@@ -65,14 +74,14 @@ $questions = [
       'title' => "WHAT'S YOUR <span class=\"text-gold-gradient\">BUDGET COMFORT?</span>",
       'text'  => "We'll match a level that feels right — no pressure.",
       'options' => [
-         ['value' => 'smart-value', 'label' => 'Smart Value', 'desc' => 'Great results, sensible spend'],
-         ['value' => 'balanced',    'label' => 'Balanced',    'desc' => 'Strong protection, fair investment'],
-         ['value' => 'premium',     'label' => 'Premium',     'desc' => 'The very best, whatever it takes'],
+         ['value' => 'best-value', 'label' => 'Best Value', 'desc' => 'Great results, sensible spend'],
+         ['value' => 'mid-range',  'label' => 'Mid-Range',  'desc' => 'Strong protection, fair investment'],
+         ['value' => 'premium',    'label' => 'Premium',    'desc' => 'The very best, whatever it takes'],
       ],
    ],
 ];
 
-$railLabels = ['vehicle' => 'Vehicle', 'priority' => 'Priority', 'usage' => 'Usage', 'longevity' => 'Longevity', 'budget' => 'Budget'];
+$railLabels = ['vehicle' => 'Vehicle', 'priority' => 'Priority', 'usage' => 'Usage', 'level' => 'Level', 'budget' => 'Budget'];
 $total      = count($questions);
 ?>
 <section class="pf-wizard-section section-padding-block pt-0" data-animate="fade">
@@ -147,8 +156,13 @@ $total      = count($questions);
                   </li>
                <?php endforeach; ?>
                <li class="pf-rail__row pf-rail__row--progress">
-                  <span class="pf-rail__label"><?= esc_html__('Match progress', 'detailking'); ?></span>
-                  <span class="pf-rail__value" data-pf-rail-progress>0%</span>
+                  <div class="pf-rail__progress-top">
+                     <span class="pf-rail__label"><?= esc_html__('Match progress', 'detailking'); ?></span>
+                     <span class="pf-rail__value" data-pf-rail-progress>0%</span>
+                  </div>
+                  <div class="pf-progressbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-pf-rail-progressbar>
+                     <span class="pf-progressbar__fill" data-pf-rail-progress-fill></span>
+                  </div>
                </li>
             </ul>
             <div class="pf-rail__photo" aria-hidden="true"></div>

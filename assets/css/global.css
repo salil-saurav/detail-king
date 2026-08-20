@@ -915,7 +915,7 @@ img {
 	overflow: hidden;
 	border: 1px solid var(--line-gold-22);
 	border-radius: var(--radius-xl);
-	padding: 90px 60px;
+	padding: 110px 90px;
 	text-align: center;
 	background: var(--bg-dark);
 }
@@ -937,7 +937,7 @@ img {
 	flex-wrap: wrap;
 	justify-content: center;
 	gap: 22px;
-	margin-block-start: 32px;
+	margin-block-start: 44px;
 }
 
 /* Product card (components/product-card.php) — moved from home.css: no
@@ -1570,8 +1570,17 @@ select.dk-field__input {
 /* Once settled, the CTAs revert to a normal button transition rather than
    the entrance choreography's .6-.8s duration + up-to-.75s stagger delay —
    without this, a hover after reveal would still animate on the reveal's
-   timing (visibly sluggish) because nothing else ever resets it. */
-.aos-ready [data-hero].is-hero-in .home-hero__actions > * {
+   timing (visibly sluggish) because nothing else ever resets it.
+
+   Keyed on `.is-hero-settled`, NOT `.is-hero-in`: `.is-hero-in` is added on
+   the very first frame and stays for the rest of the page's life, so a rule
+   scoped to it alone is already active *during* the entrance transition
+   itself — its higher specificity (one extra class) than the entrance rule
+   above clobbered the .6s/staggered-delay timing from frame one, and the
+   CTAs snapped in over .25s with no stagger instead of fading up like
+   everything else. motion.js adds `.is-hero-settled` after the entrance
+   choreography's own last transition genuinely finishes. */
+.aos-ready [data-hero].is-hero-settled .home-hero__actions > * {
 	transition-duration: .25s;
 	transition-delay: 0s;
 }
@@ -1580,10 +1589,10 @@ select.dk-field__input {
    .home-hero__actions with more specificity than a plain :hover — chaining
    the full ancestry here is what lets the hero's own CTAs still lift on
    hover/focus (§31) instead of being stuck flat forever after reveal. */
-.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-gold:hover,
-.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-gold:focus-visible,
-.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-outline-light-dk:hover,
-.aos-ready [data-hero].is-hero-in .home-hero__actions > .btn-outline-light-dk:focus-visible {
+.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-gold:hover,
+.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-gold:focus-visible,
+.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-outline-light-dk:hover,
+.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-outline-light-dk:focus-visible {
 	transform: translateY(-2px);
 }
 

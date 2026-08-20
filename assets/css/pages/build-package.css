@@ -371,6 +371,7 @@
 .byop-option__amount {
 	font-family: var(--font-display);
 	font-size: 24px;
+	font-weight: 400;
 	letter-spacing: 0.02em;
 }
 
@@ -628,7 +629,7 @@
 
 .byop-summary-card__price-val.byop-price-quote {
 	font-size: 26px;
-	font-weight: 500;
+	font-weight: 400;
 }
 
 .byop-summary-card__disclaimer {

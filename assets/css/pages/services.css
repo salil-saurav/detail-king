@@ -144,7 +144,11 @@
 	flex: 0 0 46px;
 }
 
-.svc-article__title { color: var(--text-dark); }
+.svc-article__title {
+	font: 400 64px/1 var(--font-display);
+	letter-spacing: .03em;
+	color: var(--text-dark);
+}
 
 .svc-article__text {
 	max-width: 560px;
