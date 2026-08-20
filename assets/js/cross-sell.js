@@ -104,6 +104,7 @@
 				if (data && data.success) {
 					updateCartCount(data.cartCount);
 					submitBtn.textContent = cfg.i18n.added;
+					if (window.dkSnackbar) window.dkSnackbar(cfg.i18n.added, 'success');
 					setTimeout(() => {
 						submitBtn.textContent = original;
 						submitBtn.disabled = false;
@@ -151,10 +152,12 @@
 			if (!data || !data.success) {
 				btn.innerHTML = original;
 				btn.disabled = false;
+				if (window.dkSnackbar) window.dkSnackbar((data && data.message) || cfg.i18n.error, 'error');
 				return;
 			}
 
 			updateCartCount(data.cartCount);
+			if (window.dkSnackbar) window.dkSnackbar(cfg.i18n.added, 'success');
 
 			if (crossSellBtn) {
 				// A cross-sell add never reopens/reuses the modal for a second
@@ -169,8 +172,9 @@
 				return;
 			}
 
-			// Primary add (e.g. membership-card.php's CTA): behaves exactly
-			// like the form.cart path above.
+			// Primary add (e.g. membership-card.php's CTA, product-card.php's
+			// own add-to-cart button): behaves exactly like the form.cart path
+			// above.
 			if (data.crossSellHtml) {
 				open(data.crossSellHtml);
 			}
@@ -179,6 +183,7 @@
 		} catch (err) {
 			btn.innerHTML = original;
 			btn.disabled = false;
+			if (window.dkSnackbar) window.dkSnackbar(cfg.i18n.error, 'error');
 		}
 	});
 })();

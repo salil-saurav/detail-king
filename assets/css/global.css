@@ -1856,6 +1856,61 @@ body.search-open {
 }
 
 /* ---------------------------------------------------------------
+   8c. Snackbar / toast (window.dkSnackbar, global.js) — add/remove-from-cart
+   confirmations. Highest z-index on the page on purpose: it has to read
+   over the cross-sell modal too (8b, 1090) if an add-to-cart toast fires
+   right as that modal opens.
+   --------------------------------------------------------------- */
+.dk-snackbar {
+	position: fixed;
+	inset-block-end: 28px;
+	inset-inline: 0;
+	z-index: 1200;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	pointer-events: none;
+}
+
+.dk-snackbar__item {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 14px 26px;
+	border-radius: var(--radius-pill);
+	background: var(--bg-dark-card);
+	border: 1px solid var(--line-white-08);
+	color: var(--text-white);
+	font-weight: 500;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+	opacity: 0;
+	transform: translateY(12px);
+	transition: opacity .25s ease, transform .25s ease;
+}
+
+.dk-snackbar__item.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.dk-snackbar__item--error {
+	border-color: rgba(220, 90, 90, .4);
+}
+
+@media (max-width: 575.98px) {
+	.dk-snackbar {
+		inset-inline: 16px;
+	}
+
+	.dk-snackbar__item {
+		width: 100%;
+		justify-content: center;
+		text-align: center;
+	}
+}
+
+/* ---------------------------------------------------------------
    9. Motion — hover states (animation-implementation-spec.md §31)
    The scroll-driven work lives in assets/js/motion.js; these are the
    pointer-driven counterparts, kept in CSS because they are state, not

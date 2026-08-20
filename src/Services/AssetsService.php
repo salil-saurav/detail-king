@@ -116,7 +116,10 @@ class AssetsService extends Singleton implements ServiceInterface
       // stranded that button with no listener attached. Costs nothing on a
       // page with none of its selectors present, same as the header search
       // overlay SearchService already renders unconditionally.
-      $this->addScript('dk-cross-sell', '/js/cross-sell.js', [], '1.0', true);
+      // Depends on sp-main (global.js) for window.dkSnackbar — the add-to-cart
+      // confirmation toast lives there since it's a sitewide primitive, not
+      // something specific to cross-selling.
+      $this->addScript('dk-cross-sell', '/js/cross-sell.js', ['sp-main'], '1.0', true);
    }
 
    /**
@@ -275,6 +278,13 @@ class AssetsService extends Singleton implements ServiceInterface
       // Same for the recommendation modal / cross-sell REST endpoint.
       if (wp_script_is('dk-cross-sell', 'enqueued')) {
          wp_localize_script('dk-cross-sell', 'DetailKingCrossSell', \DetailKing\Theme\Services\CrossSell\CrossSellService::getInstance()->frontendData());
+      }
+
+      // Wishlist heart ([data-dk-wishlist]) — sp-main/global.js is loaded on
+      // every page (product cards render on the homepage rail too, not just
+      // Woo contexts), so this localizes unconditionally alongside it.
+      if (wp_script_is('sp-main', 'enqueued')) {
+         wp_localize_script('sp-main', 'DetailKingWishlist', \DetailKing\Theme\Services\Wishlist\WishlistService::getInstance()->frontendData());
       }
    }
 

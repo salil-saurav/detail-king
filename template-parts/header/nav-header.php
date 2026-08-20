@@ -62,6 +62,12 @@ if (is_user_logged_in()) {
          $accountUrl = $accountPermalink;
       }
    }
+
+   $account = sprintf(
+      /* translators: %s: the logged-in user's display name. */
+      __('Hi, %s', 'detailking'),
+      wp_get_current_user()->display_name
+   );
 } else {
    $accountUrl = home_url('/login/');
 }

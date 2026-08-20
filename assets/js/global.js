@@ -12,6 +12,64 @@
 	const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	/* ----------------------------------------------------------
+		Snackbar (window.dkSnackbar) — shared toast primitive for add/remove-
+		from-cart confirmations. Exposed on window rather than kept private:
+		cross-sell.js is a separate script/IIFE and calls this from its own
+		add-to-cart success paths; AssetsService declares dk-cross-sell
+		dependent on sp-main (this file's handle) so it's always defined
+		before that script's click handlers can fire.
+		---------------------------------------------------------- */
+	let snackbarContainer = null;
+
+	const ensureSnackbarContainer = () => {
+		if (snackbarContainer) return snackbarContainer;
+		snackbarContainer = document.createElement('div');
+		snackbarContainer.className = 'dk-snackbar';
+		snackbarContainer.setAttribute('role', 'status');
+		snackbarContainer.setAttribute('aria-live', 'polite');
+		document.body.appendChild(snackbarContainer);
+		return snackbarContainer;
+	};
+
+	window.dkSnackbar = (message, type = 'success') => {
+		if (!message) return;
+
+		const item = document.createElement('div');
+		item.className = `dk-snackbar__item dk-snackbar__item--${type}`;
+		item.textContent = message;
+		ensureSnackbarContainer().appendChild(item);
+
+		requestAnimationFrame(() => item.classList.add('is-visible'));
+
+		setTimeout(() => {
+			item.classList.remove('is-visible');
+			setTimeout(() => item.remove(), 250);
+		}, 3200);
+	};
+
+	/* ----------------------------------------------------------
+		Woo's own printed notices (wc_print_notices() — add-to-cart via a
+		plain href when JS never intercepted it, cart-line removal, coupon
+		apply/errors) → snackbar, instead of the static banner sitting above
+		the page content. Scoped to the shop/product/cart templates only —
+		deliberately NOT the My Account page, which prints the same
+		.woocommerce-message class for WC 11's Customer Email Verification
+		prompt (VerificationController::render_prompt(), see CLAUDE.md);
+		that one needs to stay put and actionable, not auto-dismiss in 3s.
+		---------------------------------------------------------- */
+	const initCartNotices = () => {
+		if (document.querySelector('.dk-account-content')) return;
+		if (!document.querySelector('.dk-cart-page, .shop-listing, .product-hero')) return;
+
+		document.querySelectorAll('.woocommerce-message, .woocommerce-error, .woocommerce-info').forEach((notice) => {
+			const type = notice.classList.contains('woocommerce-error') ? 'error' : 'success';
+			const text = notice.textContent.trim();
+			notice.remove();
+			if (text) window.dkSnackbar(text, type);
+		});
+	};
+
+	/* ----------------------------------------------------------
 		Scroll-reveal ([data-animate]) lives in motion.js now.
 
 		It used to be an IntersectionObserver here, then GSAP + ScrollTrigger,
@@ -263,13 +321,21 @@
 
 	/* ----------------------------------------------------------
 		Product card save/wishlist ([data-dk-wishlist]).
-		Visual-only, localStorage-backed — there is no account-linked wishlist
-		feature in the brief (see figma-data/shop-spec.md, "open items"). Lives
-		here rather than in a Woo-conditional script because the same card
-		(and button) also renders on the homepage shop rail, which loads no
-		shop-specific JS.
+		Account-linked via WishlistService's REST endpoint when signed in
+		(window.DetailKingWishlist, localized on sp-main — see AssetsService)
+		— guests keep the old localStorage-only behaviour, since there is
+		nowhere to persist a wishlist without an account. Lives here rather
+		than in a Woo-conditional script because the same card (and button)
+		also renders on the homepage shop rail, which loads no shop-specific
+		JS.
+
+		[data-dk-wishlist-remove] marks the icon rendered on the My Account >
+		Wishlisted list (product-card.php's $wishlist_remove) — unsaving there
+		also drops the card from the DOM, since "unsaved" and "removed from
+		this list" are the same action in that context.
 		---------------------------------------------------------- */
 	const WISHLIST_KEY = 'dk_wishlist';
+	const wishlistCfg = window.DetailKingWishlist || {};
 
 	const readWishlist = () => {
 		try {
@@ -284,27 +350,74 @@
 		const buttons = document.querySelectorAll('[data-dk-wishlist]');
 		if (!buttons.length) return;
 
-		let saved = readWishlist();
+		let saved = wishlistCfg.isLoggedIn && Array.isArray(wishlistCfg.ids)
+			? wishlistCfg.ids.map(String)
+			: readWishlist();
 
 		const paint = (btn) => {
 			const id = btn.dataset.productId;
-			btn.setAttribute('aria-pressed', saved.includes(id) ? 'true' : 'false');
+			const isSaved = saved.includes(id);
+			btn.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
+
+			// The remove-icon variant (My Account > Wishlisted) always shows
+			// its "×" regardless of state — swapping the glyph is only for
+			// the plain heart used everywhere else.
+			if (btn.dataset.dkWishlistRemove === undefined) {
+				const glyph = btn.querySelector('span[aria-hidden]');
+				if (glyph) glyph.textContent = isSaved ? '♥' : '♡';
+			}
 		};
 
 		buttons.forEach(paint);
+
+		const persistLocal = () => {
+			try {
+				window.localStorage.setItem(WISHLIST_KEY, JSON.stringify(saved));
+			} catch (e) { /* storage unavailable — state just won't persist */ }
+		};
+
+		// Fire-and-forget with an optimistic-revert on failure — the paint()
+		// above already reflects the click before this resolves.
+		const persistRemote = (id, wasSaved) => {
+			if (!wishlistCfg.restUrl) return;
+
+			fetch(wishlistCfg.restUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': wishlistCfg.nonce,
+				},
+				body: JSON.stringify({ product_id: id }),
+			}).catch(() => {
+				saved = wasSaved ? [...saved, id] : saved.filter((x) => x !== id);
+				document.querySelectorAll(`[data-dk-wishlist][data-product-id="${id}"]`).forEach(paint);
+			});
+		};
 
 		document.addEventListener('click', (e) => {
 			const btn = e.target.closest('[data-dk-wishlist]');
 			if (!btn) return;
 
 			const id = btn.dataset.productId;
-			saved = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
+			const wasSaved = saved.includes(id);
+			saved = wasSaved ? saved.filter((x) => x !== id) : [...saved, id];
 
-			try {
-				window.localStorage.setItem(WISHLIST_KEY, JSON.stringify(saved));
-			} catch (e) { /* storage unavailable — state just won't persist */ }
+			if (wishlistCfg.isLoggedIn) {
+				persistRemote(id, wasSaved);
+			} else {
+				persistLocal();
+			}
 
 			document.querySelectorAll(`[data-dk-wishlist][data-product-id="${id}"]`).forEach(paint);
+
+			if (btn.dataset.dkWishlistRemove !== undefined && wasSaved) {
+				const card = btn.closest('.prod-card');
+				if (card) {
+					card.style.transition = 'opacity .2s ease';
+					card.style.opacity = '0';
+					setTimeout(() => card.remove(), 200);
+				}
+			}
 		});
 	};
 
@@ -455,5 +568,6 @@
 		initFilterTabs();
 		initHeaderSearch();
 		initWishlist();
+		initCartNotices();
 	});
 })();
