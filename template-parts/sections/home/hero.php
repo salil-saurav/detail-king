@@ -37,14 +37,14 @@ $bg = $meta->imageUrl(
 ?>
 <section class="home-hero section--dark" data-hero>
 
-   <div class="home-hero__bg" aria-hidden="true" data-hero-bg data-parallax-scope>
-      <img src="<?= esc_url($bg); ?>" alt="" fetchpriority="high" decoding="async" data-parallax="4">
+   <div class="home-hero__bg" data-hero-bg>
+      <img src="<?= esc_url($bg); ?>" alt="" fetchpriority="high" decoding="async">
    </div>
 
    <div class="container-dk home-hero__inner">
 
       <?php if ($badge !== '') : ?>
-         <span class="eyebrow eyebrow--badge home-hero__badge"><?= esc_html($badge); ?></span>
+         <span class="eyebrow eyebrow--badge home-hero__badge" data-animate><?= esc_html($badge); ?></span>
       <?php endif; ?>
 
       <?php
@@ -52,7 +52,7 @@ $bg = $meta->imageUrl(
       // three heading lines occupy design y 270…540, a 90px pitch, and the cap
       // height of line one is 62px — which is an 88px Bebas, not a 120px one.
       ?>
-      <h1 class="home-hero__title display-md">
+      <h1 class="home-hero__title display-md" data-animate>
          <?php
          echo esc_html($heading);
          if ($gold !== '') {
@@ -67,13 +67,13 @@ $bg = $meta->imageUrl(
 
       <div class="home-hero__actions">
          <?php if ($ctaText !== '') : ?>
-            <a class="btn-gold btn-arrow" href="<?= esc_url($ctaUrl ?: home_url('/contact/')); ?>">
+            <a class="btn-gold btn-arrow" href="<?= esc_url($ctaUrl ?: home_url('/contact/')); ?>" data-animate>
                <?= esc_html($ctaText); ?>
             </a>
          <?php endif; ?>
 
          <?php if ($cta2Text !== '') : ?>
-            <a class="btn-outline-light-dk" href="<?= esc_url($cta2Url ?: home_url('/memberships/')); ?>">
+            <a class="btn-outline-light-dk" href="<?= esc_url($cta2Url ?: home_url('/memberships/')); ?>" data-animate>
                <?= esc_html($cta2Text); ?>
             </a>
          <?php endif; ?>

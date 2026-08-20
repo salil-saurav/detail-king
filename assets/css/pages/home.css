@@ -558,6 +558,11 @@ a.home-hero__video:focus-visible .home-hero__videowave {
 	aspect-ratio: 1470 / 665;
 	object-fit: cover;
 	filter: brightness(0.5);
+	transition: transform 0.3s ease-in-out;
+}
+
+.home-video__frame:hover img {
+	transform: scale(1.1);
 }
 
 .home-video__badge,
@@ -753,7 +758,7 @@ a.home-video__play:focus-visible {
 	border-radius: 14px;
 	background: var(--bg-dark);
 	color: var(--gold-primary);
-	transition: background-image .3s ease, background-color .3s ease, color .3s ease;
+	transition: background-image .3s ease, background-color .3s ease, color .3s ease, transform .3s ease-in-out;
 }
 
 /* The recording fills whichever badge the pointer is over with the gold gradient
@@ -764,6 +769,7 @@ a.home-video__play:focus-visible {
 .why-feature:hover .why-feature__icon {
 	background: var(--gold-gradient-btn);
 	color: var(--bg-dark);
+	transform: rotate(-25deg);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -780,7 +786,22 @@ a.home-video__play:focus-visible {
 
 .why-features--left .why-feature__body {
 	align-items: flex-end;
+	transition: transform .3s ease-in-out;
 }
+
+.why-features--right .why-feature__body {
+	transition: transform .3s ease-in-out;
+}
+
+
+.why-feature:hover .why-feature__body {
+	transform: translateX(-10px);
+}
+
+.why-features--right .why-feature:hover .why-feature__body {
+	transform: translateX(10px);
+}
+
 
 .home-why__figure {
 	position: relative;
@@ -808,31 +829,55 @@ a.home-video__play:focus-visible {
 	object-fit: cover;
 }
 
-/* Comp note: "dashed gold rings slowly rotate around the centre car". */
+/* Comp note: "dashed gold rings slowly rotate around the centre car". This
+   ring is ~420px (the figure's own diameter), not a small icon disc — reusing
+   the shared `dk-ripple` (built for a 40-96px disc, scaling to 3.2x) grew it
+   well past .home-why's `overflow: hidden` edge while still mid-fade, so the
+   ripple read as invisible rather than "too wide". The base ring stays a
+   static dashed circle; the ripple itself is two staggered pseudo-rings
+   scaled for this size instead. */
 .home-why__ring {
 	position: absolute;
 	inset: 0;
 	border-radius: 50%;
 	border: 1px dashed var(--gold-30);
-	animation: dk-spin 46s linear infinite;
 }
 
-.home-why__ring--inner {
-	inset: 9%;
-	border-style: solid;
-	border-color: rgba(11, 11, 12, .06);
-	animation-direction: reverse;
-	animation-duration: 64s;
+.home-why__ring::before,
+.home-why__ring::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	border: 1px dashed var(--gold-primary);
+	opacity: 0;
+	animation: dk-ripple-wide 3.6s ease-out infinite;
 }
 
-@keyframes dk-spin {
-	to {
-		transform: rotate(360deg);
+.home-why__ring::after {
+	animation-delay: 1.8s;
+}
+
+@keyframes dk-ripple-wide {
+	0% {
+		transform: scale(1);
+		opacity: .5;
+	}
+
+	70% {
+		opacity: .12;
+	}
+
+	100% {
+		transform: scale(1.22);
+		opacity: 0;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.home-why__ring {
+
+	.home-why__ring::before,
+	.home-why__ring::after {
 		animation: none;
 	}
 }
@@ -1058,39 +1103,6 @@ a.home-video__play:focus-visible {
 	margin-block-start: 54px;
 }
 
-.plan-card {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	/* Measured: standard card 660 tall, featured 700. */
-	min-height: 660px;
-	min-width: 0;
-	padding: 42px 38px 38px;
-	border-radius: var(--radius-lg);
-	background: #fff;
-	box-shadow: var(--shadow-card);
-	transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s ease;
-	/* overflow-wrap inherits to title/tagline/feature text below. Confirmed
-	   live: a single 120-char unbroken token in plan_tagline had no break
-	   opportunity and no ancestor to clip it (.plan-card itself has no
-	   overflow rule), so it bled straight through the card's right edge and
-	   across the next card in the grid rather than wrapping. */
-	overflow-wrap: anywhere;
-}
-
-/* §14 hover lift. Measured off the recording at t 39.9 vs t 41.3: the hovered
-   card's top edge sits 8-9px higher than its neighbour's, so this is a small
-   rise plus a deeper shadow, not a pop. */
-.plan-card:hover {
-	transform: translateY(-8px);
-	box-shadow: var(--shadow-section);
-}
-
-/* The featured card already rests on --shadow-dark, so it needs the deeper one
-   to read as having lifted at all. */
-.plan-card--featured:hover {
-	box-shadow: var(--shadow-dark-xl);
-}
 
 @media (prefers-reduced-motion: reduce) {
 	.plan-card {
@@ -1585,6 +1597,12 @@ a.home-video__play:focus-visible {
 	letter-spacing: .18em;
 	text-transform: uppercase;
 	animation: dk-spin 90s linear infinite;
+}
+
+@keyframes dk-spin {
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {

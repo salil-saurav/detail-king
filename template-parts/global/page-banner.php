@@ -36,9 +36,9 @@ $text    = $args['text']    ?? '';
 $bg      = $args['bg']      ?? '';
 $break   = $args['break']   ?? true;
 ?>
-<section class="page-banner<?= $bg ? ' has-bg' : ''; ?>">
+<section class="page-banner<?= $bg ? ' has-bg' : ''; ?>" data-hero>
    <?php if ($bg) : ?>
-      <div class="page-banner__bg" aria-hidden="true">
+      <div class="page-banner__bg" data-hero-bg aria-hidden="true">
          <img class="img-fluid" fetchpriority="high" src="<?= esc_url($bg); ?>" alt="<?= esc_attr($title) ?>">
       </div>
    <?php endif; ?>
@@ -48,16 +48,16 @@ $break   = $args['break']   ?? true;
             <?= ThemeHelper::getInstance()->get_breadcrumbs($args['breadcrumb_suffix'] ?? []); ?>
          </div>
          <?php if ($eyebrow) : ?>
-            <span class="eyebrow eyebrow--badge"><?= esc_html($eyebrow); ?></span>
+            <span class="eyebrow eyebrow--badge" data-animate><?= esc_html($eyebrow); ?></span>
          <?php endif; ?>
-         <h1 class="page-banner__title">
+         <h1 class="page-banner__title" data-animate>
             <?= esc_html($title); ?>
             <?php if ($gold !== '') : ?>
                <?= $break ? '<br>' : ($title !== '' ? ' ' : ''); ?><span class="text-gold-gradient"><?= esc_html($gold); ?></span>
             <?php endif; ?>
          </h1>
          <?php if ($text !== '') : ?>
-            <p class="page-banner__text body-lg"><?= esc_html($text); ?></p>
+            <p class="page-banner__text body-lg" data-animate><?= esc_html($text); ?></p>
          <?php endif; ?>
       </div>
    </div>

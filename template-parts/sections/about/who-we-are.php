@@ -34,6 +34,8 @@ $image = $meta->imageUrl($meta->field('who_image'), get_template_directory_uri()
             // 40px measured off the export — no utility class lands exactly
             // there, see about.css's .about-who__copy override.
             'size'    => 'heading-xxs',
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
          ]);
          ?>
          <p class="body-md"><?= esc_html((string) $meta->fieldOr('who_text_1', $D)); ?></p>
@@ -47,6 +49,7 @@ $image = $meta->imageUrl($meta->field('who_image'), get_template_directory_uri()
          'border'     => 'neutral',
          'badge_year' => $meta->fieldOr('who_badge_year', $D),
          'badge_text' => $meta->fieldOr('who_badge_text', $D),
+         'animate'    => 'fade-right',
       ]);
       ?>
 

@@ -40,6 +40,11 @@
 	min-width: 0;
 }
 
+.dk-account-content a:not(.btn-gold):not(.dk-account-quick-link):not(.button) {
+	color: var(--gold-dark);
+	font-weight: 600;
+}
+
 /* ---- Native WooCommerce notices printed straight into account content —
    e.g. WC 11's Customer Email Verification prompt ("Confirm email address…")
    on Orders (`VerificationController::render_prompt()`, hooked to

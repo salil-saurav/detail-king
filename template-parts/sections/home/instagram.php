@@ -37,11 +37,13 @@ $handle  = (string) $meta->fieldOr('instagram_eyebrow', $D);
          'title'   => $meta->fieldOr('instagram_heading', $D),
          'gold'    => $meta->fieldOr('instagram_heading_gold', $D),
          'size'    => 'display-sm',
+         'eyebrow_animate' => 'fade-up',
+         'animate' => 'fade-up',
       ]);
       ?>
 
       <?php if ($ctaText !== '') : ?>
-         <a class="btn-outline-light-dk btn-arrow home-instagram__cta"
+         <a class="btn-outline-light-dk btn-arrow home-instagram__cta" data-animate="fade-up"
             href="<?= esc_url($ctaUrl); ?>" target="_blank" rel="noopener noreferrer">
             <?= esc_html($ctaText); ?>
          </a>
@@ -64,7 +66,7 @@ $handle  = (string) $meta->fieldOr('instagram_eyebrow', $D);
             if ($link === '') {
                $link = $ctaUrl;
             }
-            ?>
+         ?>
             <li class="home-instagram__cell" data-animate="zoom">
                <?php if ($link !== '') : ?>
                   <?php

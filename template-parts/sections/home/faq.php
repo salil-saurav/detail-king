@@ -67,11 +67,11 @@ $panelImage = $meta->imageUrl(
 
       <div class="home-faq__panel">
          <?php if ($panelImage !== '') : ?>
-            <img class="home-faq__image" src="<?= esc_url($panelImage); ?>" alt="" loading="lazy" decoding="async">
+            <img class="home-faq__image" data-animate="zoom-in" src="<?= esc_url($panelImage); ?>" alt="" loading="lazy" decoding="async">
          <?php endif; ?>
 
          <?php if ($panelLead !== '' || $panelText !== '') : ?>
-            <div class="home-faq__overlay">
+            <div class="home-faq__overlay" data-animate="fade-up">
                <p class="body-base">
                   <?php if ($panelLead !== '') : ?>
                      <strong class="text-gold"><?= esc_html($panelLead); ?></strong>
@@ -89,13 +89,15 @@ $panelImage = $meta->imageUrl(
             'title'   => $meta->fieldOr('faq_heading', $D),
             'gold'    => $meta->fieldOr('faq_heading_gold', $D),
             'size'    => 'display-sm',
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
          ]);
          ?>
 
          <div class="dk-accordion" data-dk-accordion>
             <?php foreach ($faqs as $i => $faq) : ?>
-               <details class="dk-accordion__item"<?= $i === 0 ? ' open' : ''; ?>>
-                  <summary class="dk-accordion__summary">
+               <details class="dk-accordion__item" <?= $i === 0 ? ' open' : ''; ?>>
+                  <summary class="dk-accordion__summary" data-animate="fade-up">
                      <span class="dk-accordion__q body-base-med"><?= esc_html(get_the_title($faq)); ?></span>
                      <span class="dk-accordion__toggle" aria-hidden="true"></span>
                   </summary>

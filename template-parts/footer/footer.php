@@ -56,7 +56,7 @@ $linkColumns = [
       <div class="dk-footer__cols">
 
          <!-- Brand column -->
-         <div class="dk-footer__brand">
+         <div class="dk-footer__brand" data-animate="fade-left">
             <a class="dk-footer__brandlink" href="<?= esc_url(home_url('/')); ?>" aria-label="<?= esc_attr($brand); ?>">
                <?= $logo; ?>
             </a>
@@ -74,7 +74,7 @@ $linkColumns = [
                      if ($url === '') {
                         continue;
                      }
-                     ?>
+                  ?>
                      <li>
                         <a class="dk-socials__link" href="<?= esc_url($url); ?>"
                            aria-label="<?= esc_attr($label); ?>"
@@ -89,9 +89,11 @@ $linkColumns = [
 
          <!-- Link columns -->
          <?php foreach ($linkColumns as $location => $heading) : ?>
-            <?php if (!has_nav_menu($location)) { continue; } ?>
+            <?php if (!has_nav_menu($location)) {
+               continue;
+            } ?>
             <nav class="dk-footer__col" aria-label="<?= esc_attr($heading); ?>">
-               <h2 class="dk-footer__heading label-md"><?= esc_html($heading); ?></h2>
+               <h2 class="dk-footer__heading label-md" data-animate="fade-left"><?= esc_html($heading); ?></h2>
                <?php
                wp_nav_menu([
                   'theme_location' => $location,
@@ -106,7 +108,7 @@ $linkColumns = [
 
          <!-- Contact column -->
          <div class="dk-footer__col">
-            <h2 class="dk-footer__heading label-md"><?php esc_html_e('Contact', 'detailking'); ?></h2>
+            <h2 class="dk-footer__heading label-md" data-animate="fade-left"><?php esc_html_e('Contact', 'detailking'); ?></h2>
             <ul class="dk-footer__contact">
                <?php if ($address !== '') : ?>
                   <li>

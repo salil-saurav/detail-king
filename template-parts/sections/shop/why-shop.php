@@ -32,13 +32,16 @@ $watermark = (string) $meta->fieldOr('why_watermark', $D, $pageId);
          'gold'    => $meta->fieldOr('why_heading_gold', $D, $pageId),
          'text'    => $meta->fieldOr('why_text', $D, $pageId),
          'size'    => 'display-md',
+         'eyebrow_animate' => 'fade-up',
+         'animate' => 'fade-up',
+         'text_animate' => 'fade-up',
       ]);
       ?>
 
       <ul class="shop-why__grid">
          <?php foreach ($features as $row) : ?>
             <?php $glyph = (string) ($row['feature_icon_glyph'] ?? 'shield'); ?>
-            <li class="shop-why__item">
+            <li class="shop-why__item" data-animate>
                <span class="shop-why__icon" aria-hidden="true">
                   <?php get_template_part('template-parts/components/glyph', null, ['glyph' => $glyph]); ?>
                </span>

@@ -37,7 +37,7 @@ if (!$image) {
 <section class="byop-help section--beige" data-animate="fade">
    <div class="container-dk">
       <div class="byop-help__card card-light">
-         <div class="byop-help__copy">
+         <div class="byop-help__copy" data-animate="fade-left">
             <?php
             get_template_part('template-parts/components/section-heading', null, [
                'eyebrow' => $meta->fieldOr('help_eyebrow', $D),
@@ -61,7 +61,7 @@ if (!$image) {
             <?php endif; ?>
          </div>
 
-         <div class="byop-help__media">
+         <div class="byop-help__media" data-animate="fade-right">
             <img src="<?= esc_url($image); ?>" alt="<?= esc_attr__('Detail King Studio', 'detailking'); ?>" loading="lazy" decoding="async">
          </div>
       </div>

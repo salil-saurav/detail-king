@@ -28,9 +28,10 @@ $watermark = (string) $meta->fieldOr('story_watermark', $D);
 
       <?php
       get_template_part('template-parts/components/framed-photo', null, [
-         'image'  => $image,
-         'alt'    => 'Foam wash detailing',
-         'border' => 'gold',
+         'image'   => $image,
+         'alt'     => 'Foam wash detailing',
+         'border'  => 'gold',
+         'animate' => 'fade-left',
       ]);
       ?>
 
@@ -41,6 +42,8 @@ $watermark = (string) $meta->fieldOr('story_watermark', $D);
             'title'   => $meta->fieldOr('story_title', $D),
             'gold'    => $meta->fieldOr('story_title_gold', $D),
             'size'    => 'display-md',
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
             // Comp forces a break here — the colour boundary IS the line break
             // ("A Sophisticated," / "Professional Approach"), not a reflow.
             'break'   => true,

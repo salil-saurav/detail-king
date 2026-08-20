@@ -37,6 +37,10 @@ $align   = isset($args['align'])   ? (string) $args['align']   : 'start';
 $rules   = isset($args['rules'])   ? (string) $args['rules']   : 'start';
 $tag     = isset($args['tag'])     ? (string) $args['tag']     : 'h2';
 $extra   = isset($args['class'])   ? (string) $args['class']   : '';
+$animate = isset($args['animate']) ? (string) $args['animate'] : '';
+$blockAnimate = isset($args['block_animate']) ? (string) $args['block_animate'] : '';
+$eyebrowAnimate = isset($args['eyebrow_animate']) ? (string) $args['eyebrow_animate'] : '';
+$textAnimate = isset($args['text_animate']) ? (string) $args['text_animate'] : '';
 $break   = !empty($args['break']);
 
 // Only h1-h6 and a couple of neutral wrappers; never interpolate a raw tag name.
@@ -57,13 +61,13 @@ if ($extra !== '') {
    $blockClass .= ' ' . $extra;
 }
 ?>
-<div class="<?= esc_attr($blockClass); ?>">
+<div class="<?= esc_attr($blockClass); ?>" <?= $blockAnimate !== '' ? ' data-animate="' . esc_attr($blockAnimate) . '"' : ''; ?>>
    <?php if ($eyebrow !== '') : ?>
-      <span class="<?= esc_attr($eyebrowClass); ?>"><?= esc_html($eyebrow); ?></span>
+      <span class="<?= esc_attr($eyebrowClass); ?>" <?= $eyebrowAnimate !== '' ? ' data-animate="' . esc_attr($eyebrowAnimate) . '"' : ''; ?>><?= esc_html($eyebrow); ?></span>
    <?php endif; ?>
 
    <?php if ($title !== '' || $gold !== '') : ?>
-      <<?= $tag; ?> class="section-heading__title <?= esc_attr($size); ?>">
+      <<?= $tag; ?> class="section-heading__title <?= esc_attr($size); ?>" <?= $animate !== '' ? ' data-animate="' . esc_attr($animate) . '"' : ''; ?>>
          <?php
          // A space between the two halves, not a <br>: the comp's line breaks are
          // a consequence of its own max-width, and freezing them here would stop
@@ -80,6 +84,6 @@ if ($extra !== '') {
    <?php endif; ?>
 
    <?php if ($text !== '') : ?>
-      <p class="section-heading__text body-base"><?= wp_kses_post($text); ?></p>
+      <p class="section-heading__text body-base" <?= $textAnimate !== '' ? ' data-animate="' . esc_attr($textAnimate) . '"' : ''; ?>><?= wp_kses_post($text); ?></p>
    <?php endif; ?>
 </div>

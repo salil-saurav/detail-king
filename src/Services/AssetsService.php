@@ -338,10 +338,56 @@ class AssetsService extends Singleton implements ServiceInterface
       }
    }
 
+   /**
+    * The motion gate. Adds `aos-ready` — the class every [data-animate]
+    * from-state (global.css §7) is scoped to — synchronously in <head>, before
+    * the browser can paint anything.
+    *
+    * It cannot live in motion.js, which is deferred and therefore cannot run
+    * until the document is parsed. On a warm cache the browser gets a paint in
+    * first, so the hero was painted fully visible, snapped to opacity 0 the
+    * moment motion.js added the class, and only then faded in — a flash before
+    * every reveal on the first screen. (While the reveal transition was still
+    * declared on the from-state, that snap was a 0.7s fade instead, which is
+    * the same race wearing a different costume: see global.css §7.)
+    *
+    * The capability checks are motion.js's own, in the same order, because the
+    * class must not appear on any path where motion.js will bail — that would
+    * hide content with nothing left to reveal it. Keep the two in step.
+    *
+    * The watchdog covers the remaining case: the class is applied, and then
+    * motion.js never boots at all (404, parse error, a caching plugin mangling
+    * it). motion.js clears the timer as its first act; if nothing clears it,
+    * the class comes off and every [data-animate] element is visible again.
+    * Stranding content at opacity 0 is the one failure this layer must never
+    * have (HISTORY.md §9), so it degrades to no animation instead.
+    */
+   public function printMotionGate(): void
+   {
+      echo <<<'HTML'
+<script>
+(function () {
+   var root = document.documentElement;
+
+   if (!('IntersectionObserver' in window)) return;
+   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+   root.classList.add('aos-ready');
+
+   window.dkMotionFallback = setTimeout(function () {
+      root.classList.remove('aos-ready');
+   }, 3000);
+})();
+</script>
+
+HTML;
+   }
+
    private function registerHooks(): void
    {
       add_action('wp_enqueue_scripts', [$this, 'enqueueAssets'], $this->priority);
       add_action('wp_head', [$this, 'preloadFonts'], 1);
+      add_action('wp_head', [$this, 'printMotionGate'], 2);
       add_filter('script_loader_tag', [$this, 'applyScriptAttributes'], 10, 2);
 
       add_filter('style_loader_tag', function (string $tag, string $handle, string $href): string {

@@ -14,6 +14,7 @@
  *      'border'     => 'gold',   // 'neutral' (default) | 'gold'
  *      'badge_year' => 'Since 2016',   // optional glass badge, omit to hide
  *      'badge_text' => 'Trusted automotive care',
+ *      'animate'    => 'zoom-in',      // optional data-animate value, omit for none
  *   ]);
  *
  * @package DetailKing Theme
@@ -27,12 +28,13 @@ $border = isset($args['border']) && $args['border'] === 'gold' ? 'gold' : 'neutr
 
 $badgeYear = isset($args['badge_year']) ? (string) $args['badge_year'] : '';
 $badgeText = isset($args['badge_text']) ? (string) $args['badge_text'] : '';
+$animate   = isset($args['animate']) ? (string) $args['animate'] : '';
 
 if ($image === '') {
    return;
 }
 ?>
-<div class="dk-framed-photo dk-framed-photo--<?= esc_attr($border); ?>">
+<div class="dk-framed-photo dk-framed-photo--<?= esc_attr($border); ?>" <?= $animate !== '' ? ' data-animate="' . esc_attr($animate) . '"' : ''; ?>>
    <div class="dk-framed-photo__media">
       <img src="<?= esc_url($image); ?>" alt="<?= esc_attr($alt); ?>" loading="lazy" decoding="async">
    </div>

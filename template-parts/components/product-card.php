@@ -63,7 +63,7 @@ $eyebrow  = ($terms && !is_wp_error($terms)) ? $terms[0]->name : '';
 $inStock    = $product->is_in_stock();
 $canAddHere = $inStock && $product->is_purchasable() && $product->is_type('simple');
 ?>
-<article class="prod-card<?= $dark ? ' prod-card--dark' : ''; ?>">
+<article class="prod-card<?= $dark ? ' prod-card--dark' : ''; ?>" data-animate="fade">
 
    <a class="prod-card__media" href="<?= esc_url($link); ?>">
       <?php if ($thumb) : ?>

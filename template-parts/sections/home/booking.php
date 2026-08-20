@@ -28,22 +28,26 @@ $hours = (string) $meta->optOr('contact_hours');
 
 /** Options for the service select, straight from the CPT. */
 $serviceOptions = [];
-foreach (get_posts([
-   'post_type'        => 'dk_service',
-   'posts_per_page'   => -1,
-   'orderby'          => ['menu_order' => 'ASC'],
-   'suppress_filters' => false,
-]) as $service) {
+foreach (
+   get_posts([
+      'post_type'        => 'dk_service',
+      'posts_per_page'   => -1,
+      'orderby'          => ['menu_order' => 'ASC'],
+      'suppress_filters' => false,
+   ]) as $service
+) {
    $serviceOptions[] = get_the_title($service);
 }
 
 $locationOptions = [];
-foreach (get_posts([
-   'post_type'        => 'dk_location',
-   'posts_per_page'   => -1,
-   'orderby'          => ['menu_order' => 'ASC'],
-   'suppress_filters' => false,
-]) as $location) {
+foreach (
+   get_posts([
+      'post_type'        => 'dk_location',
+      'posts_per_page'   => -1,
+      'orderby'          => ['menu_order' => 'ASC'],
+      'suppress_filters' => false,
+   ]) as $location
+) {
    $locationOptions[] = get_the_title($location);
 }
 if (!$locationOptions) {
@@ -52,12 +56,14 @@ if (!$locationOptions) {
 }
 
 $addonOptions = [__('None', 'detailking')];
-foreach (get_posts([
-   'post_type'        => 'dk_addon',
-   'posts_per_page'   => -1,
-   'orderby'          => ['menu_order' => 'ASC'],
-   'suppress_filters' => false,
-]) as $addon) {
+foreach (
+   get_posts([
+      'post_type'        => 'dk_addon',
+      'posts_per_page'   => -1,
+      'orderby'          => ['menu_order' => 'ASC'],
+      'suppress_filters' => false,
+   ]) as $addon
+) {
    $addonOptions[] = get_the_title($addon);
 }
 
@@ -104,6 +110,9 @@ $input = static function (string $name, string $label, string $type = 'text', st
             'gold'    => $meta->fieldOr('booking_heading_gold', $D),
             'size'    => 'display-sm',
             'text'    => $meta->fieldOr('booking_text', $D),
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
+            'text_animate' => 'fade-up',
          ]);
          ?>
 
@@ -122,11 +131,11 @@ $input = static function (string $name, string $label, string $type = 'text', st
          ?>
          <div class="home-booking__seal">
             <?php if ($label !== '') : ?>
-               <svg class="home-booking__sealtext" viewBox="0 0 200 200" role="img"
-                    aria-label="<?= esc_attr($label); ?>">
+               <svg class="home-booking__sealtext" data-animate="zoom-in" viewBox="0 0 200 200" role="img"
+                  aria-label="<?= esc_attr($label); ?>">
                   <defs>
                      <path id="dk-seal-path" fill="none"
-                           d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0"></path>
+                        d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0"></path>
                   </defs>
                   <text>
                      <textPath href="#dk-seal-path" startOffset="0">
@@ -161,7 +170,7 @@ $input = static function (string $name, string $label, string $type = 'text', st
          </ul>
       </div>
 
-      <div class="home-booking__card" id="dk-booking-form">
+      <div class="home-booking__card" id="dk-booking-form" data-animate="fade-right">
          <h2 class="home-booking__cardtitle heading-sm">
             <?= esc_html((string) $meta->fieldOr('booking_form_title', $D)); ?>
             <span class="text-gold-gradient"><?= esc_html((string) $meta->fieldOr('booking_form_title_gold', $D)); ?></span>

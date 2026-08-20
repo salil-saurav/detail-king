@@ -34,7 +34,7 @@ $thumb   = $thumbId ? wp_get_attachment_image_url((int) $thumbId, 'medium_large'
 
 $count = (int) $term->count;
 ?>
-<article class="cat-card">
+<article class="cat-card" data-animate="fade">
 
    <a class="cat-card__media" href="<?= esc_url($link); ?>">
       <?php if ($thumb) : ?>

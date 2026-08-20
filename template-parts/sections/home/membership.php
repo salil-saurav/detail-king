@@ -39,6 +39,9 @@ $watermark = (string) $meta->fieldOr('membership_watermark', $D);
          'align'   => 'center',
          'rules'   => 'both',
          'text'    => $meta->fieldOr('membership_text', $D),
+         'eyebrow_animate' => 'fade-up',
+         'animate' => 'fade-up',
+         'text_animate' => 'fade-up',
       ]);
       ?>
 
@@ -50,4 +53,3 @@ $watermark = (string) $meta->fieldOr('membership_watermark', $D);
 
    </div>
 </section>
-

@@ -40,7 +40,7 @@ if (!$initialThumb) {
 ?>
 <div class="byop-summary-card">
    <!-- Live Service Image -->
-   <div class="byop-summary-card__media">
+   <div class="byop-summary-card__media" data-animate="zoom-in">
       <img src="<?= esc_url($initialThumb); ?>" alt="<?= esc_attr($initialTitle); ?>" class="byop-summary-card__img" data-byop-summary-img>
    </div>
 
@@ -49,15 +49,15 @@ if (!$initialThumb) {
 
       <!-- Selection List -->
       <ul class="byop-summary-card__selections">
-         <li class="byop-summary-card__selection">
+         <li class="byop-summary-card__selection" data-animate>
             <span class="byop-summary-card__selection-label"><?= esc_html__('Vehicle Size:', 'detailking'); ?></span>
             <strong class="byop-summary-card__selection-val" data-byop-summary-vehicle>Small Vehicle</strong>
          </li>
-         <li class="byop-summary-card__selection">
+         <li class="byop-summary-card__selection" data-animate>
             <span class="byop-summary-card__selection-label"><?= esc_html__('Service:', 'detailking'); ?></span>
             <strong class="byop-summary-card__selection-val" data-byop-summary-service><?= esc_html($initialTitle); ?></strong>
          </li>
-         <li class="byop-summary-card__selection">
+         <li class="byop-summary-card__selection" data-animate>
             <span class="byop-summary-card__selection-label"><?= esc_html__('Selected Package:', 'detailking'); ?></span>
             <strong class="byop-summary-card__selection-val" data-byop-summary-package>Custom Build</strong>
          </li>
@@ -94,19 +94,19 @@ if (!$initialThumb) {
 
       <!-- Trust Bullets -->
       <ul class="byop-summary-card__trust">
-         <li class="byop-summary-card__trust-item">
+         <li class="byop-summary-card__trust-item" data-animate>
             <span class="byop-summary-card__trust-icon" aria-hidden="true">
                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </span>
             <span class="byop-summary-card__trust-text"><?= esc_html__('100% Secure Booking', 'detailking'); ?></span>
          </li>
-         <li class="byop-summary-card__trust-item">
+         <li class="byop-summary-card__trust-item" data-animate>
             <span class="byop-summary-card__trust-icon" aria-hidden="true">
                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             </span>
             <span class="byop-summary-card__trust-text"><?= esc_html__('Expert Consultation', 'detailking'); ?></span>
          </li>
-         <li class="byop-summary-card__trust-item">
+         <li class="byop-summary-card__trust-item" data-animate>
             <span class="byop-summary-card__trust-icon" aria-hidden="true">
                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><polyline points="2 8.5 12 15 22 8.5"/><polyline points="12 22 12 15"/></svg>
             </span>

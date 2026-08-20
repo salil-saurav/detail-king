@@ -46,17 +46,24 @@ $logo = $meta->optImageTag('header_logo', 'full', [
    'alt'   => $brand,
 ], $logoFallback);
 
-// "Login / My Account" points at WooCommerce's account page when the shop is
-// live, and at the WP login otherwise.
-$accountUrl = wp_login_url();
+// "Login / My Account": a signed-out visitor lands on the theme's own Login
+// page (home_url('/login/') — same convention template-signup.php uses to
+// point back at it); a signed-in visitor goes straight to the WooCommerce
+// account dashboard when the shop is live, falling back to wp_login_url()
+// otherwise.
+if (is_user_logged_in()) {
+   $accountUrl = wp_login_url();
 
-if (function_exists('wc_get_page_id')) {
-   $accountPageId = wc_get_page_id('myaccount');
-   $accountPermalink = $accountPageId > 0 ? get_permalink($accountPageId) : false;
+   if (function_exists('wc_get_page_id')) {
+      $accountPageId = wc_get_page_id('myaccount');
+      $accountPermalink = $accountPageId > 0 ? get_permalink($accountPageId) : false;
 
-   if ($accountPermalink) {
-      $accountUrl = $accountPermalink;
+      if ($accountPermalink) {
+         $accountUrl = $accountPermalink;
+      }
    }
+} else {
+   $accountUrl = home_url('/login/');
 }
 
 /* Cart. `WC()->cart` is null in plenty of real contexts (admin, REST, early
@@ -75,7 +82,7 @@ if (function_exists('wc_get_cart_url') && function_exists('WC') && WC() && WC()-
 }
 ?>
 <nav class="dk-nav<?= !empty($args['solid']) ? ' dk-nav--solid' : ''; ?>" aria-label="<?php esc_attr_e('Primary', 'detailking'); ?>">
-   <div class="dk-nav__pill">
+   <div class="dk-nav__pill" data-animate>
 
       <!-- Brand -->
       <a class="site-brand" href="<?= esc_url(home_url('/')); ?>" aria-label="<?= esc_attr($brand); ?>">
@@ -124,7 +131,8 @@ if (function_exists('wc_get_cart_url') && function_exists('WC') && WC() && WC()-
             <a class="btn-gold dk-nav__cart" href="<?= esc_url($cartUrl); ?>">
                <?php esc_html_e('Cart', 'detailking'); ?>
                <?php // aria-hidden so the count isn't announced twice — the
-                     // visually-hidden sentence below is the accessible version. ?>
+               // visually-hidden sentence below is the accessible version. 
+               ?>
                <span class="dk-nav__cart-count" data-dk-cart-count aria-hidden="true">
                   <?= esc_html((string) $cartCount); ?>
                </span>

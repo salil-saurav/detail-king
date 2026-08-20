@@ -57,13 +57,18 @@ foreach ($presets as $row) {
             'gold'    => $meta->fieldOr('ba_heading_gold', $D),
             'size'    => 'display-sm',
             'text'    => $meta->fieldOr('ba_text', $D),
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
+            'text_animate' => 'fade-up',
          ]);
          ?>
 
          <?php if (count($sets) > 1) : ?>
             <div class="home-ba__presets" role="tablist" aria-label="<?php esc_attr_e('Comparison sets', 'detailking'); ?>">
                <?php foreach ($sets as $i => $set) : ?>
-                  <?php if ($set['label'] === '') { continue; } ?>
+                  <?php if ($set['label'] === '') {
+                     continue;
+                  } ?>
                   <button class="home-ba__preset<?= $i === 0 ? ' is-active' : ''; ?>"
                      type="button"
                      role="tab"
@@ -71,7 +76,8 @@ foreach ($presets as $row) {
                      data-ba-preset="<?= esc_attr((string) $i); ?>"
                      data-before="<?= esc_url($set['before']); ?>"
                      data-after="<?= esc_url($set['after']); ?>"
-                     data-faux="<?= $set['faux'] ? '1' : '0'; ?>">
+                     data-faux="<?= $set['faux'] ? '1' : '0'; ?>"
+                     data-animate="fade-up">
                      <?= esc_html($set['label']); ?>
                   </button>
                <?php endforeach; ?>
@@ -102,7 +108,8 @@ foreach ($presets as $row) {
 
                <input class="dk-compare__range"
                   type="range" min="0" max="100" value="60" step="0.1"
-                  aria-label="<?php esc_attr_e('Reveal the before image', 'detailking'); ?>">
+                  aria-label="<?php esc_attr_e('Reveal the before image', 'detailking'); ?>"
+                  data-animate="fade-up">
 
                <span class="dk-compare__handle" aria-hidden="true"></span>
             </div>

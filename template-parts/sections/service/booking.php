@@ -90,13 +90,16 @@ $submitLabel = $bookingMode === 'enquiry'
             'align'   => 'center',
             'rules'   => 'both',
             'text'    => (string) $meta->field('booking_intro_text'),
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
+            'text_animate' => 'fade-up',
          ]);
          ?>
       </div>
 
       <ol class="service-booking__steps">
          <?php foreach ($steps as $step) : ?>
-            <li class="service-booking__step<?= $step['active'] ? ' is-active' : ''; ?><?= $step['num'] === 3 ? ' is-inert' : ''; ?>">
+            <li class="service-booking__step<?= $step['active'] ? ' is-active' : ''; ?><?= $step['num'] === 3 ? ' is-inert' : ''; ?>" data-animate>
                <span class="service-booking__stepnum" aria-hidden="true"><?= esc_html((string) $step['num']); ?></span>
                <span class="service-booking__steplabel"><?= esc_html($step['label']); ?></span>
             </li>
@@ -117,6 +120,7 @@ $submitLabel = $bookingMode === 'enquiry'
                   type="button"
                   class="service-package<?= $isSelected ? ' is-selected' : ''; ?>"
                   aria-pressed="<?= $isSelected ? 'true' : 'false'; ?>"
+                  data-animate
                   data-pkg-id="<?= esc_attr((string) $package->ID); ?>"
                   data-pkg-price="<?= esc_attr((string) $price); ?>"
                   data-pkg-title="<?= esc_attr(get_the_title($package)); ?>"
@@ -147,7 +151,7 @@ $submitLabel = $bookingMode === 'enquiry'
          </div>
       <?php endif; ?>
 
-      <div class="service-details">
+      <div class="service-details" data-animate="fade-up">
          <h3 class="service-details__title"><?= esc_html__('Your Details', 'detailking'); ?></h3>
          <p class="service-details__subtitle"><?= esc_html__('Pricing adjusts to your vehicle size. Tell us when and where to take care of it.', 'detailking'); ?></p>
 

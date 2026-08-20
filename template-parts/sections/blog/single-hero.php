@@ -37,9 +37,9 @@ $thumbId  = get_post_thumbnail_id($postId);
 $thumbUrl = $thumbId ? wp_get_attachment_image_url($thumbId, 'full') : '';
 ?>
 
-<section class="single-hero">
+<section class="single-hero" data-hero>
    <?php if ($thumbUrl) : ?>
-      <div class="single-hero__bg" aria-hidden="true">
+      <div class="single-hero__bg" data-hero-bg aria-hidden="true">
          <img src="<?= esc_url($thumbUrl); ?>" alt="<?= esc_attr($title); ?>" fetchpriority="high">
       </div>
    <?php endif; ?>
@@ -62,18 +62,18 @@ $thumbUrl = $thumbId ? wp_get_attachment_image_url($thumbId, 'full') : '';
             </ul>
          </nav>
 
-         <div class="single-hero__badge-wrap">
+         <div class="single-hero__badge-wrap" data-animate>
             <a href="<?= esc_url($catUrl); ?>" class="single-hero__badge">
                <span class="single-hero__badge-star" aria-hidden="true">★</span>
                <?= esc_html($catName); ?>
             </a>
          </div>
 
-         <h1 class="single-hero__title">
+         <h1 class="single-hero__title" data-animate>
             <?= esc_html($title); ?>
          </h1>
 
-         <div class="single-hero__meta">
+         <div class="single-hero__meta" data-animate>
             <div class="single-hero__author-block">
                <span class="single-hero__avatar" aria-hidden="true">DK</span>
                <span class="single-hero__author"><?php esc_html_e('Detail King Team', 'detailking'); ?></span>

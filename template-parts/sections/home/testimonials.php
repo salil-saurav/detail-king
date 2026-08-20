@@ -70,6 +70,8 @@ $cardNote  = (string) $meta->fieldOr('reviews_card_note', $D);
             'title'   => $meta->fieldOr('reviews_heading', $D),
             'gold'    => $meta->fieldOr('reviews_heading_gold', $D),
             'size'    => 'display-md',
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
          ]);
          ?>
 
@@ -92,7 +94,7 @@ $cardNote  = (string) $meta->fieldOr('reviews_card_note', $D);
 
       <?php if ($hasWidget) : ?>
          <?php /* Already kses-filtered by the plugin's own shortcode handler. */ ?>
-         <div class="home-reviews__widget"><?= $widget; ?></div>
+         <div class="home-reviews__widget" data-animate="fade-up"><?= $widget; ?></div>
       <?php else : ?>
          <div class="dk-rail dk-rail--reviews" data-dk-rail data-dk-autoplay="4500">
             <ul class="dk-rail__track">

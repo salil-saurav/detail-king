@@ -54,7 +54,7 @@ $shortName = static function (WP_Post $service) use ($meta): string {
    return $short !== '' ? $short : (string) get_the_title($service);
 };
 ?>
-<section class="home-services section--light" data-animate="fade">
+<section class="home-services section--light pb-0" data-animate="fade">
    <div class="container-dk">
 
       <div class="home-services__head">
@@ -64,6 +64,8 @@ $shortName = static function (WP_Post $service) use ($meta): string {
             'title'   => $meta->fieldOr('services_heading', $D),
             'gold'    => $meta->fieldOr('services_heading_gold', $D),
             'size'    => 'display-md',
+            'animate' => 'fade-up',
+            'break'   => true,
          ]);
          ?>
 
@@ -150,7 +152,7 @@ $shortName = static function (WP_Post $service) use ($meta): string {
       <?php if ($features) : ?>
          <ul class="home-services__features">
             <?php foreach ($features as $row) : ?>
-               <li class="svc-feature">
+               <li class="svc-feature" data-animate>
                   <span class="svc-feature__icon" aria-hidden="true"></span>
                   <span class="svc-feature__body">
                      <span class="svc-feature__title subheading-xs"><?= esc_html((string) ($row['feature_title'] ?? '')); ?></span>

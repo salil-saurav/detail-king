@@ -38,21 +38,24 @@ $image = $meta->imageUrl(
             'title'   => (string) $meta->field('intro_title'),
             'gold'    => (string) $meta->field('intro_title_gold'),
             'size'    => 'heading-lg',
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
          ]);
          ?>
          <?php if ($lead !== '') : ?>
-            <p class="service-intro__lead"><?= esc_html($lead); ?></p>
+            <p class="service-intro__lead" data-animate="fade-up"><?= esc_html($lead); ?></p>
          <?php endif; ?>
          <?php if ($text !== '') : ?>
-            <p class="body-base"><?= esc_html($text); ?></p>
+            <p class="body-base" data-animate="fade-up"><?= esc_html($text); ?></p>
          <?php endif; ?>
       </div>
 
       <?php
       get_template_part('template-parts/components/framed-photo', null, [
-         'image'  => $image,
-         'alt'    => get_the_title(),
-         'border' => 'neutral',
+         'image'   => $image,
+         'alt'     => get_the_title(),
+         'border'  => 'neutral',
+         'animate' => 'zoom-in',
       ]);
       ?>
    </div>

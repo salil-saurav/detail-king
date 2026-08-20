@@ -38,7 +38,7 @@ $image = $meta->imageUrl(
  */
 $renderFeature = static function (array $row, string $from = 'fade-left'): void {
    $glyph = (string) ($row['feature_icon_glyph'] ?? 'crown');
-   ?>
+?>
    <li class="why-feature" data-animate="<?= esc_attr($from); ?>">
       <span class="why-feature__icon" aria-hidden="true">
          <?php get_template_part('template-parts/components/glyph', null, ['glyph' => $glyph]); ?>
@@ -48,7 +48,7 @@ $renderFeature = static function (array $row, string $from = 'fade-left'): void 
          <span class="why-feature__text body-base"><?= esc_html((string) ($row['feature_text'] ?? '')); ?></span>
       </span>
    </li>
-   <?php
+<?php
 };
 ?>
 <section class="home-why section--light" data-animate="fade">
@@ -66,18 +66,20 @@ $renderFeature = static function (array $row, string $from = 'fade-left'): void 
          'size'    => 'display-sm',
          'align'   => 'center',
          'rules'   => 'both',
+         'block_animate' => 'fade-up',
       ]);
       ?>
 
       <div class="home-why__cols">
 
          <ul class="why-features why-features--left">
-            <?php foreach ($left as $row) { $renderFeature($row, 'fade-left'); } ?>
+            <?php foreach ($left as $row) {
+               $renderFeature($row, 'fade-left');
+            } ?>
          </ul>
 
          <div class="home-why__figure">
             <span class="home-why__ring" aria-hidden="true"></span>
-            <span class="home-why__ring home-why__ring--inner" aria-hidden="true"></span>
             <figure class="home-why__photo" data-animate="zoom-in">
                <img src="<?= esc_url($image); ?>" alt="" loading="lazy" decoding="async">
             </figure>
@@ -87,7 +89,9 @@ $renderFeature = static function (array $row, string $from = 'fade-left'): void 
          </div>
 
          <ul class="why-features why-features--right">
-            <?php foreach ($right as $row) { $renderFeature($row, 'fade-right'); } ?>
+            <?php foreach ($right as $row) {
+               $renderFeature($row, 'fade-right');
+            } ?>
          </ul>
 
       </div>

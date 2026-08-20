@@ -26,6 +26,9 @@ $D    = 'memberships';
          'align'   => 'center',
          'rules'   => 'both',
          'text'    => $meta->fieldOr('plans_text', $D),
+         'eyebrow_animate' => 'fade-up',
+         'animate' => 'fade-up',
+         'text_animate' => 'fade-up',
       ]);
       ?>
 

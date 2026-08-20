@@ -29,6 +29,7 @@
 .dk-nav.is-stuck {
 	inset-block-start: 12px;
 }
+
 .dk-nav.is-stuck .dk-nav__pill {
 	box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
 }
@@ -76,6 +77,7 @@
 	align-items: center;
 	flex: 0 0 auto;
 }
+
 .site-brand__logo,
 .site-brand .custom-logo {
 	display: block;
@@ -84,7 +86,9 @@
 }
 
 /* ---------------- menu ---------------- */
-.dk-nav__menu { display: flex; }
+.dk-nav__menu {
+	display: flex;
+}
 
 .dk-menu {
 	display: flex;
@@ -94,7 +98,11 @@
 	padding: 0;
 	list-style: none;
 }
-.dk-menu > li { position: relative; }
+
+.dk-menu>li {
+	position: relative;
+}
+
 .dk-menu a {
 	display: block;
 	font: 500 18px/1.65 var(--font-body);
@@ -102,12 +110,13 @@
 	color: var(--text-white);
 	transition: color .2s ease;
 }
+
 .dk-menu a:hover,
 .dk-menu a:focus-visible,
-.dk-menu > .current-menu-item > a,
-.dk-menu > .current-menu-ancestor > a,
-.dk-menu > .current_page_item > a {
-	color: var(--gold-primary);
+.dk-menu>.current-menu-item>a,
+.dk-menu>.current-menu-ancestor>a,
+.dk-menu>.current_page_item>a {
+	color: var(--gold-primary) !important;
 }
 
 /* Second-level dropdown. The comp has no open dropdown to copy, so this is
@@ -131,12 +140,14 @@
 	transform: translateY(10px);
 	transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
 }
-.dk-menu > li:hover > .sub-menu,
-.dk-menu > li:focus-within > .sub-menu {
+
+.dk-menu>li:hover>.sub-menu,
+.dk-menu>li:focus-within>.sub-menu {
 	opacity: 1;
 	visibility: visible;
 	transform: translateY(14px);
 }
+
 .dk-menu .sub-menu a {
 	padding: 9px 20px;
 	font-size: 17px;
@@ -160,6 +171,7 @@
 	white-space: nowrap;
 	transition: color .2s ease;
 }
+
 /* The comp draws "◉" before the label — a filled dot inside a ring. Rendered as
    a shape rather than the literal character, which is in neither webfont's
    subset and would silently fall back to a system face. The ring is a box-shadow
@@ -174,8 +186,11 @@
 	background: currentColor;
 	box-shadow: 0 0 0 2px transparent, 0 0 0 3.5px currentColor;
 }
+
 .dk-nav__account:hover,
-.dk-nav__account:focus-visible { color: var(--gold-primary); }
+.dk-nav__account:focus-visible {
+	color: var(--gold-primary);
+}
 
 .dk-nav__cta {
 	padding: 14px 32px;
@@ -233,6 +248,7 @@
 	background: var(--glass-white-05);
 	cursor: pointer;
 }
+
 .dk-nav__toggle span {
 	display: block;
 	height: 2px;
@@ -240,9 +256,18 @@
 	background: var(--gold-primary);
 	transition: transform .25s ease, opacity .25s ease;
 }
-.dk-nav__toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.dk-nav__toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-.dk-nav__toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.dk-nav__toggle[aria-expanded="true"] span:nth-child(1) {
+	transform: translateY(7px) rotate(45deg);
+}
+
+.dk-nav__toggle[aria-expanded="true"] span:nth-child(2) {
+	opacity: 0;
+}
+
+.dk-nav__toggle[aria-expanded="true"] span:nth-child(3) {
+	transform: translateY(-7px) rotate(-45deg);
+}
 
 /* ---------------- responsive ----------------
    Derived, not designed — the comp is desktop-only at 1920. The pill keeps its
@@ -250,29 +275,64 @@
    100px-radius pill containing a stacked menu reads as a mistake.
    ------------------------------------------------------------------ */
 @media (max-width: 1599.98px) {
-	.dk-nav { padding-inline: 60px; }
-	.dk-menu { gap: 30px; }
+	.dk-nav {
+		padding-inline: 60px;
+	}
+
+	.dk-menu {
+		gap: 30px;
+	}
 }
 
 @media (max-width: 1399.98px) {
-	.dk-nav { padding-inline: 32px; }
-	.dk-nav__pill { padding-inline: 26px; }
-	.dk-menu { gap: 22px; }
-	.dk-menu a { font-size: 17px; }
-	.dk-nav__actions { gap: 16px; }
-	.dk-nav__account { font-size: 16px; }
-	.dk-nav__cta { padding: 12px 24px; }
-	.dk-nav__cart { padding: 12px 20px; gap: 8px; }
+	.dk-nav {
+		padding-inline: 32px;
+	}
+
+	.dk-nav__pill {
+		padding-inline: 26px;
+	}
+
+	.dk-menu {
+		gap: 22px;
+	}
+
+	.dk-menu a {
+		font-size: 17px;
+	}
+
+	.dk-nav__actions {
+		gap: 16px;
+	}
+
+	.dk-nav__account {
+		font-size: 16px;
+	}
+
+	.dk-nav__cta {
+		padding: 12px 24px;
+	}
+
+	.dk-nav__cart {
+		padding: 12px 20px;
+		gap: 8px;
+	}
 }
 
 @media (max-width: 1199.98px) {
+
 	/* The account label is the first thing to go — the CTA beside it goes to the
 	   same place and the account page is still reachable from the footer. */
-	.dk-nav__account { display: none; }
+	.dk-nav__account {
+		display: none;
+	}
 }
 
 @media (max-width: 991.98px) {
-	.dk-nav { padding-inline: 20px; }
+	.dk-nav {
+		padding-inline: 20px;
+	}
+
 	.dk-nav__pill {
 		flex-wrap: wrap;
 		row-gap: 0;
@@ -288,27 +348,45 @@
 		max-height: calc(100dvh - 28px);
 		overflow-y: auto;
 	}
-	.dk-nav__toggle { display: flex; order: 3; }
-	.dk-nav__actions { order: 2; margin-inline-start: auto; }
-	.dk-nav__account { display: inline-flex; font-size: 15px; }
+
+	.dk-nav__toggle {
+		display: flex;
+		order: 3;
+	}
+
+	.dk-nav__actions {
+		order: 2;
+		margin-inline-start: auto;
+	}
+
+	.dk-nav__account {
+		display: inline-flex;
+		font-size: 15px;
+	}
 
 	/* Drawer. global.css hides .primary-nav:not(.is-open) below this width. */
 	.dk-nav__menu {
 		order: 4;
 		width: 100%;
 	}
+
 	.dk-nav__menu.is-open {
 		padding-block: 18px 6px;
 		margin-block-start: 14px;
 		border-block-start: 1px solid var(--line-white-08);
 	}
+
 	.dk-menu {
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 4px;
 		width: 100%;
 	}
-	.dk-menu a { padding-block: 10px; font-size: 18px; }
+
+	.dk-menu a {
+		padding-block: 10px;
+		font-size: 18px;
+	}
 
 	/* A hover-revealed dropdown is unreachable on touch — show it in flow. */
 	.dk-menu .sub-menu {
@@ -323,16 +401,43 @@
 		box-shadow: none;
 		backdrop-filter: none;
 	}
-	.dk-menu > li:hover > .sub-menu,
-	.dk-menu > li:focus-within > .sub-menu { transform: none; }
+
+	.dk-menu>li:hover>.sub-menu,
+	.dk-menu>li:focus-within>.sub-menu {
+		transform: none;
+	}
 }
 
 @media (max-width: 575.98px) {
-	.dk-nav { inset-block-start: 14px; }
-	.dk-nav__account { display: none; }
+	.dk-nav {
+		inset-block-start: 14px;
+	}
+
+	.dk-nav__account {
+		display: none;
+	}
+
 	.site-brand__logo,
-	.site-brand .custom-logo { height: 46px; }
-	.dk-nav__cta { padding: 11px 20px; font-size: 16px; min-height: 48px; }
-	.dk-nav__cart { padding: 11px 16px; font-size: 16px; min-height: 48px; gap: 7px; }
-	.dk-nav__cart-count { min-width: 21px; height: 21px; font-size: 13px; }
+	.site-brand .custom-logo {
+		height: 46px;
+	}
+
+	.dk-nav__cta {
+		padding: 11px 20px;
+		font-size: 16px;
+		min-height: 48px;
+	}
+
+	.dk-nav__cart {
+		padding: 11px 16px;
+		font-size: 16px;
+		min-height: 48px;
+		gap: 7px;
+	}
+
+	.dk-nav__cart-count {
+		min-width: 21px;
+		height: 21px;
+		font-size: 13px;
+	}
 }

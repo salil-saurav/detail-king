@@ -38,10 +38,11 @@ $stats     = $meta->fieldRowsOr('craft_stats', $D);
          'gold'    => $meta->fieldOr('video_heading_gold', $D),
          // 88px: the comp's cap height is 64, and the two lines sit on an 89px pitch.
          'size'    => 'display-md',
+         'block_animate' => 'fade-up',
       ]);
       ?>
 
-      <div class="home-video__frame">
+      <div class="home-video__frame" data-animate="fade-up">
          <figure class="home-video__media">
             <img src="<?= esc_url($thumb); ?>" alt="" loading="lazy" decoding="async">
          </figure>
@@ -77,7 +78,7 @@ $stats     = $meta->fieldRowsOr('craft_stats', $D);
 
             <ul class="dk-stats dk-stats--craft">
                <?php foreach ($stats as $row) : ?>
-                  <li class="dk-stats__item">
+                  <li class="dk-stats__item" data-animate="fade-up">
                      <span class="dk-stats__value heading-lg text-gold-gradient" data-count-to="<?= esc_attr((string) ($row['stat_value'] ?? '')); ?>">
                         <?= esc_html((string) ($row['stat_value'] ?? '')); ?>
                      </span>

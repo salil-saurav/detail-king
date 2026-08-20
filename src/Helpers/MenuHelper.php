@@ -21,6 +21,7 @@ class MenuHelper extends Singleton implements ServiceInterface
       ]);
 
       add_filter('nav_menu_css_class', [$this, 'add_additional_class_on_li'], 10, 3);
+      add_filter('nav_menu_item_attributes', [$this, 'add_footer_animation_attribute'], 10, 3);
       add_filter('nav_menu_link_attributes', [$this, 'add_specific_menu_location_atts'], 10, 3);
    }
 
@@ -37,6 +38,14 @@ class MenuHelper extends Singleton implements ServiceInterface
       if (isset($args->theme_location) && $args->theme_location === 'primary-menu') {
          $existing_class = $atts['class'] ?? '';
          $atts['class'] = trim($existing_class . ' nav-link');
+      }
+      return $atts;
+   }
+
+   public function add_footer_animation_attribute($atts, $item, $args)
+   {
+      if (isset($args->theme_location) && str_starts_with($args->theme_location, 'footer-')) {
+         $atts['data-animate'] = 'fade-left';
       }
       return $atts;
    }

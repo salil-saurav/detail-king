@@ -75,7 +75,7 @@ $stats = [
    <!-- Perks List -->
    <div class="auth-perks">
       <?php foreach ($perks as $perk) : ?>
-         <div class="auth-perk-item">
+         <div class="auth-perk-item" data-animate>
             <div class="auth-perk-item__badge" aria-hidden="true">
                <?php if ($perk['icon'] === 'bookings') : ?>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -107,7 +107,7 @@ $stats = [
    <!-- Stats Row -->
    <div class="auth-stats">
       <?php foreach ($stats as $stat) : ?>
-         <div class="auth-stat-item">
+         <div class="auth-stat-item" data-animate>
             <span class="auth-stat-item__value text-gold-gradient"><?= esc_html($stat['value']); ?></span>
             <span class="auth-stat-item__label"><?= esc_html($stat['label']); ?></span>
          </div>

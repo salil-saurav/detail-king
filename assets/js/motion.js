@@ -47,7 +47,16 @@
 		return;
 	}
 
-	document.documentElement.classList.add('aos-ready');
+	/* `aos-ready` is NOT added here. It is added synchronously in <head> by
+		AssetsService::printMotionGate(), because this file is deferred and cannot
+		run before the browser's first paint — adding the class from here meant the
+		first screen was painted visible and then snapped hidden, a flash before
+		every above-the-fold reveal. All this file owes the gate is the handshake
+		below: clearing its watchdog says "motion.js is alive, the from-states are
+		safe to keep". If this file never runs, the watchdog fires and un-hides
+		everything, which is why the class must not be re-added here either — that
+		would hide content again after the safety net had already caught it. */
+	clearTimeout(window.dkMotionFallback);
 
 	const isMobile = mq('(max-width: 767.98px)');
 
@@ -123,6 +132,38 @@
 	}, { threshold: 0, rootMargin: '100000px 0px -12% 0px' });
 
 	document.querySelectorAll('[data-animate]').forEach((el) => revealObserver.observe(el));
+
+	/* ------------------------------------------------------------------
+		Bottom-of-document safety net. The rootMargin above only rescues an
+		element that a fast scroll jumped clean over — it does nothing for an
+		element that sits so close to the true end of the page that its top
+		never crosses the -12% line, because there is no scroll distance left
+		to produce that crossing at all. Measured 20 Aug 2026 (verify.sh's
+		stranded= check, identical count on every page): the footer's
+		legal-menu items — last thing in the DOM everywhere — sat at opacity 0
+		forever on any page short enough that max scroll left them a few px
+		short of the line (e.g. /cart/: scrollY pinned at 742/742, item top at
+		840 against an 792px line on a 900px viewport). A second observer on
+		the footer, with no negative margin, fires exactly when the page has
+		been scrolled as far as it goes; at that point everything above the
+		footer must already be revealed by definition, so anything still
+		hidden is force-shown rather than left stranded for good. */
+	const footer = document.querySelector('.dk-footer');
+
+	if (footer) {
+		const bottomObserver = new IntersectionObserver((entries, obs) => {
+			if (!entries[0].isIntersecting) {
+				return;
+			}
+			document.querySelectorAll('[data-animate]:not(.is-visible)').forEach((el) => {
+				revealObserver.unobserve(el);
+				el.classList.add('is-visible');
+			});
+			obs.disconnect();
+		}, { threshold: 0 });
+
+		bottomObserver.observe(footer);
+	}
 
 	/* ------------------------------------------------------------------
 		§6 Hero. A real sequence rather than a single reveal: the backdrop settles

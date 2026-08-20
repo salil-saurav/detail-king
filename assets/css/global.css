@@ -224,7 +224,7 @@ img {
    that section's own background — a margin here would show the body colour
    and put a cream bar between two dark bands. Scoped to a direct child of
    the page's own <main>, so a nested last element never picks it up. */
-.layout--site > :last-child::after {
+.layout--site> :last-child::after {
 	content: "";
 	display: block;
 	block-size: 89px;
@@ -1344,7 +1344,9 @@ img {
    booking widget's three contact fields made it materially worse — fixing
    it here since it's shared CSS, not page-specific. */
 @media (max-width: 575.98px) {
-	.dk-form__grid { grid-template-columns: 1fr; }
+	.dk-form__grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 .dk-field {
@@ -1409,10 +1411,17 @@ select.dk-field__input {
 	display: none;
 }
 
-.dk-form__status[data-state="error"] { color: #E2574C; }
-.dk-form__status[data-state="success"] { color: #6FCF97; }
+.dk-form__status[data-state="error"] {
+	color: #E2574C;
+}
 
-.dk-field__input[aria-invalid="true"] { border-color: #E2574C; }
+.dk-form__status[data-state="success"] {
+	color: #6FCF97;
+}
+
+.dk-field__input[aria-invalid="true"] {
+	border-color: #E2574C;
+}
 
 /* Honeypot — off-screen rather than display:none, which some bots detect. */
 .dk-form__trap {
@@ -1448,21 +1457,29 @@ select.dk-field__input {
    contract — motion.js writes no transforms at all any more, so a CSS transform
    on one of these elements no longer "fights the tween", it *is* the tween.
 
-   `aos-ready` is added by motion.js and *only* once it has confirmed it can
-   actually animate — not under prefers-reduced-motion, and not if the script
-   failed to parse or run. So the hiding rule is inert on exactly the paths
-   where hiding content would otherwise strand it at opacity 0 forever, which is
-   the failure mode this build has already been bitten by (HISTORY.md §9).
+   `aos-ready` is added by AssetsService::printMotionGate() — a synchronous
+   <head> script, not motion.js, which is deferred and so cannot beat the first
+   paint (the first screen was painted visible, then snapped hidden: a flash
+   before every above-the-fold reveal). It applies the class only where motion.js
+   will also run: not under prefers-reduced-motion, and not without
+   IntersectionObserver. If motion.js then fails to boot at all, the gate's own
+   3s watchdog takes the class back off, so the hiding rule can never strand
+   content at opacity 0 with nothing left to reveal it — the failure mode this
+   build has already been bitten by (HISTORY.md §9).
 
    Distances/durations follow animation-implementation-spec.md §3/§12/§28/§29:
    images are slower than UI (1.0-1.1s vs 0.7s), travel shrinks on small
    viewports (§23), easing is power3.out expressed as its bezier.
    --------------------------------------------------------------- */
 :root {
-	--dk-rv-y: 40px;      /* §28 default reveal travel */
-	--dk-rv-x: 30px;      /* §12 directional reveal travel */
-	--dk-rv-dur: .7s;     /* §3 small UI / headings */
-	--dk-rv-ease: cubic-bezier(.215, .61, .355, 1);   /* = GSAP power3.out */
+	--dk-rv-y: 40px;
+	/* §28 default reveal travel */
+	--dk-rv-x: 30px;
+	/* §12 directional reveal travel */
+	--dk-rv-dur: .7s;
+	/* §3 small UI / headings */
+	--dk-rv-ease: cubic-bezier(.215, .61, .355, 1);
+	/* = GSAP power3.out */
 }
 
 /* §23: 40px of travel on a 375px-wide screen reads as jitter, not elegance. */
@@ -1473,19 +1490,27 @@ select.dk-field__input {
 	}
 }
 
+/* The from-state carries NO transition, and that is load-bearing rather than
+   tidiness. While the transition was declared here, adding `aos-ready` did not
+   *set* an element hidden — it animated it toward hidden over --dk-rv-dur, and
+   `.is-visible` then reversed a fade that had only just started. Below the fold
+   that is invisible (the class lands hundreds of ms before the scroll crossing,
+   so the fade-out has long finished), but for anything on the first screen the
+   observer's initial callback arrives ~100-200ms after `aos-ready` and the
+   reveal came out as a stub of its real duration — or nothing at all when both
+   landed in one style flush. Measured on the homepage h1: opacity 1 -> 0.93 ->
+   back to 1, i.e. 7% of a 40px rise, and it looked different on every reload
+   because the whole effect was the size of that gap. The transition therefore
+   belongs on the reveal below, where the before-change style is the hidden
+   state and the after-change style is the visible one. */
 .aos-ready [data-animate] {
 	opacity: 0;
 	transform: translate3d(0, var(--dk-rv-y), 0);
-	transition:
-		opacity var(--dk-rv-dur) var(--dk-rv-ease),
-		transform var(--dk-rv-dur) var(--dk-rv-ease);
-	/* Stagger. motion.js sets this inline, in ms, per element in a batch (§8,
-	   §14, §15: 100ms between siblings) and clears it once the reveal lands. */
-	transition-delay: var(--dk-rv-delay, 0ms);
 }
 
 .aos-ready [data-animate="fade"] {
-	transform: none;                                  /* opacity only */
+	transform: none;
+	/* opacity only */
 }
 
 .aos-ready [data-animate="fade-left"] {
@@ -1512,6 +1537,15 @@ select.dk-field__input {
 .aos-ready [data-animate].is-visible {
 	opacity: 1;
 	transform: none;
+	transition:
+		opacity var(--dk-rv-dur) var(--dk-rv-ease),
+		transform var(--dk-rv-dur) var(--dk-rv-ease);
+	/* Stagger. motion.js sets this inline, in ms, per element in a batch (§8,
+	   §14, §15: 100ms between siblings) and clears it once the reveal lands.
+	   Staying on this rule keeps it applying to the reveal itself, and — since
+	   `.is-visible` is never removed — leaves the transition in place afterwards
+	   for the hover states that share the transform property. */
+	transition-delay: var(--dk-rv-delay, 0ms);
 }
 
 /* ---------------------------------------------------------------
@@ -1523,7 +1557,10 @@ select.dk-field__input {
    `[data-hero]` deliberately is not `[data-animate]`, so the generic
    batch above leaves these nodes alone and cannot double-animate them.
    --------------------------------------------------------------- */
-/* Backdrop settles from 1.05 — long enough to read as a settle, not a zoom. */
+/* Backdrop settles from 1.05 — long enough to read as a settle, not a zoom.
+   [data-hero-bg] is the generic hook: the homepage hero, every inner page's
+   page-banner and the blog single hero all share it rather than each getting
+   their own copy of this rule. */
 .aos-ready [data-hero] [data-hero-bg] {
 	transform: scale(1.05);
 	transition: transform 1.6s cubic-bezier(.25, .46, .45, .94);
@@ -1533,10 +1570,19 @@ select.dk-field__input {
 	transform: none;
 }
 
+/* Badge/title/text timing is shared across every [data-hero] instance via
+   these class groups — page-banner (every inner page) and the blog single
+   hero reuse the same entrance rather than each hand-rolling one. */
 .aos-ready [data-hero] .home-hero__badge,
 .aos-ready [data-hero] .home-hero__title,
 .aos-ready [data-hero] .home-hero__text,
-.aos-ready [data-hero] .home-hero__actions > * {
+.aos-ready [data-hero] .home-hero__actions>*,
+.aos-ready [data-hero] .eyebrow--badge,
+.aos-ready [data-hero] .page-banner__title,
+.aos-ready [data-hero] .page-banner__text,
+.aos-ready [data-hero] .single-hero__badge-wrap,
+.aos-ready [data-hero] .single-hero__title,
+.aos-ready [data-hero] .single-hero__meta {
 	opacity: 0;
 	transform: translate3d(0, 30px, 0);
 	transition:
@@ -1545,24 +1591,49 @@ select.dk-field__input {
 	transition-delay: var(--dk-hero-at, 0s);
 }
 
-.aos-ready [data-hero] .home-hero__badge  { --dk-hero-at: .15s; }
-.aos-ready [data-hero] .home-hero__title  { --dk-hero-at: .25s; }
-.aos-ready [data-hero] .home-hero__text   { --dk-hero-at: .4s; }
+.aos-ready [data-hero] .home-hero__badge,
+.aos-ready [data-hero] .eyebrow--badge,
+.aos-ready [data-hero] .single-hero__badge-wrap {
+	--dk-hero-at: .15s;
+}
+
+.aos-ready [data-hero] .home-hero__title,
+.aos-ready [data-hero] .page-banner__title,
+.aos-ready [data-hero] .single-hero__title {
+	--dk-hero-at: .25s;
+}
+
+.aos-ready [data-hero] .home-hero__text,
+.aos-ready [data-hero] .page-banner__text,
+.aos-ready [data-hero] .single-hero__meta {
+	--dk-hero-at: .4s;
+}
 
 /* §6 CTAs land after the heading, with a small stagger between buttons. */
-.aos-ready [data-hero] .home-hero__actions > * {
+.aos-ready [data-hero] .home-hero__actions>* {
 	--dk-hero-at: .55s;
 	transform: translate3d(0, 20px, 0);
 	transition-duration: .6s;
 }
 
-.aos-ready [data-hero] .home-hero__actions > :nth-child(2) { --dk-hero-at: .65s; }
-.aos-ready [data-hero] .home-hero__actions > :nth-child(3) { --dk-hero-at: .75s; }
+.aos-ready [data-hero] .home-hero__actions> :nth-child(2) {
+	--dk-hero-at: .65s;
+}
+
+.aos-ready [data-hero] .home-hero__actions> :nth-child(3) {
+	--dk-hero-at: .75s;
+}
 
 .aos-ready [data-hero].is-hero-in .home-hero__badge,
 .aos-ready [data-hero].is-hero-in .home-hero__title,
 .aos-ready [data-hero].is-hero-in .home-hero__text,
-.aos-ready [data-hero].is-hero-in .home-hero__actions > * {
+.aos-ready [data-hero].is-hero-in .home-hero__actions>*,
+.aos-ready [data-hero].is-hero-in .eyebrow--badge,
+.aos-ready [data-hero].is-hero-in .page-banner__title,
+.aos-ready [data-hero].is-hero-in .page-banner__text,
+.aos-ready [data-hero].is-hero-in .single-hero__badge-wrap,
+.aos-ready [data-hero].is-hero-in .single-hero__title,
+.aos-ready [data-hero].is-hero-in .single-hero__meta {
 	opacity: 1;
 	transform: none;
 }
@@ -1580,7 +1651,7 @@ select.dk-field__input {
    CTAs snapped in over .25s with no stagger instead of fading up like
    everything else. motion.js adds `.is-hero-settled` after the entrance
    choreography's own last transition genuinely finishes. */
-.aos-ready [data-hero].is-hero-settled .home-hero__actions > * {
+.aos-ready [data-hero].is-hero-settled .home-hero__actions>* {
 	transition-duration: .25s;
 	transition-delay: 0s;
 }
@@ -1589,10 +1660,10 @@ select.dk-field__input {
    .home-hero__actions with more specificity than a plain :hover — chaining
    the full ancestry here is what lets the hero's own CTAs still lift on
    hover/focus (§31) instead of being stuck flat forever after reveal. */
-.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-gold:hover,
-.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-gold:focus-visible,
-.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-outline-light-dk:hover,
-.aos-ready [data-hero].is-hero-settled .home-hero__actions > .btn-outline-light-dk:focus-visible {
+.aos-ready [data-hero].is-hero-settled .home-hero__actions>.btn-gold:hover,
+.aos-ready [data-hero].is-hero-settled .home-hero__actions>.btn-gold:focus-visible,
+.aos-ready [data-hero].is-hero-settled .home-hero__actions>.btn-outline-light-dk:hover,
+.aos-ready [data-hero].is-hero-settled .home-hero__actions>.btn-outline-light-dk:focus-visible {
 	transform: translateY(-2px);
 }
 
@@ -1918,12 +1989,8 @@ body.search-open {
 }
 
 .plan-card:hover {
-	transform: translateY(-8px);
+	transform: translateY(-10px) !important;
 	box-shadow: var(--shadow-section);
-}
-
-.plan-card--featured:hover {
-	box-shadow: var(--shadow-dark-xl);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2081,4 +2148,3 @@ body.search-open {
 		padding: 32px 24px 30px;
 	}
 }
-

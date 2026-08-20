@@ -33,7 +33,7 @@ $hours = (string) $meta->fieldOr('direct_hours', $D);
       <div class="contact-layout">
 
          <!-- Left column: Contact Form Card -->
-         <div class="contact-form-card">
+         <div class="contact-form-card" data-animate="fade-left">
             <h2 class="contact-form-card__title">
                <?= esc_html((string) $meta->fieldOr('form_title', $D)); ?>
                <?php if ($meta->fieldOr('form_title_gold', $D) !== '') : ?>
@@ -108,7 +108,7 @@ $hours = (string) $meta->fieldOr('direct_hours', $D);
          <div class="contact-info">
 
             <!-- Card 1: Reach Us Directly -->
-            <div class="contact-card contact-card--direct">
+            <div class="contact-card contact-card--direct" data-animate="fade-right">
                <div class="contact-card__glow" aria-hidden="true"></div>
                <h3 class="contact-card__title heading-xs">
                   <?= esc_html((string) $meta->fieldOr('direct_title', $D)); ?>
@@ -160,7 +160,7 @@ $hours = (string) $meta->fieldOr('direct_hours', $D);
             </div>
 
             <!-- Card 2: Our Locations -->
-            <div class="contact-card contact-card--locations">
+            <div class="contact-card contact-card--locations" data-animate="fade-right">
                <div class="contact-card__glow" aria-hidden="true"></div>
                <h3 class="contact-card__title heading-xs">
                   <?= esc_html((string) $meta->fieldOr('direct_locations_title', $D)); ?>

@@ -16,7 +16,7 @@ $D    = 'memberships';
 $items = $meta->fieldRowsOr('loyalty_items', $D);
 
 ?>
-<section class="mship-loyalty section--dark">
+<section class="mship-loyalty section--dark" data-animate="fade">
    <div class="container-dk">
 
       <?php
@@ -28,6 +28,9 @@ $items = $meta->fieldRowsOr('loyalty_items', $D);
          'align'   => 'center',
          'rules'   => 'both',
          'text'    => $meta->fieldOr('loyalty_text', $D),
+         'eyebrow_animate' => 'fade-up',
+         'animate' => 'fade-up',
+         'text_animate' => 'fade-up',
       ]);
       ?>
 

@@ -37,7 +37,7 @@ $trustItems = MetaHelper::getInstance()->rowsOr('shop_trust_items');
 
       <div class="product-hero__layout">
 
-         <div class="product-hero__gallery">
+         <div class="product-hero__gallery" data-animate="fade-left">
             <?php
             /* Real logic, not markup to re-derive: gallery image ids, the
                placeholder fallback, and (via the theme support flags in
@@ -47,7 +47,7 @@ $trustItems = MetaHelper::getInstance()->rowsOr('shop_trust_items');
             ?>
          </div>
 
-         <div class="product-hero__info">
+         <div class="product-hero__info" data-animate="fade-right">
             <?php if ($eyebrow !== '') : ?>
                <span class="product-hero__eyebrow"><?= esc_html($eyebrow); ?></span>
             <?php endif; ?>

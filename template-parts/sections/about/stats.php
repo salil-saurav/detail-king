@@ -25,7 +25,7 @@ if (!$stats) {
    <div class="container-dk">
       <ul class="dk-stats dk-stats--craft about-stats__row">
          <?php foreach ($stats as $row) : ?>
-            <li class="dk-stats__item">
+            <li class="dk-stats__item" data-animate="fade-up">
                <span class="dk-stats__value text-gold-gradient" data-count-to="<?= esc_attr((string) ($row['stat_value'] ?? '')); ?>">
                   <?= esc_html((string) ($row['stat_value'] ?? '')); ?>
                </span>

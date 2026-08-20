@@ -30,6 +30,8 @@ $image = $meta->imageUrl($meta->field('approach_image'), get_template_directory_
                'title'   => $meta->fieldOr('approach_title', $D),
                'gold'    => $meta->fieldOr('approach_title_gold', $D),
                'size'    => 'display-md',
+               'eyebrow_animate' => 'fade-up',
+               'animate' => 'fade-up',
             ]);
             ?>
             <p class="body-md"><?= esc_html((string) $meta->fieldOr('approach_text_1', $D)); ?></p>
@@ -38,9 +40,10 @@ $image = $meta->imageUrl($meta->field('approach_image'), get_template_directory_
 
          <?php
          get_template_part('template-parts/components/framed-photo', null, [
-            'image'  => $image,
-            'alt'    => 'Careful detailing approach',
-            'border' => 'neutral',
+            'image'   => $image,
+            'alt'     => 'Careful detailing approach',
+            'border'  => 'neutral',
+            'animate' => 'fade-right',
          ]);
          ?>
       </div>
@@ -52,7 +55,7 @@ $image = $meta->imageUrl($meta->field('approach_image'), get_template_directory_
                $title  = (string) ($step['step_title'] ?? '');
                $text   = (string) ($step['step_text'] ?? '');
             ?>
-               <div class="about-approach__step card-light">
+               <div class="about-approach__step card-light" data-animate>
                   <?php if ($number !== '') : ?>
                      <span class="dk-step__num" aria-hidden="true"><?= esc_html($number); ?></span>
                   <?php endif; ?>

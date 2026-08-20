@@ -31,6 +31,11 @@ $products = get_posts([
    'orderby'          => 'menu_order',
    'order'            => 'ASC',
    'suppress_filters' => false,
+   'tax_query'       => [[
+      'taxonomy' => 'product_visibility',
+      'field'    => 'name',
+      'terms'    => 'featured',
+   ]],
 ]);
 
 if (!$products) {
@@ -57,11 +62,13 @@ $shopUrl   = function_exists('wc_get_page_id') && wc_get_page_id('shop') > 0
             'title'   => $meta->fieldOr('shop_heading', $D),
             'gold'    => $meta->fieldOr('shop_heading_gold', $D),
             'size'    => 'display-md',
+            'eyebrow_animate' => 'fade-up',
+            'animate' => 'fade-up',
          ]);
          ?>
 
          <?php if ($ctaText !== '') : ?>
-            <a class="btn-dark btn-arrow home-shop__cta" href="<?= esc_url((string) $meta->fieldOr('shop_cta_url', $D) ?: $shopUrl); ?>">
+            <a class="btn-dark btn-arrow home-shop__cta" data-animate="fade-up" href="<?= esc_url((string) $meta->fieldOr('shop_cta_url', $D) ?: $shopUrl); ?>">
                <?= esc_html($ctaText); ?>
             </a>
          <?php endif; ?>

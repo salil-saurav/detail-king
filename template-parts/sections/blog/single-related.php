@@ -55,14 +55,14 @@ if (empty($relatedPosts)) {
 }
 ?>
 
-<section class="single-related">
+<section class="single-related" data-animate="fade">
    <div class="container-dk">
       <div class="single-related__header">
-         <div class="single-related__eyebrow">
+         <div class="single-related__eyebrow" data-animate="fade-up">
             <span class="single-related__rule" aria-hidden="true"></span>
             <span class="single-related__eyebrow-text"><?php esc_html_e('KEEP READING', 'detailking'); ?></span>
          </div>
-         <h2 class="single-related__title">
+         <h2 class="single-related__title" data-animate="fade-up">
             <?= sprintf(
                /* translators: %s: gold accent text */
                esc_html__('Related %s', 'detailking'),

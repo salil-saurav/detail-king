@@ -48,12 +48,12 @@ $ctaBtnUrl = !empty($ctaBtnUrl) ? (string) $ctaBtnUrl : home_url('/services/cera
 <aside class="single-sidebar">
    <div class="single-sidebar__sticky">
       <?php if (!empty($headings)) : ?>
-         <div class="single-sidebar__card single-sidebar__toc">
+         <div class="single-sidebar__card single-sidebar__toc" data-animate="fade-up">
             <h4 class="single-sidebar__title"><?php esc_html_e('In This Article', 'detailking'); ?></h4>
             <nav class="single-sidebar__nav" aria-label="<?php esc_attr_e('Table of contents', 'detailking'); ?>">
                <ul class="single-sidebar__list">
                   <?php foreach ($headings as $heading) : ?>
-                     <li class="single-sidebar__item">
+                     <li class="single-sidebar__item" data-animate>
                         <a href="#<?= esc_attr($heading['slug']); ?>" class="single-sidebar__link">
                            <?= esc_html($heading['text']); ?>
                         </a>
@@ -64,7 +64,7 @@ $ctaBtnUrl = !empty($ctaBtnUrl) ? (string) $ctaBtnUrl : home_url('/services/cera
          </div>
       <?php endif; ?>
 
-      <div class="single-sidebar__card single-sidebar__cta">
+      <div class="single-sidebar__card single-sidebar__cta" data-animate="zoom">
          <h4 class="single-sidebar__cta-title"><?= esc_html($ctaTitle); ?></h4>
          <p class="single-sidebar__cta-text"><?= esc_html($ctaText); ?></p>
          <a href="<?= esc_url($ctaBtnUrl); ?>" class="btn-gold single-sidebar__cta-btn">

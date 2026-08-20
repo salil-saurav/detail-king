@@ -35,6 +35,9 @@ $watermark = (string) $meta->fieldOr('equip_watermark', $D);
          'size'    => 'display-md',
          'align'   => 'center',
          'rules'   => 'both',
+         'eyebrow_animate' => 'fade-up',
+         'animate' => 'fade-up',
+         'text_animate' => 'fade-up',
       ]);
       ?>
 
@@ -57,7 +60,7 @@ $watermark = (string) $meta->fieldOr('equip_watermark', $D);
                   ? get_template_directory_uri() . '/assets/images/about/icons/icon-' . $iconSlug . '.png'
                   : '';
             ?>
-               <div class="about-equip__card card-light">
+               <div class="about-equip__card card-light" data-animate>
                   <?php if ($iconUrl !== '') : ?>
                      <img class="about-equip__icon about-equip__icon--img" src="<?= esc_url($iconUrl); ?>" width="70" height="70" alt="" loading="lazy">
                   <?php else : ?>

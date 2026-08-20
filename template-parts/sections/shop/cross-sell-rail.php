@@ -29,8 +29,8 @@ if (!$productIds) {
 ?>
 <section class="cross-sell-rail" aria-label="<?php esc_attr_e('Recommended for you', 'detailking'); ?>">
    <div class="cross-sell-rail__head">
-      <span class="eyebrow eyebrow--rule-start"><?php esc_html_e('10% Off', 'detailking'); ?></span>
-      <h2 class="cross-sell-rail__title">
+      <span class="eyebrow eyebrow--rule-start" data-animate="fade-up"><?php esc_html_e('10% Off', 'detailking'); ?></span>
+      <h2 class="cross-sell-rail__title" data-animate="fade-up">
          <?php esc_html_e('Recommended', 'detailking'); ?> <span class="text-gold-gradient"><?php esc_html_e('For You', 'detailking'); ?></span>
       </h2>
    </div>
@@ -39,16 +39,14 @@ if (!$productIds) {
       <?php foreach ($productIds as $productId) : ?>
          <?php $post = get_post($productId); ?>
          <?php if ($post) : ?>
-            <div data-animate="fade">
-               <?php
-               get_template_part('template-parts/components/product-card', null, [
-                  'product'      => $post,
-                  'dark'         => true,
-                  'cross_sell'   => true,
-                  'discount_pct' => \DetailKing\Theme\Services\CrossSell\CrossSellService::DISCOUNT_PCT,
-               ]);
-               ?>
-            </div>
+            <?php
+            get_template_part('template-parts/components/product-card', null, [
+               'product'      => $post,
+               'dark'         => true,
+               'cross_sell'   => true,
+               'discount_pct' => \DetailKing\Theme\Services\CrossSell\CrossSellService::DISCOUNT_PCT,
+            ]);
+            ?>
          <?php endif; ?>
       <?php endforeach; ?>
    </div>

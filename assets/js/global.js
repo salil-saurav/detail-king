@@ -1,11 +1,11 @@
 /* =====================================================================
-   StackPress — global.js
-   Lightweight, dependency-free front-end behaviour:
-     - scroll-reveal animations ([data-animate])
-     - mobile navigation toggle ([data-sp-toggle])
-     - header live search overlay (AJAX, via SearchService)
-   Bootstrap's bundle handles dropdowns, collapse, etc.
-   ===================================================================== */
+	StackPress — global.js
+	Lightweight, dependency-free front-end behaviour:
+	  - scroll-reveal animations ([data-animate])
+	  - mobile navigation toggle ([data-sp-toggle])
+	  - header live search overlay (AJAX, via SearchService)
+	Bootstrap's bundle handles dropdowns, collapse, etc.
+	===================================================================== */
 (() => {
 	'use strict';
 
@@ -67,10 +67,10 @@
 		};
 
 		/* 1900, not the earlier 1600, and the ease below is not a guess: the
-		   reference recording's craft stats were sampled every 0.25s while they
-		   ran (t 20.4-22.3) and read 1461, 2810, 3639, 4289, 4592, 4749, 4795,
-		   4799 against a 4799 target. Inverting ease-out cubic on those gives an
-		   even ~0.131 of progress per 0.25s — i.e. exactly this curve over 1.9s. */
+			reference recording's craft stats were sampled every 0.25s while they
+			ran (t 20.4-22.3) and read 1461, 2810, 3639, 4289, 4592, 4749, 4795,
+			4799 against a 4799 target. Inverting ease-out cubic on those gives an
+			even ~0.131 of progress per 0.25s — i.e. exactly this curve over 1.9s. */
 		const duration = 1900;
 
 		const animate = (el, parsed) => {
@@ -136,12 +136,12 @@
 		Two modes, chosen by the group's data-dk-filter-mode:
 
 		  "hide"   (default) — show/hide the non-matching cards. What Gallery
-		                       wants: a wall of items, narrowed to one category.
+									  wants: a wall of items, narrowed to one category.
 		  "scroll"           — leave every card visible and scroll to the
-		                       matching one. What Our Services wants, per the
-		                       client brief: "When someone clicks on a service
-		                       name, it will take them to that service section on
-		                       the same page." See TASK-BRIEF.md §1.5.
+									  matching one. What Our Services wants, per the
+									  client brief: "When someone clicks on a service
+									  name, it will take them to that service section on
+									  the same page." See TASK-BRIEF.md §1.5.
 
 		The mode is a data attribute rather than two components because the pill
 		row, its markup and its active-state bookkeeping are identical — only
@@ -169,9 +169,9 @@
 			};
 
 			/* "all" goes back to the top of the grid; anything else jumps to the
-			   first card carrying that category. Vertical offset for the fixed nav
-			   comes from `scroll-padding-block-start` on <html> (global.css), so it
-			   is not duplicated here. */
+				first card carrying that category. Vertical offset for the fixed nav
+				comes from `scroll-padding-block-start` on <html> (global.css), so it
+				is not duplicated here. */
 			const scrollToCategory = (slug) => {
 				const destination = slug === 'all'
 					? target
@@ -225,15 +225,15 @@
 		}
 
 		/* Publish the nav's real height so `scroll-padding-block-start` (global.css)
-		   can clear it at every width. A hard-coded offset does not survive the
-		   ≤991px breakpoint, where the pill wraps to ~124px and an anchor target
-		   lands *underneath* the nav — measured at 375px, the card sat 6px under it.
+			can clear it at every width. A hard-coded offset does not survive the
+			≤991px breakpoint, where the pill wraps to ~124px and an anchor target
+			lands *underneath* the nav — measured at 375px, the card sat 6px under it.
 
-		   Recomputed on resize only. Not on scroll frames (it would be layout
-		   thrash for a value that cannot change), and deliberately *not* when the
-		   mobile drawer opens: an open drawer is several hundred px tall, and
-		   feeding that into the scroll offset would throw every anchor jump far
-		   past its target. */
+			Recomputed on resize only. Not on scroll frames (it would be layout
+			thrash for a value that cannot change), and deliberately *not* when the
+			mobile drawer opens: an open drawer is several hundred px tall, and
+			feeding that into the scroll offset would throw every anchor jump far
+			past its target. */
 		const syncHeight = () => {
 			document.documentElement.style.setProperty(
 				'--dk-nav-height',
@@ -322,19 +322,19 @@
 	};
 
 	const initHeaderSearch = () => {
-		const toggle  = document.getElementById('header-search-toggle');
+		const toggle = document.getElementById('header-search-toggle');
 		const overlay = document.getElementById('header-search-overlay');
 		if (!toggle || !overlay) {
 			return;
 		}
 
-		const panel    = overlay.querySelector('#header-search-panel');
-		const input    = overlay.querySelector('[data-search-input]');
-		const results  = overlay.querySelector('[data-search-results]');
-		const form     = overlay.querySelector('[data-search-form]');
+		const panel = overlay.querySelector('#header-search-panel');
+		const input = overlay.querySelector('[data-search-input]');
+		const results = overlay.querySelector('[data-search-results]');
+		const form = overlay.querySelector('[data-search-form]');
 		const closeBtn = overlay.querySelector('[data-search-close]');
-		const cfg      = window.detailkingSearch || {};
-		const i18n     = cfg.i18n || {};
+		const cfg = window.detailkingSearch || {};
+		const i18n = cfg.i18n || {};
 
 		let isOpen = false;
 		let activeController = null;

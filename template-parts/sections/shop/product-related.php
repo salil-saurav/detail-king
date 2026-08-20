@@ -26,8 +26,8 @@ if (!$relatedIds) {
    <div class="container-dk">
 
       <div class="product-related__head">
-         <span class="eyebrow eyebrow--rule-start"><?php esc_html_e('You May Also Like', 'detailking'); ?></span>
-         <h2 class="product-related__title">
+         <span class="eyebrow eyebrow--rule-start" data-animate="fade-up"><?php esc_html_e('You May Also Like', 'detailking'); ?></span>
+         <h2 class="product-related__title" data-animate="fade-up">
             <?php esc_html_e('Related', 'detailking'); ?> <span class="text-gold-gradient"><?php esc_html_e('Products', 'detailking'); ?></span>
          </h2>
       </div>

@@ -25,7 +25,7 @@ $checklist = $meta->fieldRowsOr('value_checklist', $D);
    <div class="container-dk">
       <div class="mship-value__grid">
 
-         <div class="mship-value__left">
+         <div class="mship-value__left" data-animate="fade-left">
             <?php
             get_template_part('template-parts/components/section-heading', null, [
                'eyebrow' => $meta->fieldOr('value_eyebrow', $D),
@@ -35,6 +35,9 @@ $checklist = $meta->fieldRowsOr('value_checklist', $D);
                'align'   => 'left',
                'rules'   => 'none',
                'text'    => $meta->fieldOr('value_text', $D),
+               'eyebrow_animate' => 'fade-up',
+               'animate' => 'fade-up',
+               'text_animate' => 'fade-up',
             ]);
             ?>
          </div>
@@ -46,7 +49,7 @@ $checklist = $meta->fieldRowsOr('value_checklist', $D);
                      $text = (string) ($item['item_text'] ?? '');
                      if ($text === '') continue;
                   ?>
-                     <div class="mship-value__item card-light">
+                     <div class="mship-value__item card-light" data-animate="fade-right">
                         <span class="mship-value__tick" aria-hidden="true"></span>
                         <span class="mship-value__text body-base-med"><?= esc_html($text); ?></span>
                      </div>
