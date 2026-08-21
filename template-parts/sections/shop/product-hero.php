@@ -29,6 +29,14 @@ $tagsRaw = (string) MetaHelper::getInstance()->field('compat_tags', get_the_ID()
 $tags    = array_filter(array_map('trim', explode(',', $tagsRaw)));
 
 $trustItems = MetaHelper::getInstance()->rowsOr('shop_trust_items');
+
+// Same "Sale" is derived, anything else is editorial" rule product-card.php
+// uses for its badge.
+$badge      = $product->is_on_sale() ? __('Sale', 'detailking') : '';
+$customBadge = (string) get_post_meta(get_the_ID(), '_dk_badge', true);
+if ($customBadge !== '') {
+   $badge = $customBadge;
+}
 ?>
 <section class="product-hero">
    <div class="container-dk">
@@ -38,6 +46,9 @@ $trustItems = MetaHelper::getInstance()->rowsOr('shop_trust_items');
       <div class="product-hero__layout">
 
          <div class="product-hero__gallery" data-animate="fade-left">
+            <?php if ($badge !== '') : ?>
+               <span class="product-hero__badge"><?= esc_html($badge); ?></span>
+            <?php endif; ?>
             <?php
             /* Real logic, not markup to re-derive: gallery image ids, the
                placeholder fallback, and (via the theme support flags in

@@ -9,7 +9,7 @@
 
 .blog-listing {
 	background-color: var(--bg-light);
-	padding-block: 110px 200px;
+	padding-block: 100px 50px;
 }
 
 .blog-filter-bar {
@@ -38,9 +38,10 @@
 
 .blog-filter-pill:hover:not(.is-active),
 .blog-filter-pill:focus-visible:not(.is-active) {
-	background: rgba(11, 11, 12, 0.05);
-	border-color: rgba(11, 11, 12, 0.2);
-	color: var(--text-dark);
+	background: var(--text-dark);
+	border-color: var(--text-dark);
+	color: var(--text-white);
+	transform: translateY(-5px);
 }
 
 .blog-filter-pill.is-active {
@@ -386,7 +387,6 @@
 /* Blog Index CTA Section */
 .blog-cta {
 	background-color: var(--bg-light);
-	padding-block: 0 110px;
 }
 
 /* ---------------------------------------------------------------------
@@ -542,7 +542,6 @@
 }
 
 .single-layout__main {
-	flex: 1;
 	min-width: 0;
 	max-width: 1060px;
 }
@@ -724,6 +723,7 @@
 .single-share-btn:hover {
 	background: var(--text-dark);
 	color: var(--text-white);
+	transform: translateY(-5px);
 }
 
 /* Sidebar Widgets */
@@ -944,6 +944,7 @@
 }
 
 @media (max-width: 767.98px) {
+
 	.blog-listing,
 	.single-body,
 	.single-related {

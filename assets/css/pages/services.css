@@ -37,7 +37,7 @@
 	background: transparent;
 	font: 400 18px/1 var(--font-body);
 	color: var(--text-white-75);
-	transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+	transition: background-color .25s ease, color .25s ease, border-color .25s ease, transform .25s ease;
 }
 .dk-filter-pill.is-active {
 	border-color: transparent;
@@ -47,9 +47,10 @@
 }
 .dk-filter-pill:not(.is-active):hover,
 .dk-filter-pill:not(.is-active):focus-visible {
-	border-color: var(--glass-white-25);
-	background: var(--glass-white-05);
-	color: var(--text-white);
+	border-color: transparent;
+	background: var(--gold-gradient-btn);
+	color: var(--text-dark);
+	transform: translateY(-5px);
 }
 
 /* ---------------------------------------------------------------

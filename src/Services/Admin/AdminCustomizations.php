@@ -18,7 +18,10 @@ class AdminCustomizations extends Singleton implements ServiceInterface
    public function register(): void
    {
       add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
+      add_action('login_enqueue_scripts', [$this, 'enqueueAdminAssets']);
       add_filter('admin_footer_text', [$this, 'customizeFooterText']);
+      add_filter('login_headerurl', [$this, 'loginLogoUrl']);
+      add_filter('login_headertext', [$this, 'loginLogoText']);
       remove_action('welcome_panel', 'wp_welcome_panel');
    }
 
@@ -54,5 +57,23 @@ class AdminCustomizations extends Singleton implements ServiceInterface
       );
 
       return apply_filters('detailking/theme/admin/footer_text', $default);
+   }
+
+   /**
+    * Point the login screen's logo link at the site homepage instead of
+    * wordpress.org.
+    */
+   public function loginLogoUrl(): string
+   {
+      return home_url('/');
+   }
+
+   /**
+    * Swap the logo's title/alt text from "Powered by WordPress" to the
+    * site name.
+    */
+   public function loginLogoText(): string
+   {
+      return get_bloginfo('name');
    }
 }

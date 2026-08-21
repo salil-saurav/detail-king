@@ -51,7 +51,15 @@ $services = get_posts([
             $thumb = get_the_post_thumbnail_url($service, 'large');
             $url   = (string) get_permalink($service);
             ?>
-            <article class="svc-article" data-dk-filter-cats="<?= esc_attr($catSlug); ?>" data-animate="fade">
+            <?php
+            /* Gallery cards link straight here as /services/#<category-slug>
+               (see seed/gallery-items.php) expecting the browser's native
+               hash-scroll to land on this card — with no id at all, that
+               link only ever landed at the top of the page. Same slug the
+               filter pills above already scroll to via JS, so this is the
+               one anchor both mechanisms share. */
+            ?>
+            <article <?= $catSlug !== '' ? 'id="' . esc_attr($catSlug) . '" ' : ''; ?>class="svc-article" data-dk-filter-cats="<?= esc_attr($catSlug); ?>" data-animate="fade">
                <div class="svc-article__media">
                   <?php if ($thumb) : ?>
                      <img src="<?= esc_url($thumb); ?>" alt="<?= esc_attr($shortName); ?>" loading="lazy" decoding="async">

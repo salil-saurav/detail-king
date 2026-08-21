@@ -4,16 +4,25 @@
  * Category archive sidebar — category checklist, price filter, "Need Advice?"
  * CTA (node 183:7649, see figma-data/shop-spec.md §B).
  *
- * Both filters navigate (real page loads), not AJAX: the comp gives no
- * interaction note for this panel, and WooCommerce's own query already
- * understands `max_price` (WC_Query::price_filter_post_clauses(), active by
- * default on the main query) with zero extra wiring — so a plain link/range
- * input that changes the URL is the "CSS/hooks before hand-rolled logic"
- * option, not a shortcut. The category list is single-select via navigation
- * (one term per archive page) rather than a true multi-category AJAX filter;
- * the comp's checkboxes read as multi-select but nothing in the brief or the
- * frame's interaction notes specifies that behaviour — recorded as a residual
- * in figma-data/shop-spec.md.
+ * Below 1280px this becomes an off-canvas drawer (initShopSidebarDrawer() in
+ * global.js), opened by the floating filter circle in listing.php. The
+ * `.shop-sidebar-overlay` wrapper is `display: contents` at desktop — so
+ * `.shop-sidebar` stays the grid's direct child there — and only becomes the
+ * fixed backdrop below the breakpoint (shop.css).
+ *
+ * Both filters are real multi-select checkboxes / a plain range input, but
+ * neither navigates any more — initShopFilters() in shop.js intercepts both
+ * and re-queries via ShopFilterService's admin-ajax endpoint, swapping
+ * #shop-listing-grid in place. This is JS-only (no non-JS submit control on
+ * either control, same as the price slider always was before this AJAX pass
+ * existed), so there's no real-navigation fallback path to keep working
+ * alongside — see ShopFilterService's own class doc for why that's a
+ * deliberate scope call, not an oversight.
+ *
+ * The category term this page loaded on (from the URL) is still the initial
+ * checked state; from there it's a real multi-select — checking a second
+ * category broadens the grid to the union of both, unchecking everything
+ * shows the full catalogue (empty tax_query = no category restriction).
  *
  * @package DetailKing Theme
  */
@@ -34,26 +43,33 @@ if (is_wp_error($terms)) {
    $terms = [];
 }
 ?>
-<aside class="shop-sidebar">
+<div class="shop-sidebar-overlay" id="shop-sidebar-overlay">
+<aside class="shop-sidebar" id="shop-sidebar">
+
+   <div class="shop-sidebar__head-mobile">
+      <span class="shop-sidebar__head-mobile-title"><?php esc_html_e('Filters', 'detailking'); ?></span>
+      <button type="button" class="shop-sidebar__close" data-shop-sidebar-close aria-label="<?php esc_attr_e('Close filters', 'detailking'); ?>">
+         <span aria-hidden="true">&times;</span>
+      </button>
+   </div>
 
    <div class="shop-sidebar__card">
       <div class="shop-sidebar__head">
          <h4 class="shop-sidebar__title"><?php esc_html_e('Category', 'detailking'); ?></h4>
-         <?php if ($currentTerm) : ?>
-            <a class="shop-sidebar__clear" href="<?= esc_url((string) get_permalink(wc_get_page_id('shop'))); ?>">
-               <?php esc_html_e('Clear', 'detailking'); ?>
-            </a>
-         <?php endif; ?>
+         <a class="shop-sidebar__clear" href="<?= esc_url((string) get_permalink(wc_get_page_id('shop'))); ?>" data-dk-cat-clear>
+            <?php esc_html_e('Clear', 'detailking'); ?>
+         </a>
       </div>
 
-      <ul class="shop-sidebar__list">
+      <ul class="shop-sidebar__list" id="shop-sidebar-cats">
          <?php foreach ($terms as $term) : ?>
-            <?php $active = $currentTerm && $currentTerm->term_id === $term->term_id; ?>
+            <?php $checked = $currentTerm && $currentTerm->term_id === $term->term_id; ?>
             <li>
-               <a class="shop-sidebar__check<?= $active ? ' is-active' : ''; ?>" href="<?= esc_url((string) get_term_link($term)); ?>">
+               <label class="shop-sidebar__check">
+                  <input type="checkbox" class="shop-sidebar__check-input" value="<?= esc_attr($term->slug); ?>" data-dk-cat-filter<?= $checked ? ' checked' : ''; ?>>
                   <span class="shop-sidebar__box" aria-hidden="true"></span>
                   <?= esc_html($term->name); ?>
-               </a>
+               </label>
             </li>
          <?php endforeach; ?>
       </ul>
@@ -61,7 +77,7 @@ if (is_wp_error($terms)) {
 
    <div class="shop-sidebar__card">
       <h4 class="shop-sidebar__title"><?php esc_html_e('Max Price', 'detailking'); ?></h4>
-      <form class="shop-sidebar__price" method="get" data-dk-price-filter>
+      <form class="shop-sidebar__price" data-dk-price-filter>
          <input type="range" name="max_price" min="20" max="300" step="10" value="<?= esc_attr((string) $currentMax); ?>" aria-label="<?php esc_attr_e('Maximum price', 'detailking'); ?>">
          <div class="shop-sidebar__price-labels">
             <span>$20</span>
@@ -79,3 +95,4 @@ if (is_wp_error($terms)) {
    </div>
 
 </aside>
+</div>

@@ -206,6 +206,7 @@
 }
 
 @media (max-width: 767.98px) {
+
 	.shop-cats__grid,
 	.shop-why__grid {
 		grid-template-columns: minmax(0, 1fr);
@@ -230,10 +231,29 @@
 	align-items: start;
 }
 
+/* Desktop: transparent to layout, so .shop-sidebar stays the grid's direct
+   child. Below 1280px this becomes the fixed backdrop for the off-canvas
+   drawer (see the 1279.98px media query). */
+.shop-sidebar-overlay {
+	display: contents;
+}
+
 .shop-sidebar {
 	display: flex;
 	flex-direction: column;
 	gap: 22px;
+}
+
+.shop-sidebar__head-mobile {
+	display: none;
+}
+
+.shop-sidebar__close {
+	display: none;
+}
+
+.shop-sidebar-fab {
+	display: none;
 }
 
 .shop-sidebar__card {
@@ -276,10 +296,21 @@
 	gap: 12px;
 	padding-block: 8px;
 	color: var(--text-muted-dark);
+	cursor: pointer;
 }
 
 .shop-sidebar__check:hover {
 	color: var(--text-dark);
+}
+
+/* The real input drives :checked/:focus-visible — visually hidden rather
+   than display:none so it stays in the tab order and keyboard-operable;
+   .shop-sidebar__box is the custom glyph the comp draws. */
+.shop-sidebar__check-input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
 }
 
 .shop-sidebar__box {
@@ -289,14 +320,15 @@
 	border: 1px solid rgba(11, 11, 12, .1);
 	border-radius: 7px;
 	position: relative;
+	transition: background-color .2s ease, border-color .2s ease;
 }
 
-.shop-sidebar__check.is-active .shop-sidebar__box {
+.shop-sidebar__check-input:checked+.shop-sidebar__box {
 	background: var(--gold-gradient-btn);
 	border-color: transparent;
 }
 
-.shop-sidebar__check.is-active .shop-sidebar__box::after {
+.shop-sidebar__check-input:checked+.shop-sidebar__box::after {
 	content: '\2713';
 	position: absolute;
 	inset: 0;
@@ -305,6 +337,11 @@
 	justify-content: center;
 	font-size: 14px;
 	color: var(--text-dark);
+}
+
+.shop-sidebar__check-input:focus-visible+.shop-sidebar__box {
+	outline: 2px solid var(--gold-dark);
+	outline-offset: 2px;
 }
 
 .shop-sidebar__price input[type="range"] {
@@ -377,6 +414,13 @@
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 26px;
+	transition: opacity .15s ease;
+}
+
+/* initShopFilters() (shop.js) — a mid-flight re-query fade rather than a
+   blank/jump while #shop-listing-grid's markup is swapped. */
+.shop-listing__main.is-loading .shop-listing__grid {
+	opacity: .4;
 }
 
 .shop-listing__more {
@@ -397,6 +441,115 @@
 	.shop-listing__grid {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
+
+	/* Off-canvas drawer. The overlay is the fixed dimmed backdrop covering
+	   the viewport; .shop-sidebar is the sliding panel inside it — absolute
+	   rather than its own `position: fixed` so it's positioned against the
+	   overlay's box without either needing a transform (transforming the
+	   overlay itself would break `position: fixed` on anything nested one
+	   day). initShopSidebarDrawer() (global.js) only ever toggles `.is-open`
+	   on the overlay; the panel's slide is a pure descendant-selector
+	   consequence of that one class. */
+	.shop-sidebar-overlay {
+		display: block;
+		position: fixed;
+		inset: 0;
+		z-index: 1070;
+		background: rgba(11, 11, 12, .6);
+		backdrop-filter: blur(2px);
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transition: opacity .3s ease, visibility .3s ease;
+	}
+
+	.shop-sidebar-overlay.is-open {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+	}
+
+	.shop-sidebar {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: min(360px, 88vw);
+		overflow-y: auto;
+		background: var(--bg-light);
+		/* The fixed nav pill sits above this drawer (z-index 1030 vs. 1070)
+		   but "above in the stack" isn't "out of the way" — push the drawer's
+		   own content down by the nav's real measured height (published as
+		   --dk-nav-height by initStickyNav()) so the "Filters" header/close
+		   button never sit under it. */
+		padding: calc(var(--dk-nav-height, 86px) + 24px) 24px 40px;
+		box-shadow: var(--shadow-section);
+		transform: translateX(-100%);
+		transition: transform .3s ease;
+	}
+
+	.shop-sidebar-overlay.is-open .shop-sidebar {
+		transform: translateX(0);
+	}
+
+	.shop-sidebar__head-mobile {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-block-end: 22px;
+	}
+
+	.shop-sidebar__head-mobile-title {
+		font: 400 22px/1 var(--font-display);
+		letter-spacing: .04em;
+		color: var(--text-dark);
+	}
+
+	.shop-sidebar__close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border: 1px solid rgba(11, 11, 12, .1);
+		border-radius: 50%;
+		background: transparent;
+		color: var(--text-dark);
+		font-size: 20px;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	/* Floating filter circle. z-index sits below the overlay's 1070 so the
+	   open drawer covers it, and below the nav's 1030... except it doesn't
+	   need to clear that one — the nav lives at the top of the viewport,
+	   this sits bottom-end, they never overlap. */
+	.shop-sidebar-fab {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: fixed;
+		inset-block-end: 28px;
+		inset-inline-end: 24px;
+		z-index: 1020;
+		width: 60px;
+		height: 60px;
+		border: 0;
+		border-radius: 50%;
+		background: var(--gold-gradient-btn);
+		box-shadow: var(--shadow-gold-btn);
+		color: var(--text-dark);
+		cursor: pointer;
+		transition: transform .25s ease;
+	}
+
+	.shop-sidebar-fab:hover,
+	.shop-sidebar-fab:focus-visible {
+		transform: translateY(-5px);
+	}
+}
+
+body.shop-sidebar-open {
+	overflow: hidden;
 }
 
 @media (max-width: 991.98px) {
@@ -421,11 +574,34 @@
    Product Detail (node 185:8134)
    --------------------------------------------------------------- */
 .product-hero {
-	padding-block: 160px 110px;
+	padding-block: 80px 110px;
 }
 
 .product-hero .breadcrumb {
 	margin-block-end: 34px;
+}
+
+/* template-parts/global/breadcrumb only ever styled the dark-hero
+   (.page-banner__breadcrumb) and blog (.single-hero__breadcrumb) contexts —
+   Product Detail's hero sits on the light #F6F4EF background (shop-spec.md
+   §C), so its links fell back to the browser's default blue/underline with
+   no theme color at all. Spec: gold links, muted grey for "/" and the
+   current page. */
+.product-hero .breadcrumb__link {
+	color: var(--gold-dark);
+	text-decoration: none;
+}
+
+.product-hero .breadcrumb__link:hover {
+	text-decoration: underline;
+}
+
+.product-hero .breadcrumb__current {
+	color: var(--text-muted);
+}
+
+.product-hero .breadcrumb__separator {
+	color: rgba(11, 11, 12, .4);
 }
 
 .product-hero__layout {
@@ -433,6 +609,37 @@
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 	gap: 56px;
 	align-items: start;
+}
+
+.product-hero__gallery {
+	position: relative;
+}
+
+/* Same gold-gradient pill .prod-card__badge uses, just at the 20px inset
+   shop-spec.md §C calls for on this larger hero image (vs. 14px on the
+   grid card). */
+.product-hero__badge {
+	position: absolute;
+	inset-block-start: 20px;
+	inset-inline-start: 20px;
+	z-index: 1;
+	padding: 5px 14px;
+	border-radius: var(--radius-pill);
+	background: var(--gold-gradient-btn);
+	color: var(--text-dark);
+	font-size: 15px;
+	font-weight: 600;
+}
+
+/* Woo's own woocommerce.css normally absolutely-positions this fullscreen/
+   lightbox trigger inside the image's top-right corner; that stylesheet is
+   filtered off sitewide (ThemeService), so the bare <a><span>🔍</span></a>
+   fell into normal flow instead — a stray icon sitting in its own line
+   above the photo, squaring off what should be the image's rounded top
+   corners. Not part of the comp (shop-spec.md §C has no lightbox trigger),
+   so it's hidden rather than repositioned. */
+.woocommerce-product-gallery__trigger {
+	display: none;
 }
 
 /* Woo's own gallery markup (woocommerce_show_product_images()) — CSS only,
@@ -580,6 +787,7 @@
 
 .dk-qty .qty {
 	width: 54px;
+	padding: 0;
 	border: 0;
 	text-align: center;
 	font: 600 20px/1 var(--font-body);
@@ -608,6 +816,11 @@
 	color: var(--text-dark);
 	font: 600 20px/1 var(--font-body);
 	letter-spacing: .04em;
+	transition: transform .25s ease;
+}
+
+.single_add_to_cart_button:hover {
+	transform: translateY(-5px);
 }
 
 .single_add_to_cart_button::after {
@@ -720,10 +933,17 @@
 	color: var(--text-muted-dark);
 }
 
-.dk-cart-page .input-text,
+/* :not(.qty) — Woo's quantity input also carries the .input-text class
+   (class="input-text qty text"), so without the exclusion this full-width
+   field treatment (14px/18px padding, 400-weight 16px font) squashed the
+   .dk-qty stepper's digit into an unreadable sliver and dropped its weight
+   from the 600 the .dk-qty .qty rule sets, since neither is a property this
+   selector's own higher-specificity `.dk-cart-line .dk-qty .qty` override
+   happens to redeclare. */
+.dk-cart-page .input-text:not(.qty),
 .dk-cart-page select,
 .dk-cart-page textarea,
-.dk-checkout-page .input-text,
+.dk-checkout-page .input-text:not(.qty),
 .dk-checkout-page select,
 .dk-checkout-page textarea {
 	width: 100%;
@@ -745,6 +965,75 @@
 .dk-checkout-page .required {
 	color: var(--gold-dark);
 	text-decoration: none;
+}
+
+/* Checkout's coupon block (checkout/form-coupon.php) is Woo's own stock
+   markup — cart.php builds its own coupon widget instead, and .shop-notices'
+   woocommerce-info treatment only wraps the shop/product wc_print_notices()
+   call, so checkout is the one page where this ships with zero theme
+   styling: a bare blue underlined link and a bare browser <button>. */
+.dk-checkout-page .woocommerce-form-coupon-toggle {
+	margin-block-end: 18px;
+	font: 400 16px/1.5 var(--font-body);
+	color: var(--text-muted-dark);
+}
+
+.dk-checkout-page .woocommerce-form-coupon-toggle .woocommerce-info {
+	display: block;
+	margin: 0;
+	padding: 0;
+	background: none;
+	border: 0;
+	list-style: none;
+}
+
+.dk-checkout-page .showcoupon {
+	color: var(--gold-dark);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.dk-checkout-page .showcoupon:hover,
+.dk-checkout-page .showcoupon:focus-visible {
+	text-decoration: underline;
+}
+
+.dk-checkout-page .checkout_coupon {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 12px;
+	margin: 0 0 28px;
+}
+
+.dk-checkout-page .checkout_coupon .form-row {
+	margin: 0;
+	flex: 1 1 240px;
+}
+
+.dk-checkout-page .checkout_coupon .form-row-last {
+	flex: 0 0 auto;
+}
+
+.dk-checkout-page .checkout_coupon button[name="apply_coupon"] {
+	padding: 14px 28px;
+	border: 1px solid var(--text-dark);
+	border-radius: var(--radius-md);
+	background: transparent;
+	color: var(--text-dark);
+	font: 600 16px/1 var(--font-body);
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background-color .2s ease;
+}
+
+.dk-checkout-page .checkout_coupon button[name="apply_coupon"]:hover,
+.dk-checkout-page .checkout_coupon button[name="apply_coupon"]:focus-visible {
+	background: rgba(11, 11, 12, .06);
+}
+
+.dk-checkout-page .checkout_coupon .clear {
+	display: none;
 }
 
 /* ---------------------------------------------------------------
@@ -833,15 +1122,27 @@
 	margin: 0;
 	font-size: 14px;
 }
+
 .dk-cart-line__meta dt,
 .dk-cart-line__meta dd {
 	display: inline;
 	margin: 0;
 	color: var(--text-muted-dark);
 }
-.dk-cart-line__meta dt { font-weight: 600; }
-.dk-cart-line__meta dd p { display: inline; margin: 0; }
-.dk-cart-line__meta dd::after { content: ""; display: block; }
+
+.dk-cart-line__meta dt {
+	font-weight: 600;
+}
+
+.dk-cart-line__meta dd p {
+	display: inline;
+	margin: 0;
+}
+
+.dk-cart-line__meta dd::after {
+	content: "";
+	display: block;
+}
 
 .dk-cart-line__subtotal {
 	font-weight: 600;
@@ -897,6 +1198,27 @@
 	flex: 1 1 320px;
 }
 
+/* .btn-outline-light-dk defaults to its glass-on-dark variant (white text,
+   5%-alpha white fill) and only flips to the dark-on-light look inside a
+   .section--light ancestor. .dk-cart-actions is a plain white card with
+   neither, so cart.php's own "Apply" button rendered white-on-white —
+   invisible but for a near-transparent border. Same missing-light-variant
+   gap as the date/time color-scheme fix in build-package.css, just on a
+   button instead of a native picker. */
+.dk-cart-coupon .btn-outline-light-dk {
+	background: transparent;
+	border-color: rgba(11, 11, 12, .16);
+	color: var(--text-dark);
+}
+
+.dk-cart-coupon .btn-outline-light-dk:hover,
+.dk-cart-coupon .btn-outline-light-dk:focus-visible {
+	background: rgba(11, 11, 12, .06);
+	border-color: var(--text-dark);
+	color: var(--text-dark);
+	transform: none;
+}
+
 .dk-cart-coupon .input-text {
 	flex: 1 1 auto;
 }
@@ -930,7 +1252,7 @@
    checkout" link (woocommerce_proceed_to_checkout) — the card already has
    both (see cart.php), styled, so hide the plain duplicates rather than
    overriding the template. */
-.cart_totals > h2,
+.cart_totals>h2,
 .cart_totals .checkout-button {
 	display: none;
 }
@@ -1042,6 +1364,7 @@
 }
 
 @media (max-width: 991.98px) {
+
 	.dk-cart-layout,
 	.dk-checkout-layout {
 		grid-template-columns: minmax(0, 1fr);
@@ -1064,11 +1387,26 @@
 		row-gap: 10px;
 	}
 
-	.dk-cart-line__media { grid-area: media; }
-	.dk-cart-line__body { grid-area: body; }
-	.dk-cart-line .quantity { grid-area: qty; }
-	.dk-cart-line__subtotal { grid-area: subtotal; }
-	.dk-cart-line__remove { grid-area: remove; justify-self: end; }
+	.dk-cart-line__media {
+		grid-area: media;
+	}
+
+	.dk-cart-line__body {
+		grid-area: body;
+	}
+
+	.dk-cart-line .quantity {
+		grid-area: qty;
+	}
+
+	.dk-cart-line__subtotal {
+		grid-area: subtotal;
+	}
+
+	.dk-cart-line__remove {
+		grid-area: remove;
+		justify-self: end;
+	}
 }
 
 /* ---------------------------------------------------------------
@@ -1087,14 +1425,25 @@
 }
 
 .cross-sell-rail__title {
+	/* var(--text-white) was a leftover from the dark-section version of this
+	   heading elsewhere (Product Detail's Related Products, which sits on a
+	   #0B0B0C band) — this rail runs directly on the cart page's light
+	   background, where white text is unreadable. The dark .prod-card items
+	   underneath don't need a dark section wrapper to read fine on light. */
 	font: 400 clamp(24px, 2.4vw, 32px)/1.1 var(--font-display);
-	color: var(--text-white);
+	color: var(--text-dark);
 	margin-block-start: 6px;
 }
 
 .cross-sell-rail__grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	/* auto-fill (not auto-fit) + a capped max: auto-fit stretches existing
+	   cards to fill every leftover track when there are only one or two
+	   recommendations, which is what blew the cards (and, since
+	   .prod-card__media is aspect-ratio-based, their images) up to roughly
+	   double width on a short list. auto-fill leaves the extra tracks empty
+	   instead of handing their space to the real cards. */
+	grid-template-columns: repeat(auto-fill, minmax(220px, 300px));
 	gap: 20px;
 }
 

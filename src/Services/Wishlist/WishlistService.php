@@ -190,6 +190,10 @@ class WishlistService extends Singleton implements ServiceInterface
          'nonce'      => wp_create_nonce('wp_rest'),
          'isLoggedIn' => is_user_logged_in(),
          'ids'        => array_map('strval', $this->getWishlist($userId)),
+         'i18n'       => [
+            'added'   => __('Added to wishlist', 'detailking'),
+            'removed' => __('Removed from wishlist', 'detailking'),
+         ],
       ];
    }
 }

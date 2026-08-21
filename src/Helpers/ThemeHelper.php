@@ -41,6 +41,18 @@ class ThemeHelper extends Singleton implements ServiceInterface
       } elseif (is_single()) {
          if (get_post_type() === 'product' && function_exists('wc_get_page_permalink')) {
             $items[] = $this->link((string) wc_get_page_permalink('shop'), __('Shop', 'detailking'));
+         } elseif (get_post_type() === 'dk_service') {
+            // The 7 service singles sit under the real "Our Services" Page
+            // (/our-services/ — what the nav actually links to), not under
+            // /services/, the dk_service archive template that Woo-style
+            // has_archive registration forces to exist but nothing links to.
+            // Fall back to that archive only if the Page ever goes missing.
+            $servicesPage = get_page_by_path('our-services');
+            if ($servicesPage) {
+               $items[] = $this->link((string) get_permalink($servicesPage), get_the_title($servicesPage));
+            } else {
+               $items[] = $this->link((string) get_post_type_archive_link('dk_service'), __('Services', 'detailking'));
+            }
          } else {
             $categories = get_the_category();
             if (!empty($categories)) {
@@ -50,9 +62,30 @@ class ThemeHelper extends Singleton implements ServiceInterface
          $items[] = $has_suffix
             ? $this->link(get_permalink(), get_the_title())
             : $this->current(get_the_title());
+      } elseif (is_post_type_archive()) {
+         // dk_service's own has_archive URL (/services/) — unlinked from the
+         // nav (which points to /our-services/ instead) but still directly
+         // reachable, and previously fell through every branch here to a
+         // bare "Home" with no current-page crumb at all.
+         $items[] = $this->current(post_type_archive_title('', false));
       } elseif (is_category() || is_tax() || is_tag()) {
          $term = get_queried_object();
          if ($term && !is_wp_error($term)) {
+            // Product categories sit under Shop (same "Home / Shop / …" shape
+            // the single-product branch above already uses) and can nest —
+            // walk ancestors oldest-first so a child category still shows its
+            // parent(s) rather than just the leaf term.
+            if ($term->taxonomy === 'product_cat' && function_exists('wc_get_page_permalink')) {
+               $items[] = $this->link((string) wc_get_page_permalink('shop'), __('Shop', 'detailking'));
+
+               $ancestors = array_reverse(get_ancestors($term->term_id, $term->taxonomy));
+               foreach ($ancestors as $ancestorId) {
+                  $ancestor = get_term($ancestorId, $term->taxonomy);
+                  if ($ancestor && !is_wp_error($ancestor)) {
+                     $items[] = $this->link((string) get_term_link($ancestor), $ancestor->name);
+                  }
+               }
+            }
             $items[] = $this->current($term->name);
          }
       } elseif (is_search()) {
@@ -73,7 +106,7 @@ class ThemeHelper extends Singleton implements ServiceInterface
       }
 
       ob_start();
-      echo '<ul class="breadcrumb mb-0">';
+      echo '<ul class="breadcrumb">';
       foreach ($items as $index => $item) {
          echo '<li class="breadcrumb__item">';
          echo $item;

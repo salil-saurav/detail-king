@@ -431,7 +431,7 @@
 }
 
 .auth-submit-btn:hover {
-	transform: translateY(-2px);
+	transform: translateY(-5px);
 	box-shadow: 0 14px 36px rgba(201, 161, 74, 0.45);
 }
 
@@ -720,7 +720,7 @@ body.login {
 }
 
 .login .button.button-primary:hover {
-	transform: translateY(-1px) !important;
+	transform: translateY(-5px) !important;
 	box-shadow: 0 12px 28px rgba(201, 161, 74, 0.45) !important;
 }
 

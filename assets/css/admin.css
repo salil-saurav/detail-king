@@ -1,1 +1,305 @@
-/* admin.css — wp-admin styles for StackPress. */
+/* =====================================================================
+   admin.css — wp-admin + login screen branding for Detail King.
+   Reuses the site's own tokens (global.css §Backgrounds/Gold accent) so
+   the dashboard doesn't look like a different product from the front end.
+   Enqueued by AdminCustomizations::enqueueAdminAssets(), on both
+   admin_enqueue_scripts and login_enqueue_scripts.
+   ===================================================================== */
+
+:root {
+	--dka-bg: #0B0B0C;
+	--dka-bg-alt: #131315;
+	--dka-bg-card: #17171A;
+	--dka-gold: #E9C97C;
+	--dka-gold-mid: #C9A14A;
+	--dka-gold-dark: #A87D2E;
+	--dka-gold-gradient: linear-gradient(115deg, #A87D2E 0%, #E9C97C 39%, #F6E4AB 50%, #E9C97C 61%, #A87D2E 100%);
+	--dka-line: rgba(255, 255, 255, .08);
+	--dka-text: rgba(255, 255, 255, .85);
+	--dka-text-dim: rgba(255, 255, 255, .55);
+
+	/* WP core reads these for focus rings, links and the few controls that
+	   already theme via variables (WP 5.9+) — cheaper than chasing every
+	   selector individually. */
+	--wp-admin-theme-color: var(--dka-gold-mid);
+	--wp-admin-theme-color-darker-10: var(--dka-gold-dark);
+	--wp-admin-theme-color-darker-20: #8A661F;
+}
+
+/* ---------------------------------------------------------------------
+   1. Admin menu (left rail)
+   --------------------------------------------------------------------- */
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu,
+#adminmenu .wp-submenu,
+#adminmenu .wp-has-current-submenu .wp-submenu {
+	background: var(--dka-bg);
+}
+
+#adminmenu li.menu-top {
+	border-bottom: 1px solid rgba(255, 255, 255, .04);
+}
+
+#adminmenu a {
+	color: var(--dka-text);
+}
+
+#adminmenu div.wp-menu-image:before {
+	color: var(--dka-text-dim);
+}
+
+#adminmenu a:hover,
+#adminmenu li.menu-top>a:focus {
+	color: #fff;
+}
+
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub>a.menu-top,
+#adminmenu li>a.menu-top:focus {
+	background: var(--dka-bg-alt);
+}
+
+#adminmenu li.menu-top:hover div.wp-menu-image:before,
+#adminmenu li.opensub>a.menu-top div.wp-menu-image:before {
+	color: var(--dka-gold);
+}
+
+/* Current top-level item: gold left rail instead of the default blue. */
+#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+#adminmenu li.current a.menu-top {
+	background: var(--dka-bg-card);
+	box-shadow: inset 3px 0 0 var(--dka-gold);
+}
+
+#adminmenu li.wp-has-current-submenu div.wp-menu-image:before,
+#adminmenu li.current div.wp-menu-image:before {
+	color: var(--dka-gold);
+}
+
+#adminmenu .wp-submenu a,
+#adminmenu .wp-submenu-head {
+	color: var(--dka-text-dim);
+}
+
+#adminmenu .wp-submenu a:hover,
+#adminmenu .wp-submenu a:focus,
+#adminmenu li.current .wp-submenu a.current,
+#adminmenu a.wp-has-current-submenu:hover+.wp-submenu a.current {
+	color: var(--dka-gold);
+}
+
+#adminmenu .wp-submenu li.current a,
+#adminmenu li .wp-submenu a.current {
+	color: var(--dka-gold) !important;
+}
+
+/* Bubble counts (comments, updates) */
+#adminmenu .update-plugins,
+#adminmenu .awaiting-mod,
+#adminmenu .plugin-count {
+	background: var(--dka-gold);
+	color: var(--dka-bg);
+}
+
+/* Collapse button + separators */
+#collapse-menu,
+#adminmenu li.wp-menu-separator {
+	background: var(--dka-bg);
+	border-color: rgba(255, 255, 255, .06);
+}
+
+#collapse-button:before {
+	color: var(--dka-text-dim);
+}
+
+/* Site name / "Howdy" flyout header at the top of the menu when collapsed. */
+#adminmenu .wp-menu-name {
+	font-family: 'Poppins', -apple-system, sans-serif;
+}
+
+/* ---------------------------------------------------------------------
+   2. Top admin bar
+   --------------------------------------------------------------------- */
+#wpadminbar {
+	background: var(--dka-bg);
+}
+
+#wpadminbar .ab-item,
+#wpadminbar a.ab-item,
+#wpadminbar>#wp-toolbar span.ab-label,
+#wpadminbar>#wp-toolbar span.noticon {
+	color: var(--dka-text);
+}
+
+#wpadminbar .ab-top-menu>li:hover>.ab-item,
+#wpadminbar .ab-top-menu>li.hover>.ab-item,
+#wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus,
+#wpadminbar .ab-top-menu>li>.ab-item:focus {
+	background: var(--dka-bg-alt);
+	color: var(--dka-gold);
+}
+
+#wpadminbar .quicklinks .menupop ul.ab-sub-secondary,
+#wpadminbar .quicklinks .menupop .ab-sub-wrapper {
+	background: var(--dka-bg-alt);
+}
+
+#wpadminbar .quicklinks .ab-sub-wrapper .ab-item {
+	color: var(--dka-text-dim);
+}
+
+#wpadminbar .quicklinks .ab-sub-wrapper li a:hover,
+#wpadminbar .quicklinks .ab-sub-wrapper li a:focus {
+	color: var(--dka-gold) !important;
+	background: rgba(255, 255, 255, .04) !important;
+}
+
+#wp-admin-bar-my-account.with-avatar #wpadminbar img.avatar {
+	border-radius: 50%;
+	box-shadow: 0 0 0 2px var(--dka-gold);
+}
+
+/* ---------------------------------------------------------------------
+   3. Buttons, focus states, links — the rest of the chrome stays WP's
+      own light canvas so tables/forms/media stay legible; only the
+      brand-accent controls change.
+   --------------------------------------------------------------------- */
+.wp-core-ui .button-primary {
+	background: var(--dka-gold-gradient);
+	border-color: var(--dka-gold-dark);
+	color: #1a1305;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.wp-core-ui .button-primary:hover,
+.wp-core-ui .button-primary:focus {
+	background: var(--dka-gold-mid);
+	border-color: var(--dka-gold-dark);
+	color: #1a1305;
+}
+
+a {
+	color: var(--dka-gold-dark);
+}
+
+a:hover,
+a:focus {
+	color: var(--dka-gold);
+}
+
+.wp-core-ui input[type=checkbox]:checked::before,
+.wp-core-ui input[type=radio]:checked::before {
+	color: var(--dka-gold-mid);
+}
+
+/* Page titles: brand display face for the "Dashboard" / "Posts" H1s only —
+   deliberately not applied anywhere text-heavy (list tables, editors). */
+.wrap>h1.wp-heading-inline,
+.wrap>h1 {
+	font-family: 'Bebas Neue', 'Poppins', -apple-system, sans-serif;
+	letter-spacing: .03em;
+	position: relative;
+	padding-bottom: 10px;
+}
+
+.wrap>h1.wp-heading-inline::after,
+.wrap>h1::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 48px;
+	height: 3px;
+	background: var(--dka-gold-gradient);
+}
+
+/* ---------------------------------------------------------------------
+   4. Dashboard widgets — subtle gold hairline on the widget head instead
+      of WP's default blue-on-hover.
+   --------------------------------------------------------------------- */
+.postbox .hndle,
+.postbox .postbox-header h2 {
+	font-family: 'Poppins', -apple-system, sans-serif;
+}
+
+.postbox:hover {
+	box-shadow: 0 0 0 1px var(--dka-gold-dark);
+}
+
+/* ---------------------------------------------------------------------
+   5. Login screen (login_enqueue_scripts also loads this file — the
+      selectors below only exist on wp-login.php, so they're free of
+      cost/collision on wp-admin proper).
+   --------------------------------------------------------------------- */
+body.login {
+	background: var(--dka-bg) radial-gradient(circle at 50% 0%, rgba(233, 201, 124, .08), transparent 60%);
+}
+
+body.login #login h1 a {
+	background-image: url('../images/brand/logo.png');
+	background-size: contain;
+	width: 260px;
+	height: 90px;
+	margin-bottom: 16px;
+}
+
+body.login form {
+	background: var(--dka-bg-card);
+	border: 1px solid var(--dka-line);
+	box-shadow: none;
+	border-radius: 8px;
+}
+
+body.login label {
+	color: var(--dka-text);
+}
+
+body.login form .input,
+body.login input[type=text],
+body.login input[type=password] {
+	background: var(--dka-bg);
+	border: 1px solid var(--dka-line);
+	color: var(--dka-text);
+	box-shadow: none;
+}
+
+body.login form .input:focus,
+body.login input[type=text]:focus,
+body.login input[type=password]:focus {
+	border-color: var(--dka-gold-mid);
+	box-shadow: 0 0 0 1px var(--dka-gold-mid);
+}
+
+body.login .button-primary {
+	background: var(--dka-gold-gradient);
+	border-color: var(--dka-gold-dark);
+	color: #1a1305;
+	text-shadow: none;
+	box-shadow: none;
+	width: 100%;
+	text-align: center;
+}
+
+body.login .button-primary:hover,
+body.login .button-primary:focus {
+	background: var(--dka-gold-mid);
+}
+
+body.login #nav a,
+body.login #backtoblog a {
+	color: var(--dka-text-dim);
+}
+
+body.login #nav a:hover,
+body.login #backtoblog a:hover {
+	color: var(--dka-gold);
+}
+
+body.login #login_error,
+body.login .message {
+	background: var(--dka-bg-card);
+	border-left: 4px solid var(--dka-gold-dark);
+	color: var(--dka-text);
+}

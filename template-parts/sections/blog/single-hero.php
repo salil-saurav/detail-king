@@ -47,7 +47,7 @@ $thumbUrl = $thumbId ? wp_get_attachment_image_url($thumbId, 'full') : '';
    <div class="container-dk">
       <div class="single-hero__inner">
          <nav class="single-hero__breadcrumb" aria-label="<?php esc_attr_e('Breadcrumbs', 'detailking'); ?>">
-            <ul class="breadcrumb mb-0">
+            <ul class="breadcrumb">
                <li class="breadcrumb__item">
                   <a class="breadcrumb__link" href="<?= esc_url(home_url('/')); ?>"><?php esc_html_e('Home', 'detailking'); ?></a>
                   <span class="breadcrumb__separator mx-2" aria-hidden="true">/</span>

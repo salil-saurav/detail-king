@@ -295,6 +295,56 @@
 	};
 
 	/* ----------------------------------------------------------
+		Shop category sidebar — off-canvas drawer below 1280px
+		([data-shop-sidebar-close]/#shop-sidebar-toggle/#shop-sidebar-overlay,
+		see shop-sidebar.php + shop.css). Mirrors initHeaderSearch()'s
+		open/close shape (backdrop click + Escape close) rather than the plain
+		data-sp-toggle convention, which has neither.
+		---------------------------------------------------------- */
+	const initShopSidebarDrawer = () => {
+		const toggle = document.getElementById('shop-sidebar-toggle');
+		const overlay = document.getElementById('shop-sidebar-overlay');
+		if (!toggle || !overlay) return;
+
+		const panel = document.getElementById('shop-sidebar');
+		const closeBtn = overlay.querySelector('[data-shop-sidebar-close]');
+
+		let isOpen = false;
+
+		const open = () => {
+			if (isOpen) return;
+			isOpen = true;
+			overlay.classList.add('is-open');
+			document.body.classList.add('shop-sidebar-open');
+			toggle.setAttribute('aria-expanded', 'true');
+		};
+
+		const close = () => {
+			if (!isOpen) return;
+			isOpen = false;
+			overlay.classList.remove('is-open');
+			document.body.classList.remove('shop-sidebar-open');
+			toggle.setAttribute('aria-expanded', 'false');
+		};
+
+		toggle.addEventListener('click', () => (isOpen ? close() : open()));
+		if (closeBtn) closeBtn.addEventListener('click', close);
+		overlay.addEventListener('click', (e) => {
+			if (panel && !panel.contains(e.target)) close();
+		});
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && isOpen) close();
+		});
+
+		// The drawer is only real below 1280px — a resize past it (rotating a
+		// tablet, a dev-tools width drag) must not leave body scroll locked
+		// under the now-static in-flow sidebar.
+		window.matchMedia('(min-width: 1280px)').addEventListener('change', (e) => {
+			if (e.matches) close();
+		});
+	};
+
+	/* ----------------------------------------------------------
 		Sticky pill nav.
 		The comp only ever draws the nav over the hero, but the client's own
 		animation reference (animation.mp4, analysed in TASK-BRIEF.md §3) keeps
@@ -378,9 +428,11 @@
 	};
 
 	const initWishlist = () => {
-		const buttons = document.querySelectorAll('[data-dk-wishlist]');
-		if (!buttons.length) return;
-
+		// Deliberately no early-return on an empty NodeList: this page may have
+		// zero [data-dk-wishlist] buttons at load (an empty category grid) and
+		// gain some later via the Shop sidebar's AJAX re-query — the delegated
+		// listener below has to exist before that happens, not just when this
+		// ran to find buttons already on the page.
 		let saved = wishlistCfg.isLoggedIn && Array.isArray(wishlistCfg.ids)
 			? wishlistCfg.ids.map(String)
 			: readWishlist();
@@ -399,7 +451,15 @@
 			}
 		};
 
-		buttons.forEach(paint);
+		document.querySelectorAll('[data-dk-wishlist]').forEach(paint);
+
+		// Exposed so any AJAX pass that injects fresh product-card markup
+		// (currently just ShopFilterService's re-query, shop.js) can repaint
+		// the new buttons' saved state — the template always renders the
+		// heart as unsaved server-side (product-card.php has no per-request
+		// wishlist context to render against) and relies on this pass to
+		// correct it, same as the initial page load does above.
+		window.dkRepaintWishlist = () => document.querySelectorAll('[data-dk-wishlist]').forEach(paint);
 
 		const persistLocal = () => {
 			try {
@@ -440,6 +500,10 @@
 			}
 
 			document.querySelectorAll(`[data-dk-wishlist][data-product-id="${id}"]`).forEach(paint);
+
+			if (window.dkSnackbar && wishlistCfg.i18n) {
+				window.dkSnackbar(wasSaved ? wishlistCfg.i18n.removed : wishlistCfg.i18n.added, 'success');
+			}
 
 			if (btn.dataset.dkWishlistRemove !== undefined && wasSaved) {
 				const card = btn.closest('.prod-card');
@@ -598,6 +662,7 @@
 		initSubmenuToggle();
 		initStickyNav();
 		initFilterTabs();
+		initShopSidebarDrawer();
 		initHeaderSearch();
 		initWishlist();
 		initCartNotices();

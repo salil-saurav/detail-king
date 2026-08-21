@@ -10,7 +10,7 @@
    --------------------------------------------------------------- */
 .gallery-section {
 	background: #F6F4EF;
-	padding-block: 110px 220px;
+	padding-block: 50px 100px;
 	position: relative;
 }
 
@@ -238,7 +238,6 @@
    --------------------------------------------------------------- */
 .gallery-cta-section {
 	background: #F6F4EF;
-	padding-bottom: 110px;
 }
 
 /* ---------------------------------------------------------------

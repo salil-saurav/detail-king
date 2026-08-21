@@ -1308,13 +1308,14 @@ a.home-video__play:focus-visible {
 	color: var(--text-dark);
 	font-size: 19px;
 	cursor: pointer;
-	transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+	transition: background-color .25s ease, color .25s ease, border-color .25s ease, transform .25s ease;
 }
 
 .dk-rail__btn:hover {
 	background: var(--bg-dark);
 	border-color: var(--bg-dark);
 	color: var(--gold-primary);
+	transform: translateY(-5px);
 }
 
 .dk-rail__btn[disabled] {
@@ -1626,7 +1627,7 @@ a.home-video__play:focus-visible {
 }
 
 .home-booking__dial:hover {
-	transform: translateY(-3px) scale(1.04);
+	transform: translateY(-5px) scale(1.04);
 	color: var(--bg-dark);
 }
 

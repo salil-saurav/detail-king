@@ -121,13 +121,13 @@
 
 /* Dropdown indicator. Drawn as a rotated border-corner rather than an icon
    font or unicode glyph — same reasoning as .dk-nav__account::before. */
-.dk-menu > .menu-item-has-children > a {
+.dk-menu>.menu-item-has-children>a {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 }
 
-.dk-menu > .menu-item-has-children > a::after {
+.dk-menu>.menu-item-has-children>a::after {
 	content: "";
 	flex: 0 0 auto;
 	width: 7px;
@@ -138,8 +138,8 @@
 	transition: transform .2s ease;
 }
 
-.dk-menu > .menu-item-has-children:hover > a::after,
-.dk-menu > .menu-item-has-children:focus-within > a::after {
+.dk-menu>.menu-item-has-children:hover>a::after,
+.dk-menu>.menu-item-has-children:focus-within>a::after {
 	transform: translateY(1px) rotate(225deg);
 }
 
@@ -350,15 +350,6 @@
 	}
 }
 
-@media (max-width: 1199.98px) {
-
-	/* The account label is the first thing to go — the CTA beside it goes to the
-	   same place and the account page is still reachable from the footer. */
-	.dk-nav__account {
-		display: none;
-	}
-}
-
 @media (max-width: 991.98px) {
 	.dk-nav {
 		padding-inline: 20px;
@@ -391,7 +382,6 @@
 	}
 
 	.dk-nav__account {
-		display: inline-flex;
 		font-size: 15px;
 	}
 
@@ -445,7 +435,7 @@
 	/* A hover-revealed dropdown is unreachable on touch — collapsed by default,
 	   expanded on tap via .dk-menu__toggle (global.js) rather than shown in
 	   flow unconditionally. */
-	.dk-menu > .menu-item-has-children {
+	.dk-menu>.menu-item-has-children {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -456,11 +446,11 @@
 	   text instead of being pushed to the far edge — one arrow, not two. Its
 	   own ::after (desktop's hover indicator) is redundant with the toggle
 	   button's arrow here, so it's hidden below. */
-	.dk-menu > .menu-item-has-children > a {
+	.dk-menu>.menu-item-has-children>a {
 		flex: 0 1 auto;
 	}
 
-	.dk-menu > .menu-item-has-children > a::after {
+	.dk-menu>.menu-item-has-children>a::after {
 		display: none;
 	}
 
@@ -488,7 +478,7 @@
 		transition: transform .2s ease;
 	}
 
-	.dk-menu > .menu-item-has-children.is-open > .dk-menu__toggle::after {
+	.dk-menu>.menu-item-has-children.is-open>.dk-menu__toggle::after {
 		transform: rotate(225deg);
 	}
 
@@ -516,12 +506,13 @@
 		transition: max-height .3s ease, padding-block-end .3s ease;
 	}
 
-	.dk-menu > .menu-item-has-children.is-open > .sub-menu {
+	.dk-menu>.menu-item-has-children.is-open>.sub-menu {
 		padding-block-end: 6px;
 	}
 }
 
 @media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
+
 	.dk-nav__menu,
 	.dk-menu .sub-menu,
 	.dk-menu__toggle::after {
@@ -532,10 +523,6 @@
 @media (max-width: 575.98px) {
 	.dk-nav {
 		inset-block-start: 14px;
-	}
-
-	.dk-nav__account {
-		display: none;
 	}
 
 	.site-brand__logo,
@@ -550,9 +537,9 @@
 	}
 
 	.dk-nav__cart {
-		padding: 11px 16px;
-		font-size: 16px;
-		min-height: 48px;
+		padding: 5px 10px;
+		font-size: 14px;
+		min-height: 42px;
 		gap: 7px;
 	}
 
@@ -560,5 +547,27 @@
 		min-width: 21px;
 		height: 21px;
 		font-size: 13px;
+	}
+}
+
+@media (max-width: 460px) {
+	.dk-nav__pill {
+		gap: 10px;
+		align-items: center;
+	}
+
+	.dk-nav__toggle {
+		gap: 3px;
+		width: 35px;
+		height: 35px;
+	}
+
+	.dk-nav__cart {
+		min-height: 35px;
+	}
+
+	.site-brand__logo,
+	.site-brand .custom-logo {
+		height: 35px;
 	}
 }

@@ -280,6 +280,12 @@ class AssetsService extends Singleton implements ServiceInterface
          wp_localize_script('dk-cross-sell', 'DetailKingCrossSell', \DetailKing\Theme\Services\CrossSell\CrossSellService::getInstance()->frontendData());
       }
 
+      // Same for the Shop category sidebar's AJAX re-query (category
+      // checkboxes + price slider, no page load).
+      if (wp_script_is('dk-shop', 'enqueued')) {
+         wp_localize_script('dk-shop', 'DetailKingShopFilter', \DetailKing\Theme\Services\Shop\ShopFilterService::getInstance()->frontendData());
+      }
+
       // Wishlist heart ([data-dk-wishlist]) — sp-main/global.js is loaded on
       // every page (product cards render on the homepage rail too, not just
       // Woo contexts), so this localizes unconditionally alongside it.

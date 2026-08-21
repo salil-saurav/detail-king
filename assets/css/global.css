@@ -38,6 +38,7 @@
 	--text-white-82: rgba(255, 255, 255, .82);
 	--text-white-75: rgba(255, 255, 255, .75);
 	--text-white-70: rgba(255, 255, 255, .70);
+	--text-white-60: rgba(255, 255, 255, 0.60);
 	--text-white-65: rgba(255, 255, 255, .65);
 	--text-white-55: rgba(255, 255, 255, .55);
 	--text-white-45: rgba(255, 255, 255, .45);
@@ -630,7 +631,7 @@ img {
 .btn-gold:hover,
 .btn-gold:focus-visible {
 	color: var(--text-dark);
-	transform: translateY(-2px);
+	transform: translateY(-5px);
 	box-shadow: var(--shadow-gold);
 }
 
@@ -645,7 +646,7 @@ img {
 .btn-dark:focus-visible {
 	background: var(--bg-dark-card);
 	color: var(--gold-primary);
-	transform: translateY(-2px);
+	transform: translateY(-5px);
 }
 
 .btn-outline-light-dk {
@@ -658,7 +659,7 @@ img {
 .btn-outline-light-dk:focus-visible {
 	background: var(--glass-white-12);
 	color: var(--text-white);
-	transform: translateY(-2px);
+	transform: translateY(-5px);
 }
 
 .section--light .btn-outline-light-dk {
@@ -1137,11 +1138,19 @@ img {
 	flex-shrink: 0;
 	width: 44px;
 	height: 44px;
+	padding: 0;
+	/* The cross-sell rail's add button is a real <button> (the AJAX case),
+	   everywhere else this is an <a> — without an explicit reset the button
+	   variant keeps the browser's default grey "buttonface" fill and padding
+	   behind the icon, which is what made the --dark variant's white "+"
+	   unreadable (white on light grey, not white on the dark card). */
+	appearance: none;
+	background: transparent;
 	border: 1px solid var(--text-dark);
 	border-radius: 50%;
 	color: var(--text-dark);
-	font-size: 22px;
-	line-height: 1;
+	font: 22px/1 var(--font-body);
+	cursor: pointer;
 }
 
 .prod-card__add:hover {
@@ -1662,7 +1671,7 @@ select.dk-field__input {
 .aos-ready [data-hero].is-hero-settled .home-hero__actions>.btn-gold:focus-visible,
 .aos-ready [data-hero].is-hero-settled .home-hero__actions>.btn-outline-light-dk:hover,
 .aos-ready [data-hero].is-hero-settled .home-hero__actions>.btn-outline-light-dk:focus-visible {
-	transform: translateY(-2px);
+	transform: translateY(-5px);
 }
 
 /* ---------------------------------------------------------------
@@ -1915,8 +1924,10 @@ body.search-open {
    choreography, and should survive with JS off.
 
    The spec is emphatic that hover stays restrained: image scale(1.05),
-   card -4px, button -1px, icon +2px, over 400-600ms. Explicitly not
-   scale(1.2), not rotation, not bounce.
+   card -4px, icon +2px, over 400-600ms. Explicitly not scale(1.2), not
+   rotation, not bounce. Button lift is a deliberate exception, raised
+   from the spec's -1px to -5px client-side 21 Aug 2026 to match the
+   filter-pill hover lift.
 
    Guarded on (hover: hover) so a touch device never sticks in a hover
    state after a tap, and neutralised under reduced motion.
@@ -1949,7 +1960,7 @@ body.search-open {
 	.btn-gold:hover,
 	.btn-dark:hover,
 	.btn-outline-light-dk:hover {
-		transform: translateY(-1px);
+		transform: translateY(-5px);
 	}
 
 	/* §8/§15: the card stays put, the image zooms inside its clipped frame. */
