@@ -20,6 +20,9 @@ defined('ABSPATH') || exit;
  * - Logged-in user redirection to My Account dashboard (/my-account/)
  * - Password reset integration with WordPress native wp-login.php?action=lostpassword flow
  * - Dark-themed on-brand styling for wp-login.php (logo, colours, Bebas/Poppins type)
+ * - Unauthenticated wp-login.php / wp-admin requests bounced to the custom
+ *   /login page (see redirectToCustomLogin()); logout, the lost-password
+ *   flow and a logged-in user's own session are left on wp-login.php
  *
  * @package DetailKing Theme
  */
@@ -27,6 +30,23 @@ class AuthService extends Singleton implements ServiceInterface
 {
    public static string $authError = '';
    public static string $authSuccess = '';
+
+   /**
+    * wp-login.php `action` values that still need the native screen — the
+    * lost-password round trip and logout both run through wp-login.php by
+    * design (see the class doc above), so they're excluded from the
+    * redirect-to-/login rule below rather than redirected mid-flow.
+    */
+   private const LOGIN_PASSTHROUGH_ACTIONS = [
+      'logout',
+      'lostpassword',
+      'retrievepassword',
+      'resetpass',
+      'rp',
+      'postpass',
+      'confirmaction',
+      'confirm_admin_email',
+   ];
 
    public function register(): void
    {
@@ -36,6 +56,41 @@ class AuthService extends Singleton implements ServiceInterface
       add_filter('login_headertext', [$this, 'loginHeaderText']);
       add_action('template_redirect', [$this, 'handleAuthSubmissions']);
       add_action('template_redirect', [$this, 'redirectLoggedInUsers']);
+      add_action('login_init', [$this, 'redirectToCustomLogin']);
+   }
+
+   /**
+    * Send an unauthenticated wp-login.php request to the theme's own /login
+    * page. wp-admin needs no separate hook: WordPress's own admin.php calls
+    * auth_redirect() (-> wp-login.php) before 'admin_init' ever fires for a
+    * logged-out visitor, so this one hook on 'login_init' catches both a
+    * direct wp-login.php hit and that bounce from wp-admin. Logged-in users
+    * are untouched either way — they never reach auth_redirect(), and a
+    * logged-in user who browses to wp-login.php directly keeps WordPress's
+    * own "already logged in" behaviour.
+    */
+   public function redirectToCustomLogin(): void
+   {
+      if (is_user_logged_in()) {
+         return;
+      }
+
+      // The "session expired while editing" interim-login iframe, and the
+      // lost-password flow's own "check your email" notice — both render
+      // *on* wp-login.php by design; redirecting either mid-flow strands
+      // the user with no way back to what they were doing.
+      if (isset($_REQUEST['interim-login']) || isset($_GET['checkemail'])) {
+         return;
+      }
+
+      $action = sanitize_key(wp_unslash($_REQUEST['action'] ?? 'login'));
+
+      if (in_array($action, self::LOGIN_PASSTHROUGH_ACTIONS, true)) {
+         return;
+      }
+
+      wp_safe_redirect(home_url('/login/'));
+      exit;
    }
 
    /**
