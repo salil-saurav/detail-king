@@ -1434,16 +1434,14 @@ select.dk-field__input {
 
 /* ---------------------------------------------------------------
    6. Mobile navigation ([data-sp-toggle] toggles `.is-open`)
-   --------------------------------------------------------------- */
-@media (max-width: 991.98px) {
-	.primary-nav:not(.is-open) {
-		display: none;
-	}
 
-	.primary-nav.is-open {
-		display: block;
-	}
-}
+   The open/close animation (grid-template-rows 0fr -> 1fr) lives entirely
+   in header.css's `.dk-nav__menu` rule, not here — `.dk-nav__menu` and
+   `.primary-nav` are the same element (nav-header.php), and dk-header loads
+   after sp-global, so a plain `.primary-nav{display:grid}` here would only
+   win the cascade by accident of specificity; putting it all in one file
+   avoids that trap.
+   --------------------------------------------------------------- */
 
 /* ---------------------------------------------------------------
    7. Scroll-reveal ([data-animate]) — house convention, put it on

@@ -185,6 +185,37 @@
 	};
 
 	/* ----------------------------------------------------------
+		Primary menu submenu toggle. Hover reveals a dropdown on desktop, but
+		that's unreachable on touch — inject a real button per top-level
+		.menu-item-has-children so the collapsed mobile drawer expands its
+		submenu on tap instead of showing it open by default.
+		---------------------------------------------------------- */
+	const initSubmenuToggle = () => {
+		document.querySelectorAll('.dk-menu > .menu-item-has-children').forEach((item) => {
+			const submenu = item.querySelector(':scope > .sub-menu');
+			if (!submenu || item.querySelector(':scope > .dk-menu__toggle')) {
+				return;
+			}
+
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'dk-menu__toggle';
+			btn.setAttribute('aria-expanded', 'false');
+			btn.setAttribute('aria-label', 'Toggle submenu');
+			btn.addEventListener('click', () => {
+				const isOpen = item.classList.toggle('is-open');
+				btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+				// scrollHeight reads the true content height even while
+				// max-height:0 clips it, so this works whichever way we're
+				// toggling — the CSS transition animates to/from this value.
+				submenu.style.maxHeight = isOpen ? `${submenu.scrollHeight}px` : '';
+			});
+
+			item.insertBefore(btn, submenu);
+		});
+	};
+
+	/* ----------------------------------------------------------
 		Category filter pills ([data-dk-filter-group]).
 		Each pill inside carries data-dk-filter="<slug>"; the group names the
 		card container to act on via data-dk-filter-target="<selector>". Cards
@@ -564,6 +595,7 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		initStatCounters();
 		initNavToggle();
+		initSubmenuToggle();
 		initStickyNav();
 		initFilterTabs();
 		initHeaderSearch();

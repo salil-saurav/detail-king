@@ -119,6 +119,37 @@
 	color: var(--gold-primary) !important;
 }
 
+/* Dropdown indicator. Drawn as a rotated border-corner rather than an icon
+   font or unicode glyph — same reasoning as .dk-nav__account::before. */
+.dk-menu > .menu-item-has-children > a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.dk-menu > .menu-item-has-children > a::after {
+	content: "";
+	flex: 0 0 auto;
+	width: 7px;
+	height: 7px;
+	border-inline-end: 2px solid currentColor;
+	border-block-end: 2px solid currentColor;
+	transform: translateY(-2px) rotate(45deg);
+	transition: transform .2s ease;
+}
+
+.dk-menu > .menu-item-has-children:hover > a::after,
+.dk-menu > .menu-item-has-children:focus-within > a::after {
+	transform: translateY(1px) rotate(225deg);
+}
+
+/* Mobile submenu toggle button, injected by global.js next to the top-level
+   link — hidden on desktop, where hover/focus-within already reveals the
+   dropdown (see below) and no separate control is needed. */
+.dk-menu__toggle {
+	display: none;
+}
+
 /* Second-level dropdown. The comp has no open dropdown to copy, so this is
    derived: same glass treatment as the pill, left-aligned under its parent. */
 .dk-menu .sub-menu {
@@ -364,16 +395,38 @@
 		font-size: 15px;
 	}
 
-	/* Drawer. global.css hides .primary-nav:not(.is-open) below this width. */
+	/* Drawer. Grid-rows trick (0fr -> 1fr) rather than display:none/block, so
+	   it slides open/closed instead of snapping — overrides the desktop
+	   `display: flex` above, so this has to stay in the same file/media
+	   query as that rule rather than in global.css's generic is-open
+	   section (dk-header loads after sp-global; a rule there would win the
+	   cascade only by accident of specificity). Works here because
+	   .dk-nav__menu has exactly one child (.dk-menu) — the single grid
+	   item's intrinsic height IS the 1fr track size, and it re-measures
+	   live if a nested .sub-menu (below) grows after the drawer has opened.
+	   Padding/margin/border ride the same transition so the drawer's chrome
+	   eases in together with the height. */
 	.dk-nav__menu {
+		display: grid;
+		grid-template-rows: 0fr;
+		overflow: hidden;
 		order: 4;
 		width: 100%;
+		padding-block: 0;
+		margin-block-start: 0;
+		border-block-start: 1px solid transparent;
+		transition:
+			grid-template-rows .3s ease,
+			padding-block .3s ease,
+			margin-block-start .3s ease,
+			border-color .3s ease;
 	}
 
 	.dk-nav__menu.is-open {
+		grid-template-rows: 1fr;
 		padding-block: 18px 6px;
 		margin-block-start: 14px;
-		border-block-start: 1px solid var(--line-white-08);
+		border-block-start-color: var(--line-white-08);
 	}
 
 	.dk-menu {
@@ -381,6 +434,7 @@
 		align-items: flex-start;
 		gap: 4px;
 		width: 100%;
+		min-height: 0;
 	}
 
 	.dk-menu a {
@@ -388,23 +442,90 @@
 		font-size: 18px;
 	}
 
-	/* A hover-revealed dropdown is unreachable on touch — show it in flow. */
+	/* A hover-revealed dropdown is unreachable on touch — collapsed by default,
+	   expanded on tap via .dk-menu__toggle (global.js) rather than shown in
+	   flow unconditionally. */
+	.dk-menu > .menu-item-has-children {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		width: 100%;
+	}
+
+	/* Shrink to the label's width so .dk-menu__toggle sits right after the
+	   text instead of being pushed to the far edge — one arrow, not two. Its
+	   own ::after (desktop's hover indicator) is redundant with the toggle
+	   button's arrow here, so it's hidden below. */
+	.dk-menu > .menu-item-has-children > a {
+		flex: 0 1 auto;
+	}
+
+	.dk-menu > .menu-item-has-children > a::after {
+		display: none;
+	}
+
+	.dk-menu__toggle {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--text-white-75);
+		cursor: pointer;
+	}
+
+	.dk-menu__toggle::after {
+		content: "";
+		width: 8px;
+		height: 8px;
+		border-inline-end: 2px solid currentColor;
+		border-block-end: 2px solid currentColor;
+		transform: rotate(45deg);
+		transition: transform .2s ease;
+	}
+
+	.dk-menu > .menu-item-has-children.is-open > .dk-menu__toggle::after {
+		transform: rotate(225deg);
+	}
+
+	/* max-height rather than display:none/block, so the accordion slides
+	   instead of snapping. The 0/open px values are set inline by
+	   global.js's initSubmenuToggle (measured off scrollHeight, which reads
+	   the true content height even while clipped) — depth is capped at 2 by
+	   wp_nav_menu, so there's no further-nested accordion whose growth this
+	   would need to react to live, unlike the drawer's grid-fr trick above. */
 	.dk-menu .sub-menu {
 		position: static;
 		opacity: 1;
 		visibility: visible;
 		transform: none;
+		overflow: hidden;
+		max-height: 0;
 		min-width: 0;
-		padding: 0 0 6px 16px;
+		width: 100%;
+		padding-inline-start: 16px;
+		padding-block-end: 0;
 		border: 0;
 		background: none;
 		box-shadow: none;
 		backdrop-filter: none;
+		transition: max-height .3s ease, padding-block-end .3s ease;
 	}
 
-	.dk-menu>li:hover>.sub-menu,
-	.dk-menu>li:focus-within>.sub-menu {
-		transform: none;
+	.dk-menu > .menu-item-has-children.is-open > .sub-menu {
+		padding-block-end: 6px;
+	}
+}
+
+@media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
+	.dk-nav__menu,
+	.dk-menu .sub-menu,
+	.dk-menu__toggle::after {
+		transition: none;
 	}
 }
 
